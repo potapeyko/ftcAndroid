@@ -1,0 +1,2 @@
+1)Поменять файл local.properties (создать с текстом типа sdk.dir=C\:\\android\\android-sdk-windows)
+2) Project stract подключить lombok
