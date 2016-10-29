@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+    <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:weightSum="1">
+
+        <TextView
+                android:layout_width="152dp"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/title_txt"
+                android:id="@+id/textView"
+                android:layout_gravity="center_horizontal" android:layout_weight="0.09"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="New Button"
+                android:id="@+id/button" android:layout_gravity="center_horizontal" android:layout_weight="0.09"
+                />
+
+    </LinearLayout>
+    <ListView android:id="@+id/left_drawer"
+              android:layout_gravity="start"
+              android:layout_width="240dp"
+              android:layout_height="match_parent"
+              android:choiceMode="singleChoice"
+              android:divider="@android:color/transparent"
+              android:dividerHeight="0dp"
+              android:background="@android:color/background_dark"
+    />
+</android.support.v4.widget.DrawerLayout>

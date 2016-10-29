@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Rss</string>
+    <string name="app_name">rssReader</string>
+    <string name="title_txt">Неизмененный текст</string>
+    <string name="hint_new_chanel_uti">Введите URL ленты</string>
+    <string-array name="drawer_items_array">
+        <item>Добавить канал</item>
+        <item>Сменить канал</item>
+        <item>Удалить канал</item>
+        <item>Настройки канала</item>
+        <item>Настройки приложения</item>
+        <item>О приложении</item>
+    </string-array>
 </resources>
