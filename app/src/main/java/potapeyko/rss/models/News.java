@@ -7,9 +7,10 @@ import lombok.Setter;
 
 @Data
 public class News {
-    String title;
-    String description;
-    String fullNewsUri;
+    private String title;
+    private String description;
+    private String fullNewsUri;
+
 
     public News(String title, String description, String fullNewsUri){
         this.title=title;

@@ -16,6 +16,7 @@
         <activity android:name=".activities.NewChanelActivityMy"/>
         <activity android:name=".activities.AboutAppActivityMy"/>
         <activity android:name=".activities.ChanelChangeActivityMy"/>
+        <activity android:name=".activities.FullNewsActivity"/>
     </application>
 
 </manifest>
