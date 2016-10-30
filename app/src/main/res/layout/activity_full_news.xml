@@ -8,7 +8,7 @@
         <ImageView android:layout_width="100dp" android:layout_height="100dp"
         android:src="@drawable/camera"
         android:background="@android:color/black"
-        android:contentDescription="">
+        android:contentDescription="@string/news_alter_text"/>
 
         <TextView
                 android:layout_width="wrap_content"
