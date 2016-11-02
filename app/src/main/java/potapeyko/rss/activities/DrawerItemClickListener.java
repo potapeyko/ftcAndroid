@@ -7,24 +7,23 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 
-class DrawerItemClickListener implements ListView.OnItemClickListener {
-    private final DrawerLayout mDrawerLayout;
-    private final ListView mDrawerList;
+final class DrawerItemClickListener implements ListView.OnItemClickListener {
+    private final DrawerLayout DrawerLayout;
+    private final ListView DrawerList;
     private final Activity mainActivity;
     DrawerItemClickListener(DrawerLayout mDrawerLayout, ListView mDrawerList, Activity mainActivity) {
-        this.mDrawerLayout = mDrawerLayout;
-        this.mDrawerList=mDrawerList;
+        this.DrawerLayout = mDrawerLayout;
+        this.DrawerList =mDrawerList;
         this.mainActivity = mainActivity;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
         selectItem(position);
     }
 
     private void selectItem(int position) {
-        mDrawerLayout.closeDrawer(mDrawerList);
+        DrawerLayout.closeDrawer(DrawerList);
 
         switch (position) {
             case 0: {

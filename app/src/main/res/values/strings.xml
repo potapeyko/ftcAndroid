@@ -12,4 +12,6 @@
     </string-array>
     <string name="link_text">Ссылка на полную статью в Сети</string>
     <string name="news_alter_text">эмблема новости</string>
+    <string name="main_chanel_title">Титул новости</string>
+
 </resources>

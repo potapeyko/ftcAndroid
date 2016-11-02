@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
 
-public class NewChanelActivityMy extends MyBaseActivity implements IActivityListener {
+public final class NewChanelActivityMy extends MyBaseActivity implements IActivityListener {
 
-    public NewChanelActivityMy(){
+    public NewChanelActivityMy() {
         this.onCreateSubscribe(this);
     }
 
@@ -17,8 +17,14 @@ public class NewChanelActivityMy extends MyBaseActivity implements IActivityList
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_new_chanel);
     }
-    static void start(Activity other){
-        Intent intent = new Intent(other,NewChanelActivityMy.class);
+
+    @Override
+    public void onSaveInstanceStateActivity(Bundle outState) {
+
+    }
+
+    static void start(Activity other) {
+        Intent intent = new Intent(other, NewChanelActivityMy.class);
         other.startActivity(intent);
     }
 }

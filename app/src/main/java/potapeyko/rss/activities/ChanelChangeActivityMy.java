@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import potapeyko.rss.interfaces.IActivityListener;
 
 
-public class ChanelChangeActivityMy extends MyBaseActivity implements IActivityListener {
+public final class ChanelChangeActivityMy extends MyBaseActivity implements IActivityListener {
     public ChanelChangeActivityMy() {
         this.onCreateSubscribe(this);
     }
@@ -18,6 +18,11 @@ public class ChanelChangeActivityMy extends MyBaseActivity implements IActivityL
     }
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
+    }
+
+    @Override
+    public void onSaveInstanceStateActivity(Bundle outState) {
+
     }
 }
 
