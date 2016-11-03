@@ -77,7 +77,11 @@ public final class DB {
 
     public Cursor getAllNewsOfChanel(long chanelId) {
         //// TODO: 02.11.2016 картинки
-        String[] columns = new String[]{"_id", "title"};
+        String[] columns = new String[]{"_id",
+                DbConvention.NEWS_TABLE_TITLE,
+                DbConvention.NEWS_TABLE_DESCRIPTION,
+                DbConvention.NEWS_TABLE_LINK
+        };
         String selection = "chanel_id = " + chanelId;
         return dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
     }

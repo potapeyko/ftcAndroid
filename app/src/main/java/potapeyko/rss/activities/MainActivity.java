@@ -1,10 +1,10 @@
 package potapeyko.rss.activities;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,14 +44,13 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null && savedInstanceState.containsKey(CHANEL_ID))
             chanelId = savedInstanceState.getLong(CHANEL_ID);
 
         text = (TextView) findViewById(R.id.textView);
-        if(text!=null)
-        text.setText(R.string.main_chanel_title);
+        if (text != null)
+            text.setText(R.string.main_chanel_title);
         leftDrawerLayoutInit();
         db = new DB(this);
         newsListInit();

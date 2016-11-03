@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -8,15 +8,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Введите канал и настройки"
-            android:id="@+id/textView2" android:layout_gravity="center_horizontal"
-            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
+            android:text="@string/new_chanel_tv"
+            android:id="@+id/tvNewChanel" android:layout_gravity="center_horizontal"
+            />
     <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/etNewChanelUri"
             android:inputType="textUri"
             android:hint="@string/hint_new_chanel_uti"
-            android:layout_below="@+id/textView2" android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+
+
             android:layout_marginTop="17dp"/>
-</RelativeLayout>
+
+    <Button android:layout_width="300dp" android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/btnNewChanel"
+            android:text="@string/new_chanel_btn"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+    />
+</LinearLayout>
