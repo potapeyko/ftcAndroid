@@ -6,23 +6,28 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:orientation="horizontal">
         <ImageView android:layout_width="100dp" android:layout_height="100dp"
-        android:src="@drawable/camera"
-        android:background="@android:color/black"
-        android:contentDescription="@string/news_alter_text"/>
+                   android:id="@+id/activity.full.news.logo"
+                   android:src="@drawable/camera"
+                   android:background="@android:color/black"
+                   android:contentDescription="@string/news_alter_text"/>
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Large Text"
-                android:id="@+id/textView5"/>
+                android:id="@+id/activity.full.news.title"/>
 
     </LinearLayout>
-    <WebView android:layout_width="match_parent" android:layout_height="wrap_content">
+    <WebView android:id="@+id/activity.full.news.description"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+    >
 
     </WebView>
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="@string/link_text"
-              android:layout_marginTop="20dp"
-              android:clickable="true"/>
+    <TextView android:id="@+id/activity.full.news.link"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/link_text"
+            android:layout_marginTop="20dp"
+            android:clickable="true"/>
 </LinearLayout>

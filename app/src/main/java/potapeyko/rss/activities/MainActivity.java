@@ -1,18 +1,18 @@
 package potapeyko.rss.activities;
 
-import android.database.Cursor;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Patterns;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import potapeyko.rss.R;
-import potapeyko.rss.adapters.ItemsListAdapter;
+import potapeyko.rss.adapters.NewsListAdapter;
+import potapeyko.rss.constants.LogCodes;
 import potapeyko.rss.interfaces.IActivityListener;
+import potapeyko.rss.models.Chanel;
 import potapeyko.rss.models.News;
 import potapeyko.rss.sql.DB;
 
@@ -21,15 +21,11 @@ import java.util.ArrayList;
 
 
 public final class MainActivity extends MyBaseActivity implements IActivityListener {
-    private String[] drawerTitles;
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-    private TextView text;
-    private ListView mNewsList;
-    private DB db;
-    private long chanelId = 1; //todo сделать сохранение в настройках приложения, чтобы открывался нужный канал
-    private static final String CHANEL_ID = "chanel_id";
 
+
+    private DB db;
+    private long chanelId = 8; //todo сделать сохранение в настройках приложения, чтобы открывался нужный канал
+    private static final String CHANEL_ID = "chanel_id";
 
     public MainActivity() {
         this.onCreateSubscribe(this);
@@ -45,51 +41,71 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
-        if (savedInstanceState != null && savedInstanceState.containsKey(CHANEL_ID))
+        if (savedInstanceState != null && savedInstanceState.containsKey(CHANEL_ID)) {
             chanelId = savedInstanceState.getLong(CHANEL_ID);
+        } else chanelId = getIntent().getLongExtra("chanelId", 1);
 
-        text = (TextView) findViewById(R.id.textView);
-        if (text != null)
-            text.setText(R.string.main_chanel_title);
+
         leftDrawerLayoutInit();
-        db = new DB(this);
-        newsListInit();
+
+        newsTitleAndListInit();
     }
 
     private void leftDrawerLayoutInit() {
-        drawerTitles = getResources().getStringArray(R.array.drawer_items_array);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setAdapter(new ArrayAdapter<>(this,
-                R.layout.drawer_list_item, drawerTitles));
-        drawerList.setOnItemClickListener(new DrawerItemClickListener(drawerLayout, drawerList, this));
+        String[] drawerTitles = getResources().getStringArray(R.array.drawer_items_array);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView drawerList = (ListView) findViewById(R.id.activity_main_left_drawer);
+        if (drawerList != null) {
+            drawerList.setAdapter(new ArrayAdapter<>(this,
+                    R.layout.drawer_list_item, drawerTitles));
+            drawerList.setOnItemClickListener(new DrawerItemClickListener(drawerLayout, drawerList, this));
+        } else {
+            Log.e(LogCodes.MAIN_ACTIVITY, "не найден ListView activity_main_left_drawer");
+        }
     }
 
-    private void newsListInit() {
-        mNewsList = (ListView) findViewById(R.id.newsList);
-        ItemsListAdapter adapter = new ItemsListAdapter(this, getItemsList(chanelId));
-        mNewsList.setAdapter(adapter);
-        mNewsList.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FullNewsActivity.start(MainActivity.this, id);
-            }
-        });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data==null)return;
+        long id = ChanelChangeActivityMy.getResultChanelId(data);
+        if(id != -1){
+            chanelId =id;
+            newsTitleAndListInit();
+        }
     }
 
-    //todo времянка замена отдельный поток
-    private ArrayList<News> getItemsList(long chanelId) {
-        ArrayList<News> news = new ArrayList<>();
+    private void newsTitleAndListInit() {
+        ListView newsList = (ListView) findViewById(R.id.activity_main_newsList);
+        NewsListAdapter adapter;
+        TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
+        db = new DB(this);
+
         db.open();
-        Cursor cur = db.getAllNewsOfChanel(chanelId);
-        if (cur.moveToFirst()) {
-            do {
-                news.add(new News(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3)));
-            }
-            while (cur.moveToNext());
+        Chanel chanel = db.getChanelById(this.chanelId);
+        if (title != null&&chanel!=null) {
+            title.setText(chanel.getTitle());
+        }
+        if (newsList != null) {
+
+            ArrayList<News> news = db.getAllNewsOfChanelList(this.chanelId);
+            adapter = new NewsListAdapter(this, news);
+            newsList.setAdapter(adapter);
+            newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    FullNewsActivity.start(MainActivity.this, id);
+                }
+            });
+        } else {
+            Log.e(LogCodes.MAIN_ACTIVITY, "не найден ListView activity_main_newsList");
         }
         db.close();
-        return news;
     }
 
+    static void start(Activity other, Long aLong) {
+        Intent intent = new Intent(other, MainActivity.class);
+        intent.putExtra("chanelId", aLong);
+        other.startActivity(intent);
+    }
 }

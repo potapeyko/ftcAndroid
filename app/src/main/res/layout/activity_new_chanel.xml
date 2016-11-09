@@ -9,12 +9,12 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/new_chanel_tv"
-            android:id="@+id/tvNewChanel" android:layout_gravity="center_horizontal"
+            android:id="@+id/activity.new.chanel.tvNewChanel" android:layout_gravity="center_horizontal"
             />
     <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:id="@+id/etNewChanelUri"
+            android:id="@+id/activity.new.chanel.etNewChanelUri"
             android:inputType="textUri"
             android:hint="@string/hint_new_chanel_uti"
             android:layout_gravity="center_horizontal"
@@ -25,7 +25,7 @@
     <Button android:layout_width="300dp" android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/btnNewChanel"
+            android:id="@+id/activity.new.chanel.btnNewChanel"
             android:text="@string/new_chanel_btn"
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"

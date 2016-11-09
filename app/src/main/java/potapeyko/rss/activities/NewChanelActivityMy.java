@@ -14,8 +14,6 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.network.NetworkHelper;
 
-import java.net.URI;
-
 public final class NewChanelActivityMy extends MyBaseActivity implements IActivityListener {
 
     private Button btnNewChanel;
@@ -31,13 +29,14 @@ public final class NewChanelActivityMy extends MyBaseActivity implements IActivi
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_new_chanel);
-        btnNewChanel = (Button) findViewById(R.id.btnNewChanel);
-        etUri = (EditText) findViewById(R.id.etNewChanelUri);
-        tvNewChanel = (TextView) findViewById(R.id.tvNewChanel);
+        btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
+        etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
+        tvNewChanel = (TextView) findViewById(R.id.activity_new_chanel_tvNewChanel);
         if (!nwHelper.isNetworkAvailable()) {
             notConnectionCase();
         }
         else {
+
             btnNewChanel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -47,9 +46,12 @@ public final class NewChanelActivityMy extends MyBaseActivity implements IActivi
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    //иедем в сервис грузим парсим
+                    AddChanelService.start(getApplicationContext(),etUri.getText().toString());
+                    ChanelChangeActivityMy.start(NewChanelActivityMy.this);
+
                 }
             });
+
         }
     }
 

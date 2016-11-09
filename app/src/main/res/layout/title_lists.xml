@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:text="Large Text"
               android:background="@color/colorTitleLists"
-            android:id="@+id/titleList" android:layout_gravity="center_horizontal"
-            android:padding="10dp"
+              android:id="@+id/title.list" android:layout_gravity="center_horizontal"
+              android:padding="10dp"
     />

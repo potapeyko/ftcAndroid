@@ -16,12 +16,12 @@ import potapeyko.rss.models.News;
 
 import java.util.ArrayList;
 
-public class ItemsListAdapter extends BaseAdapter {
+public class NewsListAdapter extends BaseAdapter {
 
     private final ArrayList<News> news;
     private final LayoutInflater layoutInflater;
 
-    public ItemsListAdapter(Context context, ArrayList<News> news) {
+    public NewsListAdapter(Context context, ArrayList<News> news) {
         this.news = news;
         this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -38,7 +38,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return news.get(i).getId();
     }
 
     @Override

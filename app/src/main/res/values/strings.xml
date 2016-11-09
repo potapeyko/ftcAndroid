@@ -19,6 +19,8 @@
     <string name="new_chanel_no_connection_toast">Проверьте соединение и попробуйте снова</string>
     <string name="new_chanel_not_correct_link_toast">Введена неверная ссылка</string>
     <string name="back">Назад</string>
+    <string name="chanel_change_textView">Выбор канала</string>
+    <string name="activity_about_title">О приложении</string>
 
 
 </resources>

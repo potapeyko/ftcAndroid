@@ -19,18 +19,17 @@
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/title_txt"
-                    android:id="@+id/textView"
+                    android:id="@+id/activity.main.txtTitle"
                     android:gravity="center"
                     android:layout_gravity="center_horizontal" android:layout_weight="0.09"
                     />
-
         </LinearLayout>
         <ListView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:id="@+id/newsList"></ListView>
+        android:id="@+id/activity.main.newsList"></ListView>
 
 
     </LinearLayout>
-    <ListView android:id="@+id/left_drawer"
+    <ListView android:id="@+id/activity.main.left.drawer"
               android:layout_gravity="start"
               android:layout_width="240dp"
               android:layout_height="match_parent"
