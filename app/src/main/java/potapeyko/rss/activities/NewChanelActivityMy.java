@@ -46,9 +46,12 @@ public final class NewChanelActivityMy extends MyBaseActivity implements IActivi
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    AddChanelService.start(getApplicationContext(),etUri.getText().toString());
-                    ChanelChangeActivityMy.start(NewChanelActivityMy.this);
 
+                    MyService.start(getApplicationContext(),etUri.getText().toString());
+
+
+                    ChanelChangeActivityMy.start(NewChanelActivityMy.this);
+                    NewChanelActivityMy.this.finish();
                 }
             });
 

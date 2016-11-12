@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import lombok.Getter;
 import potapeyko.rss.R;
 import potapeyko.rss.adapters.NewsListAdapter;
 import potapeyko.rss.constants.LogCodes;
@@ -24,7 +25,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
 
     private DB db;
-    private long chanelId = 8; //todo сделать сохранение в настройках приложения, чтобы открывался нужный канал
+    @Getter private long chanelId = 8; //todo сделать сохранение в настройках приложения, чтобы открывался нужный канал
     private static final String CHANEL_ID = "chanel_id";
 
     public MainActivity() {
@@ -43,7 +44,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null && savedInstanceState.containsKey(CHANEL_ID)) {
             chanelId = savedInstanceState.getLong(CHANEL_ID);
-        } else chanelId = getIntent().getLongExtra("chanelId", 1);
+        } else chanelId = getIntent().getLongExtra("chanelId", 3);
 
 
         leftDrawerLayoutInit();
@@ -89,6 +90,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         if (newsList != null) {
 
             ArrayList<News> news = db.getAllNewsOfChanelList(this.chanelId);
+//            ArrayList<News> news = db.getAllNews();
             adapter = new NewsListAdapter(this, news);
             newsList.setAdapter(adapter);
             newsList.setOnItemClickListener(new ListView.OnItemClickListener() {

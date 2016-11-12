@@ -25,7 +25,7 @@
         <activity android:name=".activities.FullNewsActivity"/>
 
         <service
-                android:name=".activities.AddChanelService"
+                android:name=".activities.MyService"
                 android:enabled="true"
                 android:exported="true">
         </service>

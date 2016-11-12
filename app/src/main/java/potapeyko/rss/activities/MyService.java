@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public final class AddChanelService extends Service {
+public final class MyService extends Service {
     private static String URI = "uri";
     private ExecutorService threadPoolService;
 
@@ -34,7 +34,7 @@ public final class AddChanelService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        threadPoolService = Executors.newFixedThreadPool(1);
+        threadPoolService = Executors.newFixedThreadPool(5);
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class AddChanelService extends Service {
 
     static boolean start(Context context, String uri) {
         if (context == null || "".equals(uri)) return false;
-        Intent intent = new Intent(context, AddChanelService.class);
+        Intent intent = new Intent(context, MyService.class);
         intent.putExtra(URI, uri);
 
         try {
@@ -76,7 +76,7 @@ public final class AddChanelService extends Service {
                 urlConnection.connect();
                 is = urlConnection.getInputStream();
                 XmlPullParser xpp = prepareXpp(is, null);
-                db = new DB(AddChanelService.this);
+                db = new DB(MyService.this);
                 db.open();
                 if(db.isChanelInDb(uri)){
                     Log.e(LogCodes.ADD_CHANEL,"УЖЕ ЕСТЬ");

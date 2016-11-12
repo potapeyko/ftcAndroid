@@ -1,19 +1,22 @@
 package potapeyko.rss.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import potapeyko.rss.sql.DB;
 
 
 final class DrawerItemClickListener implements ListView.OnItemClickListener {
-    private final DrawerLayout DrawerLayout;
-    private final ListView DrawerList;
-    private final Activity mainActivity;
-    DrawerItemClickListener(DrawerLayout mDrawerLayout, ListView mDrawerList, Activity mainActivity) {
-        this.DrawerLayout = mDrawerLayout;
-        this.DrawerList =mDrawerList;
+    private final DrawerLayout drawerLayout;
+    private final ListView drawerList;
+    private final MainActivity mainActivity;
+
+    DrawerItemClickListener(DrawerLayout drawerLayout, ListView drawerList, MainActivity mainActivity) {
+        this.drawerLayout = drawerLayout;
+        this.drawerList = drawerList;
         this.mainActivity = mainActivity;
     }
 
@@ -23,7 +26,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
     }
 
     private void selectItem(int position) {
-        DrawerLayout.closeDrawer(DrawerList);
+        drawerLayout.closeDrawer(drawerList);
 
         switch (position) {
             case 0: {
@@ -35,7 +38,26 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                 break;
             }
             case 2: {
-                //                диалог или сразу удаление
+                DB db = null;
+                if (mainActivity != null) {
+                    try {
+                        db = new DB(mainActivity);
+
+                        db.open();
+                        db.deleteChanelById(mainActivity.getChanelId());
+
+
+                    } catch (Exception r) {
+                        r.printStackTrace();
+                    } finally {
+                        if (db != null) {
+                            db.close();
+                            Intent intent = new Intent(mainActivity, MainActivity.class);
+                            mainActivity.startActivity(intent);
+                            mainActivity.finish();
+                        }
+                    }
+                }
                 break;
             }
             case 3: {

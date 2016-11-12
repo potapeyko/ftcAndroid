@@ -210,7 +210,6 @@ public final class DB {
 
     public boolean isNewsInDb(final String link) {
         if (link == null) return false;
-
         String[] columns = {DbConvention.NEWS_TABLE_TITLE};
         String selection = DbConvention.NEWS_TABLE_LINK + " = '" + link + "'";
         Cursor cursor = dB.query(DbConvention.DB_CHANEL_TABLE, columns, selection, null, null, null, null);
@@ -229,14 +228,46 @@ public final class DB {
         if (result == -1) Log.e(DB_LOG, "Ошибка addToNews записи в бд");
     }
 
-    public void deleteChanel(long id) {
-        dB.delete(DbConvention.DB_CHANEL_TABLE, "_id = " + id, null);
-    }
-
     public void clearAll() {
         if (dB == null) return;
         dB.delete(DbConvention.DB_CHANEL_TABLE, null, null);
         dB.delete(DbConvention.DB_NEWS_TABLE, null, null);//почему то каскадное не работает?
+    }
+    //todo УДАЛИТЬ
+//    public  ArrayList<News> getAllNews(){
+//        ArrayList<News> list = new ArrayList<>();
+//        Cursor cur = null;
+//        String[] columns = new String[]{
+//                DbConvention.NEWS_ID,
+//                DbConvention.NEWS_TABLE_TITLE,
+//                DbConvention.NEWS_TABLE_DESCRIPTION,
+//                DbConvention.NEWS_TABLE_LINK
+//        };
+//        try {
+//            cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, null, null, null, null, null);
+//            if (cur.moveToFirst()) {
+//                do {
+//                    list.add(new News(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3)));
+//                }
+//                while (cur.moveToNext());
+//            }
+//        } finally {
+//            if (cur != null) {
+//                cur.close();
+//            }
+//        }
+//        return list;
+//    }
+
+
+    public void deleteChanelById(long id){
+        if (dB == null) return;
+        String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID+" = "+id;
+        String chanelSelection = DbConvention.CHANEL_ID+" = "+id;
+
+        int a =dB.delete(DbConvention.DB_NEWS_TABLE, newsSelection, null);
+        int b =dB.delete(DbConvention.DB_CHANEL_TABLE, chanelSelection, null);
+
     }
 
     private final class DBHelper extends SQLiteOpenHelper {
