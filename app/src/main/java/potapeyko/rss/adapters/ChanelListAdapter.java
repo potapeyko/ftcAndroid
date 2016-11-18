@@ -5,18 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import potapeyko.rss.R;
-import potapeyko.rss.models.Chanel;
+import potapeyko.rss.models.Channel;
 
 import java.util.ArrayList;
 
 public class ChanelListAdapter extends BaseAdapter {
-      private final ArrayList<Chanel> chanels;
+      private final ArrayList<Channel> chanels;
     private final LayoutInflater layoutInflater;
 
-    public ChanelListAdapter(Context context, ArrayList<Chanel> news) {
+    public ChanelListAdapter(Context context, ArrayList<Channel> news) {
         this.chanels = news;
         this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -43,10 +42,8 @@ public class ChanelListAdapter extends BaseAdapter {
             contentView = layoutInflater.inflate(R.layout.news_list_item, viewGroup, false);
         }
         TextView title = (TextView) contentView.findViewById(R.id.news_list_title);
-        ImageView image = (ImageView) contentView.findViewById(R.id.news_list_image);
-        final Chanel chanel = (Chanel) getItem(position);
+        final Channel chanel = (Channel) getItem(position);
         title.setText(chanel.getTitle());
-        //image.setImageResource(news.getImageResource()); // TODO: 28.10.2016
         return contentView;
     }
 }

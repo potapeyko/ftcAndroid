@@ -47,8 +47,7 @@ public final class NewChanelActivityMy extends MyBaseActivity implements IActivi
                         return;
                     }
 
-                    MyService.start(getApplicationContext(),etUri.getText().toString());
-
+                    AddIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
 
                     ChanelChangeActivityMy.start(NewChanelActivityMy.this);
                     NewChanelActivityMy.this.finish();

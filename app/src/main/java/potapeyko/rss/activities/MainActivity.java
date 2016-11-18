@@ -1,55 +1,86 @@
 package potapeyko.rss.activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.*;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
 import lombok.Getter;
 import potapeyko.rss.R;
-import potapeyko.rss.adapters.NewsListAdapter;
 import potapeyko.rss.constants.LogCodes;
 import potapeyko.rss.interfaces.IActivityListener;
-import potapeyko.rss.models.Chanel;
-import potapeyko.rss.models.News;
 import potapeyko.rss.sql.DB;
-
-
-import java.util.ArrayList;
 
 
 public final class MainActivity extends MyBaseActivity implements IActivityListener {
 
-
-    private DB db;
-    @Getter private long chanelId = 8; //todo сделать сохранение в настройках приложения, чтобы открывался нужный канал
     private static final String CHANEL_ID = "chanel_id";
+    private static final String CHANEL_TITLE = "chanel_title";
+
+    @Getter private long chanelId ;
+    private String chanelTitle = "";
+    private DB db;
+    private Cursor newsCursor;
+    private SharedPreferences sPref;
+
+    private BroadcastReceiver br;
 
     public MainActivity() {
         this.onCreateSubscribe(this);
-        this.onSaveInstanceStateSubscribe(this);
     }
 
+
+
     @Override
-    public void onSaveInstanceStateActivity(Bundle outState) {
-        outState.clear();
-        outState.putLong(CHANEL_ID, chanelId);
+    protected void onPause() {
+        saveLastChanel();
+        super.onPause();
+    }
+
+    private void saveLastChanel() {
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(CHANEL_TITLE, chanelTitle);
+        ed.putLong(CHANEL_ID, chanelId);
+        ed.apply();
     }
 
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
+        PreferenceManager.setDefaultValues(this, R.xml.pref, false);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState != null && savedInstanceState.containsKey(CHANEL_ID)) {
-            chanelId = savedInstanceState.getLong(CHANEL_ID);
-        } else chanelId = getIntent().getLongExtra("chanelId", 3);
+        chanelId = getIntent().getLongExtra("chanelId", -1);
+        chanelTitle = "";
+        if (chanelId == -1) {
+            sPref = getPreferences(MODE_PRIVATE);
+            chanelTitle = getString(R.string.activity_main_add_new_chanel);
+            chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
+            chanelId = sPref.getLong(CHANEL_ID,chanelId);
 
+        }
+        br = new BroadcastReceiver() {
+            // действия при получении сообщений
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
 
         leftDrawerLayoutInit();
-
         newsTitleAndListInit();
+    }
+
+    @Override
+    public void onSaveInstanceStateActivity(Bundle outState) {
+
     }
 
     private void leftDrawerLayoutInit() {
@@ -68,41 +99,66 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(data==null)return;
+        if (data == null) return;
         long id = ChanelChangeActivityMy.getResultChanelId(data);
-        if(id != -1){
-            chanelId =id;
+        if (id != -1) {
+            chanelId = id;
+            chanelTitle = "";
             newsTitleAndListInit();
         }
     }
 
     private void newsTitleAndListInit() {
         ListView newsList = (ListView) findViewById(R.id.activity_main_newsList);
-        NewsListAdapter adapter;
         TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
-        db = new DB(this);
 
-        db.open();
-        Chanel chanel = db.getChanelById(this.chanelId);
-        if (title != null&&chanel!=null) {
-            title.setText(chanel.getTitle());
+        if (chanelId == -1) {
+            if (title != null) {
+                title.setText(chanelTitle);
+            }
+            return;
         }
-        if (newsList != null) {
 
-            ArrayList<News> news = db.getAllNewsOfChanelList(this.chanelId);
-//            ArrayList<News> news = db.getAllNews();
-            adapter = new NewsListAdapter(this, news);
-            newsList.setAdapter(adapter);
-            newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    FullNewsActivity.start(MainActivity.this, id);
-                }
-            });
-        } else {
-            Log.e(LogCodes.MAIN_ACTIVITY, "не найден ListView activity_main_newsList");
+        try {
+            db = new DB(this);
+            db.open();
+
+            if ("".equals(chanelTitle)) {
+                chanelTitle = db.getChanelById(this.chanelId).getTitle();
+            }
+            if (title != null) {
+                title.setText(chanelTitle);
+            }
+
+            if (newsList != null) {
+                newsCursor = db.getAllNewsOfChanelCursor(chanelId);
+                String[] from = {DB.DbConvention.NEWS_TABLE_TITLE};
+                int[] to = {R.id.news_list_title};
+
+                SimpleCursorAdapter adapter =
+                        new SimpleCursorAdapter(this, R.layout.news_list_item, newsCursor, from, to);
+                newsList.setAdapter(adapter);
+                newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        FullNewsActivity.start(MainActivity.this, id);
+                    }
+                });
+            } else {
+                Log.e(LogCodes.MAIN_ACTIVITY, "не найден ListView activity_main_newsList");
+            }
+        } finally {
+            db.close();
         }
-        db.close();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (newsCursor != null) {
+            newsCursor.close();
+        }
     }
 
     static void start(Activity other, Long aLong) {

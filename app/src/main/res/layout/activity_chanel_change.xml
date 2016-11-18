@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/chanel_change_textView"
-            android:id="@+id/textView3" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/chanel.change.text" android:layout_gravity="center_horizontal"/>
     <ListView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="center_horizontal"

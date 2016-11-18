@@ -4,8 +4,7 @@ package potapeyko.rss.network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-public final class NetworkHelper  {
+public final class NetworkHelper {
     private final Context context;
 
     public NetworkHelper(Context context) {

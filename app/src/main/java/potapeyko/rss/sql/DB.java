@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import potapeyko.rss.models.Chanel;
+import potapeyko.rss.models.Channel;
 import potapeyko.rss.models.News;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import static potapeyko.rss.constants.LogCodes.DB_LOG;
 public final class DB {
 
 
-    private final class DbConvention {
+    public final class DbConvention {
         private DbConvention() throws Exception {
             throw new Exception();
         }
@@ -28,15 +28,15 @@ public final class DB {
         private static final int DB_VERSION = 6;
 
         private static final String DB_CHANEL_TABLE = "chanel";
-        private static final String CHANEL_TABLE_TITLE = "title";
+        public static final String CHANEL_TABLE_TITLE = "title";
         private static final String CHANEL_TABLE_LINK = "link";
-        private static final String CHANEL_TABLE_DESCRIPTION = "description";
+        public static final String CHANEL_TABLE_DESCRIPTION = "description";
         private static final String CHANEL_ID = "_id";
 
 
         private static final String DB_NEWS_TABLE = "news";
         private static final String NEWS_TABLE_DESCRIPTION = "description";
-        private static final String NEWS_TABLE_TITLE = "title";
+        public static final String NEWS_TABLE_TITLE = "title";
         private static final String NEWS_TABLE_LINK = "link";
         private static final String NEWS_TABLE_CHANEL_ID = "chanel_id";
         private static final String NEWS_ID = "_id";
@@ -86,13 +86,13 @@ public final class DB {
         dB = null;
     }
 
-    public Chanel getChanelById(long id) {
+    public Channel getChanelById(long id) {
         String selection = "_id = " + id;
         Cursor cur = dB.query(DbConvention.DB_CHANEL_TABLE, null, selection, null, null, null, null);
-        Chanel resChanel = null;
+        Channel resChanel = null;
         try {
             if (cur.moveToFirst()) {
-                resChanel = new Chanel(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3));
+                resChanel = new Channel(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3));
             }
             return resChanel;
         } finally {
@@ -115,18 +115,18 @@ public final class DB {
         }
     }
 
-    public Cursor getAllChanelsCursor() {
+    public Cursor getAllChannelsCursor() {
         return dB.query(DbConvention.DB_CHANEL_TABLE, null, null, null, null, null, null);
     }
 
-    public ArrayList<Chanel> getAllChanelsList() {
-        ArrayList<Chanel> list = new ArrayList<>();
+    public ArrayList<Channel> getAllChannelsList() {
+        ArrayList<Channel> list = new ArrayList<>();
         Cursor cur = null;
         try {
             cur = dB.query(DbConvention.DB_CHANEL_TABLE, null, null, null, null, null, null);
             if (cur.moveToFirst()) {
                 do {
-                    list.add(new Chanel(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3)));
+                    list.add(new Channel(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3)));
                 }
                 while (cur.moveToNext());
             }
@@ -138,7 +138,6 @@ public final class DB {
     }
 
     public Cursor getAllNewsOfChanelCursor(long chanelId) {
-        //// TODO: 02.11.2016 картинки
         String[] columns = new String[]{
                 DbConvention.NEWS_ID,
                 DbConvention.NEWS_TABLE_TITLE,
@@ -175,25 +174,13 @@ public final class DB {
         return list;
     }
 
-    public long addChanel(String title, String link) {
-        return addChanel(title, link, null);
-    }
 
-    private long addChanel(String title, String link, String description) {
+    public long addChanel(String title, String link, String description) {
         ContentValues cv = new ContentValues();
         cv.put(DbConvention.CHANEL_TABLE_TITLE, title);
         cv.put(DbConvention.CHANEL_TABLE_LINK, link);
         cv.put(DbConvention.CHANEL_TABLE_DESCRIPTION, description);
         return dB.insert(DbConvention.DB_CHANEL_TABLE, null, cv);
-    }
-
-    public void addDescriptionToChanel(Long chanelId, String description) {
-        if (description == null || "".equals(description)) return;
-        String sql = "update " + DbConvention.DB_CHANEL_TABLE +
-                " set " + DbConvention.CHANEL_TABLE_DESCRIPTION + " = '" +
-                description + "' where _id = " + chanelId + ";";
-
-        dB.execSQL(sql);
     }
 
     public boolean isChanelInDb(final String link) {
@@ -208,10 +195,11 @@ public final class DB {
         return res;
     }
 
-    public boolean isNewsInDb(final String link) {
-        if (link == null) return false;
+    public boolean isNewsInDb(final News news) {
+        if (news == null) return false;
         String[] columns = {DbConvention.NEWS_TABLE_TITLE};
-        String selection = DbConvention.NEWS_TABLE_LINK + " = '" + link + "'";
+        String selection = DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "' "+DbConvention.NEWS_TABLE_DESCRIPTION
+                + " =  '"+news.getDescription()+"' "+DbConvention.NEWS_TABLE_TITLE + " =  '"+news.getTitle()+"'";
         Cursor cursor = dB.query(DbConvention.DB_CHANEL_TABLE, columns, selection, null, null, null, null);
         boolean res = cursor.getCount() > 0;
         cursor.close();
@@ -233,32 +221,6 @@ public final class DB {
         dB.delete(DbConvention.DB_CHANEL_TABLE, null, null);
         dB.delete(DbConvention.DB_NEWS_TABLE, null, null);//почему то каскадное не работает?
     }
-    //todo УДАЛИТЬ
-//    public  ArrayList<News> getAllNews(){
-//        ArrayList<News> list = new ArrayList<>();
-//        Cursor cur = null;
-//        String[] columns = new String[]{
-//                DbConvention.NEWS_ID,
-//                DbConvention.NEWS_TABLE_TITLE,
-//                DbConvention.NEWS_TABLE_DESCRIPTION,
-//                DbConvention.NEWS_TABLE_LINK
-//        };
-//        try {
-//            cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, null, null, null, null, null);
-//            if (cur.moveToFirst()) {
-//                do {
-//                    list.add(new News(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3)));
-//                }
-//                while (cur.moveToNext());
-//            }
-//        } finally {
-//            if (cur != null) {
-//                cur.close();
-//            }
-//        }
-//        return list;
-//    }
-
 
     public void deleteChanelById(long id){
         if (dB == null) return;

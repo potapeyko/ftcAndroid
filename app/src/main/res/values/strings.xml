@@ -6,8 +6,7 @@
         <item>Добавить канал</item>
         <item>Сменить канал</item>
         <item>Удалить канал</item>
-        <item>Настройки канала</item>
-        <item>Настройки приложения</item>
+        <item>Настройки</item>
         <item>О приложении</item>
     </string-array>
     <string name="link_text">Ссылка на полную статью в Сети</string>
@@ -21,6 +20,10 @@
     <string name="back">Назад</string>
     <string name="chanel_change_textView">Выбор канала</string>
     <string name="activity_about_title">О приложении</string>
-
+    <string name= "activity_main_add_new_chanel">Выберите или добавьте канал</string>
+    <string name = "activity_settings_period_title">Введите период в минутах</string>
+    <string name = "activity_settings_period_summary">Введите период обновления в минутах</string>
+    <string name = "activity_settings_auto_summary">Будет ли приложение проверять новости автоматичеки</string>
+    <string name = "activity_settings_auto_title">Автоматическое обновление</string>
 
 </resources>

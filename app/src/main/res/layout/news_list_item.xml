@@ -4,14 +4,15 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@android:color/white">
-    <ImageView android:layout_width="100dp" android:layout_height="100dp"
-    android:id="@+id/news.list.image"
-    android:contentDescription="@string/news_alter_text"/>
     <TextView
+            android:id="@+id/news.list.title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Large Text"
-            android:id="@+id/news.list.title" android:layout_gravity="center_horizontal" android:singleLine="false"/>
+            android:singleLine="false"
 
+            android:gravity="center_vertical|center_horizontal" android:background="#88d4fb"/>
 </LinearLayout>

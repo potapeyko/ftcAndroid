@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:weightSum="1">
         <LinearLayout android:layout_width="match_parent" android:layout_height="52dp"
-            android:background="@color/colorTitleLists"
+                      android:background="@color/colorTitleLists"
 
         >
             <TextView
@@ -22,10 +22,11 @@
                     android:id="@+id/activity.main.txtTitle"
                     android:gravity="center"
                     android:layout_gravity="center_horizontal" android:layout_weight="0.09"
-                    />
+            />
         </LinearLayout>
+
         <ListView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:id="@+id/activity.main.newsList"></ListView>
+                  android:id="@+id/activity.main.newsList"></ListView>
 
 
     </LinearLayout>

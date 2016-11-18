@@ -1,6 +1,5 @@
 package potapeyko.rss.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -60,15 +59,12 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                 }
                 break;
             }
+
             case 3: {
-//                настройки канала... что это игде
+                SettingsActivity.start(mainActivity);
                 break;
             }
             case 4: {
-                //                настройки приложения... что это игде
-                break;
-            }
-            case 5: {
                 AboutAppActivityMy.start(mainActivity);
                 break;
             }
