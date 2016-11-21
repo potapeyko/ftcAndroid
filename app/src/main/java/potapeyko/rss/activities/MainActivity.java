@@ -1,14 +1,14 @@
 package potapeyko.rss.activities;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.*;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.*;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
@@ -22,23 +22,36 @@ import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.sql.DB;
 
 
-public final class MainActivity extends MyBaseActivity implements IActivityListener {
+public final class MainActivity extends MyBaseActivity implements IActivityListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
 
-    @Getter private long chanelId ;
+    @Getter
+    private long chanelId;
     private String chanelTitle = "";
     private DB db;
     private Cursor newsCursor;
     private SharedPreferences sPref;
+    private SimpleCursorAdapter adapter;
 
-    private BroadcastReceiver br;
+    private BroadcastReceiver br = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(MainActivity.this, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+            if (intent.getStringExtra("message").equals("updateChannel") && (intent.getLongExtra("data", -1)) == chanelId) {
+                db.open();
+                newsCursor = db.getAllNewsOfChanelCursor(chanelId);
+                adapter.changeCursor(newsCursor);
+                adapter.notifyDataSetChanged();
+                db.close();
+            }
+        }
+    };
 
     public MainActivity() {
         this.onCreateSubscribe(this);
     }
-
 
 
     @Override
@@ -48,7 +61,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     }
 
     private void saveLastChanel() {
-        sPref = getPreferences(MODE_PRIVATE);
+        sPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(CHANEL_TITLE, chanelTitle);
         ed.putLong(CHANEL_ID, chanelId);
@@ -61,21 +74,35 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         setContentView(R.layout.activity_main);
         chanelId = getIntent().getLongExtra("chanelId", -1);
         chanelTitle = "";
+        sPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sPref.registerOnSharedPreferenceChangeListener(this);
         if (chanelId == -1) {
-            sPref = getPreferences(MODE_PRIVATE);
             chanelTitle = getString(R.string.activity_main_add_new_chanel);
             chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
-            chanelId = sPref.getLong(CHANEL_ID,chanelId);
+            chanelId = sPref.getLong(CHANEL_ID, chanelId);
 
         }
-        br = new BroadcastReceiver() {
-            // действия при получении сообщений
-            public void onReceive(Context context, Intent intent) {
-            }
-        };
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(br, new IntentFilter("potapeyko.rss.activities"));
         leftDrawerLayoutInit();
         newsTitleAndListInit();
+
+        alarmSettings();
+
+    }
+
+    private void alarmSettings() {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, TimeNotification.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                intent, PendingIntent.FLAG_CANCEL_CURRENT);//флаг - отмена такого-же интента
+
+        boolean isAutoUpdate = sPref.getBoolean("auto_update", true);
+        if (isAutoUpdate) {
+            long a = sPref.getLong("nextUpdate", System.currentTimeMillis());//если обновление не запл. то обновиться сразу
+            am.set(AlarmManager.RTC_WAKEUP, a, pendingIntent);
+        } else {
+            am.cancel(pendingIntent);
+        }
     }
 
     @Override
@@ -132,11 +159,13 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
             if (newsList != null) {
                 newsCursor = db.getAllNewsOfChanelCursor(chanelId);
+
                 String[] from = {DB.DbConvention.NEWS_TABLE_TITLE};
                 int[] to = {R.id.news_list_title};
 
-                SimpleCursorAdapter adapter =
+                adapter =
                         new SimpleCursorAdapter(this, R.layout.news_list_item, newsCursor, from, to);
+
                 newsList.setAdapter(adapter);
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
@@ -155,15 +184,22 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     @Override
     protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
         super.onDestroy();
         if (newsCursor != null) {
             newsCursor.close();
         }
+
     }
 
     static void start(Activity other, Long aLong) {
         Intent intent = new Intent(other, MainActivity.class);
         intent.putExtra("chanelId", aLong);
         other.startActivity(intent);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        alarmSettings();
     }
 }

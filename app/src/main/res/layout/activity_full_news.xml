@@ -2,21 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:layout_marginLeft="5dp"
+              android:layout_marginRight="5dp"
+              android:layout_marginTop="5dp"
+>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-        <ImageView android:layout_width="100dp" android:layout_height="100dp"
-                   android:id="@+id/activity.full.news.logo"
-                   android:src="@drawable/camera"
-                   android:background="@android:color/black"
-                   android:contentDescription="@string/news_alter_text"/>
+                  android:orientation="horizontal" android:gravity="center_horizontal"
+                  android:background="@color/colorTitleLists"
+
+    >
 
         <TextView
+                android:id="@+id/activity.full.news.title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Large Text"
-                android:id="@+id/activity.full.news.title"/>
+                android:text=""
+                android:gravity="center_horizontal"
+        />
 
     </LinearLayout>
     <WebView android:id="@+id/activity.full.news.description"
@@ -26,8 +30,8 @@
 
     </WebView>
     <TextView android:id="@+id/activity.full.news.link"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/link_text"
-            android:layout_marginTop="20dp"
-            android:clickable="true"/>
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:text="@string/link_text"
+              android:layout_marginTop="20dp"
+              android:clickable="true"/>
 </LinearLayout>

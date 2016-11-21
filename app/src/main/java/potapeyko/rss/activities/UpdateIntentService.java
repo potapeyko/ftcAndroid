@@ -3,9 +3,12 @@ package potapeyko.rss.activities;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import potapeyko.rss.Exeptions.ConnectionException;
+import potapeyko.rss.Exeptions.DbException;
 import potapeyko.rss.models.Channel;
 import potapeyko.rss.parser.ParsHelper;
 import potapeyko.rss.sql.DB;
@@ -21,17 +24,20 @@ public class UpdateIntentService extends IntentService {
 
     private static final String ACTION_UPDATE = "potapeyko.rss.activities.action.UPDATE";
 
+    private static final String CONNECTION_EXCEPTION_BROADCAST_MESS = "ConnectionException";
+    private static final String DB_EXCEPTION_BROADCAST_MESS = "DBException";
+    private static final String CHANNEL_UPDATE_BROADCAST_MESS = "updateChannel";
+    private static final String ALL_CHANNELS_UPFATE_BROADCAST_MESS = "updateAllChannels";
+
 
     public UpdateIntentService() {
         super("UpdateIntentService");
     }
 
-
-     static void startActionUpdate(Context context) {
+    static void startActionUpdate(@NonNull Context context) {
         Intent intent = new Intent(context, UpdateIntentService.class);
         intent.setAction(ACTION_UPDATE);
         context.startService(intent);
-         Log.e("AAAA","AAA1");
     }
 
 
@@ -40,8 +46,9 @@ public class UpdateIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_UPDATE.equals(action)) {
-                Log.e("AAAA","AAA2");
+
                 handleActionUpdate();
+
             }
         }
     }
@@ -51,31 +58,46 @@ public class UpdateIntentService extends IntentService {
         InputStream is;
         HttpURLConnection urlConnection;
         DB db = new DB(this);
+        XmlPullParser xpp;
+        ParsHelper helper;
+        ArrayList<Channel> channels;
 
         try {
-            Log.e("AAAA","AAA3");
-            db.open();
-            ArrayList<Channel> channels = db.getAllChannelsList();
+            try {
+                db.open();
+                channels = db.getAllChannelsList();
+            }catch (Throwable th){
+                throw new DbException(th);
+            }
+
             for (Channel channel : channels) {
-                Log.e("AAAA","AAA4");
                 url = new URL(channel.getLink());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.connect();
                 is = urlConnection.getInputStream();
-                XmlPullParser xpp = ParsHelper.prepareXpp(is, null);
-                ParsHelper helper = new ParsHelper(xpp, db);
-
-                helper.checkNews(channel.getId());
-                //закончили с новостями канала
+                xpp = ParsHelper.prepareXpp(is, null);
+                helper = new ParsHelper(xpp, db);
+                boolean areNewNews = helper.checkNews(channel.getId());//проверка внутри
+                if (areNewNews) sendMyBroadcast(CHANNEL_UPDATE_BROADCAST_MESS, channel.getId());
             }
-            Log.e("AAAA","AAA5");
-            //звкончили со всеми каналами
-        } catch (XmlPullParserException | IOException e) {
+            sendMyBroadcast(ALL_CHANNELS_UPFATE_BROADCAST_MESS, 0);
+        } catch (DbException e) {
+            sendMyBroadcast(DB_EXCEPTION_BROADCAST_MESS, 0);
             e.printStackTrace();
-            Log.e("AAAA","AAA6");
+        } catch (IOException | XmlPullParserException | ConnectionException e) {
+            sendMyBroadcast(CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
+            e.printStackTrace();
         } finally {
             db.close();
-            Log.e("AAAA","AAA7");
         }
     }
+
+    private void sendMyBroadcast(String message, long data) {
+        Intent serviceStartedIntent = new Intent("potapeyko.rss.activities");
+        serviceStartedIntent.putExtra("message", message);
+        serviceStartedIntent.putExtra("data", data);
+        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(serviceStartedIntent);
+    }
+
+
 }

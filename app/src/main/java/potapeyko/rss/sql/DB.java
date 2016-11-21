@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import potapeyko.rss.Exeptions.DbException;
 import potapeyko.rss.models.Channel;
 import potapeyko.rss.models.News;
 
@@ -99,9 +100,10 @@ public final class DB {
             cur.close();
         }
     }
+
     public News getNewsById(long id) {
-        String [] columns = {DbConvention.NEWS_ID,DbConvention.NEWS_TABLE_TITLE,
-                DbConvention.NEWS_TABLE_DESCRIPTION,DbConvention.NEWS_TABLE_LINK};
+        String[] columns = {DbConvention.NEWS_ID, DbConvention.NEWS_TABLE_TITLE,
+                DbConvention.NEWS_TABLE_DESCRIPTION, DbConvention.NEWS_TABLE_LINK};
         String selection = "_id = " + id;
         Cursor cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
         News resNews = null;
@@ -195,25 +197,42 @@ public final class DB {
         return res;
     }
 
-    public boolean isNewsInDb(final News news) {
+    public boolean isNewsInDb(final News news) throws DbException {
         if (news == null) return false;
         String[] columns = {DbConvention.NEWS_TABLE_TITLE};
-        String selection = DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "' "+DbConvention.NEWS_TABLE_DESCRIPTION
-                + " =  '"+news.getDescription()+"' "+DbConvention.NEWS_TABLE_TITLE + " =  '"+news.getTitle()+"'";
-        Cursor cursor = dB.query(DbConvention.DB_CHANEL_TABLE, columns, selection, null, null, null, null);
-        boolean res = cursor.getCount() > 0;
-        cursor.close();
-        return res;
+
+        String whereLink = news.getFullNewsUri() == null ? DbConvention.NEWS_TABLE_LINK + "IS NULL" :
+                DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "'";
+        String whereDescription = news.getDescription() == null ? DbConvention.NEWS_TABLE_DESCRIPTION + "IS NULL" :
+                DbConvention.NEWS_TABLE_DESCRIPTION + " = '" + news.getDescription() + "'";
+        String whereTitle = news.getTitle() == null ? DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
+                DbConvention.NEWS_TABLE_TITLE + " = '" + news.getTitle() + "'";
+
+        String selection = whereLink + " AND " + whereTitle + " AND " + whereDescription;
+        Cursor cursor = null;
+        boolean res;
+        try {
+            cursor = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
+            res = cursor.getCount() > 0;
+            return res;
+        } catch (Throwable th) {
+            throw new DbException(th);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+
     }
 
-    public void addToNews(Long chanelId, String title, String link, String description) {
+    public void addToNews(Long chanelId, String title, String link, String description) throws DbException {
         ContentValues cv = new ContentValues();
         cv.put(DbConvention.NEWS_TABLE_CHANEL_ID, chanelId);
         cv.put(DbConvention.NEWS_TABLE_TITLE, title);
         cv.put(DbConvention.NEWS_TABLE_LINK, link);
         cv.put(DbConvention.NEWS_TABLE_DESCRIPTION, description);
         long result = dB.insert(DbConvention.DB_NEWS_TABLE, null, cv);
-        if (result == -1) Log.e(DB_LOG, "Ошибка addToNews записи в бд");
+        if (result == -1) throw  new DbException();
     }
 
     public void clearAll() {
@@ -222,13 +241,13 @@ public final class DB {
         dB.delete(DbConvention.DB_NEWS_TABLE, null, null);//почему то каскадное не работает?
     }
 
-    public void deleteChanelById(long id){
+    public void deleteChanelById(long id) {
         if (dB == null) return;
-        String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID+" = "+id;
-        String chanelSelection = DbConvention.CHANEL_ID+" = "+id;
+        String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID + " = " + id;
+        String chanelSelection = DbConvention.CHANEL_ID + " = " + id;
 
-        int a =dB.delete(DbConvention.DB_NEWS_TABLE, newsSelection, null);
-        int b =dB.delete(DbConvention.DB_CHANEL_TABLE, chanelSelection, null);
+        int a = dB.delete(DbConvention.DB_NEWS_TABLE, newsSelection, null);
+        int b = dB.delete(DbConvention.DB_CHANEL_TABLE, chanelSelection, null);
 
     }
 
@@ -245,39 +264,6 @@ public final class DB {
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        }
-
-        private void test(SQLiteDatabase db) {
-            String[] chanel_title = {"Канал 1", "Канал 2", "Канал 3", "Канал 4", "Канал 5"};
-            String[] chanel_link = {"https://habrahabr.ru/rss/hub/programming/", "https://habrahabr.ru/rss/hub/programming/",
-                    "Программер", "Программер", "Бухгалтер"};
-            String[] chanel_description = {"Социальное СМИ. Новости о блогах, поиске работы. Обзоры и рейтинги компаний.",
-                    "Программер", "Программер", "Бухгалтер", ""};
-
-            String[] news_title = {"Новость 1", "Новость 1 2", "Новость 1 3", "Новость 1 4", "Новость 1 5"};
-            long[] news_channel_id = {1, 1, 1, 2, 3};
-            String[] news_description = {"Социальное СМИ. Новости о блогах, поиске работы. Обзоры и рейтинги компаний.",
-                    "Программер", "Программер", "", "Бухгалтер"};
-
-            ContentValues cv = new ContentValues();
-
-
-            for (int i = 0; i < chanel_title.length; i++) {
-                cv.clear();
-                cv.put("title", chanel_title[i]);
-                cv.put("link", chanel_link[i]);
-                cv.put("description", chanel_description[i]);
-                db.insert("chanel", null, cv);
-            }
-
-            for (int i = 0; i < news_title.length; i++) {
-                cv.clear();
-                cv.put("title", news_title[i]);
-                cv.put("link", chanel_link[i]);
-                cv.put("description", news_description[i]);
-                cv.put("chanel_id", news_channel_id[i]);
-                db.insert("news", null, cv);
-            }
         }
     }
 }

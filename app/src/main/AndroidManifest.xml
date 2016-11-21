@@ -36,8 +36,10 @@
                 android:name=".activities.UpdateIntentService"
                 android:enabled="true"
                >
-            <!--<receiver android:name=".AlarmReceiver" />-->
+
+
         </service>
+        <receiver android:name=".activities.TimeNotification"/>
     </application>
 
 </manifest>

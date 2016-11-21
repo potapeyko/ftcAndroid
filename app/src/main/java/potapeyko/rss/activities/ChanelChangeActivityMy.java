@@ -24,7 +24,7 @@ public final class ChanelChangeActivityMy extends MyBaseActivity {
     private final DB db;
     
     private Cursor channelsListCursor =null;
-    
+
 
     public ChanelChangeActivityMy() {
         this.db = new DB(this);

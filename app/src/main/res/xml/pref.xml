@@ -11,6 +11,7 @@
     <EditTextPreference
             android:dependency="auto_update"
             android:key="period"
+            android:defaultValue="1"
             android:title="@string/activity_settings_period_title"
             android:summary="@string/activity_settings_period_summary"
             android:numeric="integer"

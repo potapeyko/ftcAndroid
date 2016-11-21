@@ -78,17 +78,3 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
 }
 
 
-//    public FullNewsActivity() {
-//        this.onCreateSubscribe(new ActivityListenerAdapter() {
-//            @Override
-//            public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-//                setContentView(R.layout.activity_full_news);
-//                if(savedInstanceState!=null&&savedInstanceState.containsKey("newsId")){
-//                    newsId = savedInstanceState.getLong("newsId");
-//                }
-//                else{
-//                    newsId = getIntent().getLongExtra("newsId",1);
-//                }
-//            }
-//        });
-//    }

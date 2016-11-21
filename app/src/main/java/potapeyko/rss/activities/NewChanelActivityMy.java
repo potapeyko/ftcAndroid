@@ -1,61 +1,88 @@
 package potapeyko.rss.activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import potapeyko.rss.R;
-import potapeyko.rss.interfaces.IActivityListener;
+import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.network.NetworkHelper;
 
-public final class NewChanelActivityMy extends MyBaseActivity implements IActivityListener {
+public final class NewChanelActivityMy extends MyBaseActivity {
 
     private Button btnNewChanel;
     private EditText etUri;
     private TextView tvNewChanel;
     private final NetworkHelper nwHelper;
+    private ProgressBar progressBar;
+
+    private BroadcastReceiver br = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(NewChanelActivityMy.this,intent.getStringExtra("message"),Toast.LENGTH_SHORT).show();
+
+            if(intent.getStringExtra("message").equals("ChannelNewsAdded")){
+                MainActivity.start(NewChanelActivityMy.this,intent.getLongExtra("data",-1));
+            }
+            else
+            {
+                btnNewChanel.setEnabled(true);
+                etUri.setEnabled(true);
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+            }
+
+        }
+    };
+
 
     public NewChanelActivityMy() {
-        this.onCreateSubscribe(this);
+
         nwHelper = new NetworkHelper(this);
-    }
+        this.onCreateSubscribe(new ActivityListenerAdapter(){
+            @Override
+            public void onCreateActivity(@Nullable Bundle savedInstanceState) {
 
-    @Override
-    public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-        setContentView(R.layout.activity_new_chanel);
-        btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
-        etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
-        tvNewChanel = (TextView) findViewById(R.id.activity_new_chanel_tvNewChanel);
-        if (!nwHelper.isNetworkAvailable()) {
-            notConnectionCase();
-        }
-        else {
-
-            btnNewChanel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!isLinkCorrect()){
-                        Toast.makeText(NewChanelActivityMy.this,
-                                R.string.new_chanel_not_correct_link_toast,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    AddIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
-
-                    ChanelChangeActivityMy.start(NewChanelActivityMy.this);
-                    NewChanelActivityMy.this.finish();
+                LocalBroadcastManager.getInstance(NewChanelActivityMy.this).registerReceiver( br, new IntentFilter( "potapeyko.rss.activities" ) );
+                setContentView(R.layout.activity_new_chanel);
+                btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
+                etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
+                tvNewChanel = (TextView) findViewById(R.id.activity_new_chanel_tvNewChanel);
+                progressBar= (ProgressBar)findViewById(R.id.activity_new_chanel_progressBar);
+                if (!nwHelper.isNetworkAvailable()) {
+                    notConnectionCase();
                 }
-            });
+                else {
 
-        }
+                    btnNewChanel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(!isLinkCorrect()){
+                                Toast.makeText(NewChanelActivityMy.this,
+                                        R.string.new_chanel_not_correct_link_toast,
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            AddIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
+                            btnNewChanel.setEnabled(false);
+                            etUri.setEnabled(false);
+                            progressBar.setVisibility(ProgressBar.VISIBLE);
+                        }
+                    });
+
+                }
+            }
+        });
     }
+
+
 
     private boolean isLinkCorrect() {
         String uri = etUri.getText().toString();
@@ -76,9 +103,11 @@ public final class NewChanelActivityMy extends MyBaseActivity implements IActivi
         Toast.makeText(this,R.string.new_chanel_no_connection_toast,Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onSaveInstanceStateActivity(Bundle outState) {
 
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+        super.onDestroy();
     }
 
     static void start(Activity other) {

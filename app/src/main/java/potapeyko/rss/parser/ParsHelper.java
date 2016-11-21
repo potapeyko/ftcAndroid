@@ -1,13 +1,16 @@
 package potapeyko.rss.parser;
 
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+import potapeyko.rss.Exeptions.ConnectionException;
+import potapeyko.rss.Exeptions.DbException;
 import potapeyko.rss.models.Channel;
 import potapeyko.rss.models.News;
 import potapeyko.rss.sql.DB;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -26,32 +29,56 @@ public final class ParsHelper {
     private final static String RSS_ITEM_LINK = "link";
     private final static long DEFAULT_ID = -1;
 
+    private final static String EXCEPTION_CHANNEL = "The channel is not found";
 
-    @Nullable private final XmlPullParser xpp;
-    @Nullable private final DB db;
 
-    public ParsHelper(@Nullable XmlPullParser xpp, @Nullable DB db) {
+    @NonNull
+    private final XmlPullParser xpp;
+    @NonNull
+    private final DB db;
+
+    public ParsHelper(@NonNull XmlPullParser xpp, @NonNull DB db) {
         this.xpp = xpp;
         this.db = db;
     }
 
-    public long addChannel(URL url) throws XmlPullParserException, IOException {
+    /**
+     * @param url - url of channel in Internet
+     * @return id of channel in db or -1 if this channel already was IN db
+     * @throws ConnectionException - if can't pars channel info
+     * @throws DbException         - if  can't keep a channel in the db
+     */
+    public long addChannel(URL url) throws ConnectionException, DbException {
         Channel channel = null;
         try {
-            if (xpp.getEventType() == XmlPullParser.START_TAG) {
-                if (("rss".equals(xpp.getName()))) {
-                    channel = parsChannel(url.getQuery());
+            while (xpp.getEventType() != XmlPullParser.START_TAG || xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
+                if (xpp.getEventType() == XmlPullParser.START_TAG) {
+                    if (("rss".equals(xpp.getName()))) {
+                        channel = parsChannel(url.toString());
+                        break;
+                    }
                 }
+                xpp.next();
             }
-            if (channel != null) {
+        } catch (XmlPullParserException | IOException e) {
+            throw new ConnectionException(EXCEPTION_CHANNEL, e);
+        }
+
+        if (channel != null) {
+            try {
                 db.open();
-                if (db.isChanelInDb(channel.getLink())) {
+                boolean isInDb = db.isChanelInDb(channel.getLink());
+                if (!isInDb) {
                     return db.addChanel(channel.getTitle(), channel.getLink(), channel.getDescription());
                 }
+
+            } catch (Throwable th) {
+                throw new DbException(th);
+            } finally {
+                db.close();
             }
-        } finally {
-            db.close();
         }
+
         return -1;
     }
 
@@ -64,7 +91,6 @@ public final class ParsHelper {
                         xpp.next();
                         String title = xpp.getText();
                         if (title == null) return null;
-
                         channel = new Channel(DEFAULT_ID, title, url, null);//id присваивается в бд
                         break;
                     }
@@ -86,30 +112,39 @@ public final class ParsHelper {
         return channel;
     }
 
-    public void addNews(Long channelId) {
+    public void addNews(Long channelId) throws ConnectionException, DbException {
         ArrayList<News> news = null;
         try {
             news = parsNews();
         } catch (XmlPullParserException | IOException e) {
-            e.printStackTrace();
+            throw new ConnectionException(e);
         }
-        newsToDB(channelId,news);
+        newsToDB(channelId, news);
     }
 
-    public void checkNews(long channelId) {
+
+    /**
+     * @return  true - if some news added to db
+                false - if nothing add to db
+     */
+    public boolean checkNews(long channelId) throws ConnectionException, DbException {
+        boolean areNewNews = false;
         ArrayList<News> news = null;
         try {
-            if (xpp.getEventType() == XmlPullParser.START_TAG) {
-                if (("rss".equals(xpp.getName()))) {
-                    news = parsNews();
+            while (xpp.getEventType() != XmlPullParser.START_TAG || xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
+                if (xpp.getEventType() == XmlPullParser.START_TAG) {
+                    if (("rss".equals(xpp.getName()))) {
+                        news = parsNews();
+                        break;
+                    }
                 }
+                xpp.next();
             }
-            newsToDB(channelId,news);
+            areNewNews = newsToDB(channelId, news);
         } catch (XmlPullParserException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            db.close();
+            throw new ConnectionException(e);
         }
+        return areNewNews;
     }
 
     private ArrayList<News> parsNews() throws XmlPullParserException, IOException {
@@ -156,16 +191,22 @@ public final class ParsHelper {
         return news;
     }
 
-    private void newsToDB(long channelId,ArrayList<News> news){
+    /**
+     * @return  true - if some news added to db
+                false - if nothing add to db
+     */
+    private boolean newsToDB(long channelId, ArrayList<News> news) throws DbException {
+        boolean result=false;
         if (news != null) {
-            db.open();
             for (News currentNews : news) {
                 if (!db.isNewsInDb(currentNews)) {
                     db.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
                             currentNews.getDescription());
+                    result=true;
                 }
             }
         }
+        return result;
     }
 
     public static XmlPullParser prepareXpp(InputStream is, String encoding) throws XmlPullParserException {

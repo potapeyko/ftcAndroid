@@ -11,7 +11,6 @@ import potapeyko.rss.sql.DB;
 
 
 public final class AboutAppActivityMy extends MyBaseActivity {
-    private static int id=0;
     public AboutAppActivityMy() {
         this.onCreateSubscribe(new ActivityListenerAdapter()
         {
@@ -39,7 +38,6 @@ public final class AboutAppActivityMy extends MyBaseActivity {
     }
     public void add(View view){
         UpdateIntentService.startActionUpdate(this);
-
     }
 
 }
