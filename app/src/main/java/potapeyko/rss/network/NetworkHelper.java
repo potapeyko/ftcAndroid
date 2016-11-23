@@ -14,6 +14,7 @@ public final class NetworkHelper {
     public boolean isNetworkAvailable() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connMgr==null)return false;
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }

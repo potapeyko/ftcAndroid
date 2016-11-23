@@ -27,7 +27,7 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/activity.new.chanel.btnNewChanel"
             android:text="@string/new_chanel_btn"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:textColor="@android:color/white"
     />
     <ProgressBar

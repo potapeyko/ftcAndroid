@@ -5,19 +5,21 @@
               android:orientation="vertical">
 
     <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/activity.about.tvTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/activity_about_title"
-            android:id="@+id/activity.about.textView" android:layout_gravity="center_horizontal"/>
-    <Button
-            android:layout_width="wrap_content"
+            android:minHeight="52dp"
+            android:background="@color/colorTitleLists"
+            android:gravity="center" android:textColor="@android:color/white"/>
+    <TextView
+            android:id="@+id/activity.about.tvText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="del"
-            android:id="@+id/activity.about.button.del" android:onClick="del"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="next"
-            android:id="@+id/activity.about.button.next" android:layout_gravity="center_horizontal" android:onClick="add"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/activity_about_text"
+            android:padding="5dp"
+    />
+
 </LinearLayout>

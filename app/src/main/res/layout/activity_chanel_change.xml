@@ -2,17 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent" android:background="#88d4fb"
+>
 
     <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/chanel.change.text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="52dp"
+            android:background="@color/colorTitleLists"
+            android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/chanel_change_textView"
-            android:id="@+id/chanel.change.text" android:layout_gravity="center_horizontal"/>
-    <ListView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_horizontal"
-              android:id="@+id/chanel.change.list"
-    ></ListView>
+            android:textColor="@android:color/white"
+    />
+    <ListView
+            android:id="@+id/chanel.change.list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:choiceMode="singleChoice"
+            android:divider="@color/colorTitleLists"
+            android:dividerHeight="2dp"
+    />
 </LinearLayout>

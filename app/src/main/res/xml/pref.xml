@@ -2,16 +2,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     xmlns:android="http://schemas.android.com/apk/res/android">
     <SwitchPreference
-            android:key="auto_update"
+            android:key="@string/settings_auto_update_key"
             android:defaultValue="true"
             android:summary="@string/activity_settings_auto_summary"
             android:title="@string/activity_settings_auto_title">
     </SwitchPreference>
 
     <EditTextPreference
-            android:dependency="auto_update"
-            android:key="period"
-            android:defaultValue="1"
+            android:dependency="@string/settings_auto_update_key"
+            android:key="@string/settings_period_key"
+            android:defaultValue="1440"
             android:title="@string/activity_settings_period_title"
             android:summary="@string/activity_settings_period_summary"
             android:numeric="integer"

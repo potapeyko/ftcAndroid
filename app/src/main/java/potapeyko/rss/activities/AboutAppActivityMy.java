@@ -26,18 +26,4 @@ public final class AboutAppActivityMy extends MyBaseActivity {
         other.startActivity(intent);
     }
 
-    public void del(View view){
-        DB db = new DB(this);
-        try {
-            db.open();
-            db.clearAll();
-        }finally {
-            db.close();
-        }
-
-    }
-    public void add(View view){
-        UpdateIntentService.startActionUpdate(this);
-    }
-
 }

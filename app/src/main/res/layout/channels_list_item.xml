@@ -3,16 +3,22 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center_vertical|center_horizontal" android:background="#88d4fb">
+              android:background="#88d4fb"
+              android:gravity="center"
+              android:padding="10dp"
+>
     <TextView android:id="@+id/channels.list.item.title"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
+              android:gravity="center_horizontal"
+
     />
     <TextView android:id="@+id/channels.list.item.description"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceSmall"/>
+              android:textAppearance="?android:attr/textAppearanceSmall"
+              />
 
 
 </LinearLayout>

@@ -15,6 +15,9 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.network.NetworkHelper;
 
+import static potapeyko.rss.utils.BroadcastSender.*;
+
+
 public final class NewChanelActivityMy extends MyBaseActivity {
 
     private Button btnNewChanel;
@@ -26,20 +29,39 @@ public final class NewChanelActivityMy extends MyBaseActivity {
     private BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(NewChanelActivityMy.this,intent.getStringExtra("message"),Toast.LENGTH_SHORT).show();
-
-            if(intent.getStringExtra("message").equals("ChannelNewsAdded")){
-                MainActivity.start(NewChanelActivityMy.this,intent.getLongExtra("data",-1));
+            String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
+            if(CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)){
+                MainActivity.start(NewChanelActivityMy.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
+                NewChanelActivityMy.this.finish();
+            }
+            else if(CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)){
+                showCauseToast(broadcastMessage);
             }
             else
             {
                 btnNewChanel.setEnabled(true);
                 etUri.setEnabled(true);
                 progressBar.setVisibility(ProgressBar.INVISIBLE);
+                showCauseToast(broadcastMessage);
             }
 
         }
     };
+
+    private void showCauseToast(String broadcastMessage) {
+        if(CHANNEL_ALREADY_WAS_IN_DB_BROADCAST_MESS.equals(broadcastMessage)){
+            Toast.makeText(this,R.string.channel_already_was_in_db,Toast.LENGTH_LONG).show();
+        }
+        else if(CONNECTION_EXCEPTION_BROADCAST_MESS.equals(broadcastMessage)){
+            Toast.makeText(this,R.string.connection_exception,Toast.LENGTH_LONG).show();
+        }
+        else if(DB_EXCEPTION_BROADCAST_MESS.equals(broadcastMessage)){
+            Toast.makeText(this,R.string.db_exception,Toast.LENGTH_LONG).show();
+        }
+        else if (CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)){
+            Toast.makeText(this,R.string.channel_add_broadcast_message,Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     public NewChanelActivityMy() {

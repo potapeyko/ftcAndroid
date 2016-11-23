@@ -4,25 +4,26 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-sdk android:minSdkVersion="14"/>
 
     <application
-            android:allowBackup="true"
+            android:allowBackup="false"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".activities.MyBaseActivity"/>
+
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.NewChanelActivityMy"/>
         <activity android:name=".activities.AboutAppActivityMy"/>
-        <activity android:name=".activities.ChanelChangeActivityMy"/>
+        <activity android:name=".activities.ChannelChangeActivity"/>
         <activity android:name=".activities.FullNewsActivity"/>
         <activity android:name=".activities.SettingsActivity"/>
 
@@ -36,10 +37,8 @@
                 android:name=".activities.UpdateIntentService"
                 android:enabled="true"
                >
-
-
         </service>
-        <receiver android:name=".activities.TimeNotification"/>
+        <receiver android:name=".utils.UpdateAlarmListener"/>
     </application>
 
 </manifest>

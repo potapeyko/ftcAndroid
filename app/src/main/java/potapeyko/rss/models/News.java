@@ -16,6 +16,4 @@ public class News {
     @Getter @Setter
     private String fullNewsUri;
 
-//    @Getter    @Setter    int imageResource;
-
 }

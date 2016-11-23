@@ -21,13 +21,15 @@ public final class ParsHelper {
 
     private final static String RSS_TITLE = "title";
     private final static String RSS_DESCR = "description";
-    private final static String RSS_CHANEL = "chanel";
 
     private final static String RSS_ITEM = "item";
     private final static String RSS_ITEM_TITLE = "title";
     private final static String RSS_ITEM_DESCR = "description";
     private final static String RSS_ITEM_LINK = "link";
-    private final static long DEFAULT_ID = -1;
+    private final static long DEFAULT_ID = -100;
+
+    public final static long OK_RESULT_WITHOUT_ID = -23;
+
 
     private final static String EXCEPTION_CHANNEL = "The channel is not found";
 
@@ -44,18 +46,41 @@ public final class ParsHelper {
 
     /**
      * @param url - url of channel in Internet
-     * @return id of channel in db or -1 if this channel already was IN db
+     * @return id of new channel in db or OK_RESULT_WITHOUT_ID if this channel already was IN db
      * @throws ConnectionException - if can't pars channel info
      * @throws DbException         - if  can't keep a channel in the db
      */
     public long addChannel(URL url) throws ConnectionException, DbException {
-        Channel channel = null;
+
+        Channel channel  = getChannel(url);
+        if (channel == null) throw new ConnectionException(EXCEPTION_CHANNEL);
+
         try {
+            db.open();
+            boolean isInDb = db.isChanelInDb(channel.getLink());
+            if (!isInDb) {
+                long result = db.addChanel(channel.getTitle(), channel.getLink(), channel.getDescription());
+                if (result == -1) {
+                    throw new DbException();
+                } else {
+                    return result;
+                }
+            } else return OK_RESULT_WITHOUT_ID;
+
+        } catch (Throwable th) {
+            throw new DbException(th);
+        } finally {
+            db.close();
+        }
+    }
+
+    private Channel getChannel(URL url) throws ConnectionException {
+        try {
+
             while (xpp.getEventType() != XmlPullParser.START_TAG || xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (xpp.getEventType() == XmlPullParser.START_TAG) {
                     if (("rss".equals(xpp.getName()))) {
-                        channel = parsChannel(url.toString());
-                        break;
+                        return parsChannel(url.toString());
                     }
                 }
                 xpp.next();
@@ -63,24 +88,9 @@ public final class ParsHelper {
         } catch (XmlPullParserException | IOException e) {
             throw new ConnectionException(EXCEPTION_CHANNEL, e);
         }
-
-        if (channel != null) {
-            try {
-                db.open();
-                boolean isInDb = db.isChanelInDb(channel.getLink());
-                if (!isInDb) {
-                    return db.addChanel(channel.getTitle(), channel.getLink(), channel.getDescription());
-                }
-
-            } catch (Throwable th) {
-                throw new DbException(th);
-            } finally {
-                db.close();
-            }
-        }
-
-        return -1;
+        throw new ConnectionException(EXCEPTION_CHANNEL);
     }
+
 
     private Channel parsChannel(String url) throws XmlPullParserException, IOException {
         Channel channel = null;
@@ -112,8 +122,12 @@ public final class ParsHelper {
         return channel;
     }
 
+
+    /**
+     It does not check the channel format
+     */
     public void addNews(Long channelId) throws ConnectionException, DbException {
-        ArrayList<News> news = null;
+        ArrayList<News> news;
         try {
             news = parsNews();
         } catch (XmlPullParserException | IOException e) {
@@ -124,11 +138,13 @@ public final class ParsHelper {
 
 
     /**
-     * @return  true - if some news added to db
-                false - if nothing add to db
+     * @return true - if some news added to db.
+     * false - if nothing added to db.
+     *
+     * Check channel format and add new news in db
      */
     public boolean checkNews(long channelId) throws ConnectionException, DbException {
-        boolean areNewNews = false;
+        boolean areNewNews;
         ArrayList<News> news = null;
         try {
             while (xpp.getEventType() != XmlPullParser.START_TAG || xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
@@ -192,18 +208,28 @@ public final class ParsHelper {
     }
 
     /**
-     * @return  true - if some news added to db
-                false - if nothing add to db
+     * @return true - if some news added to db
+     * false - if nothing add to db
      */
     private boolean newsToDB(long channelId, ArrayList<News> news) throws DbException {
-        boolean result=false;
+        boolean result = false;
         if (news != null) {
-            for (News currentNews : news) {
-                if (!db.isNewsInDb(currentNews)) {
-                    db.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
-                            currentNews.getDescription());
-                    result=true;
+            try {
+                db.open();
+            } catch (Throwable th) {
+                db.close();
+                throw new DbException(th);
+            }
+            try {
+                for (News currentNews : news) {
+                    if (!db.isNewsInDb(currentNews)) {
+                        db.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
+                                currentNews.getDescription());
+                        result = true;
+                    }
                 }
+            } finally {
+                db.close();
             }
         }
         return result;

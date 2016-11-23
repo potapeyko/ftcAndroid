@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static potapeyko.rss.utils.BroadcastSender.*;
+
 
 public class AddIntentService extends IntentService {
 
@@ -25,18 +27,15 @@ public class AddIntentService extends IntentService {
 
     private static final String EXTRA_URI = "potapeyko.rss.activities.extra.URL";
 
-    private static final String CONNECTION_EXCEPTION_BROADCAST_MESS = "ConnectionException";
-    private static final String DB_EXCEPTION_BROADCAST_MESS = "DBException";
-    private static final String CHANNEL_ADD_BROADCAST_MESS = "ChannelAdded";
-    private static final String CHANNEL_NEWS_ADD_BROADCAST_MESS = "ChannelNewsAdded";
 
+    private static final int ADD_INTENT_CONNECT_TIMEOUT = 1000;
 
     public AddIntentService() {
         super("AddIntentService");
     }
 
     static void startActionADD(@NonNull Context context, @NonNull String uri) {
-        Intent intent = new Intent(context, AddIntentService.class);
+        final Intent intent = new Intent(context, AddIntentService.class);
         intent.setAction(ACTION_ADD);
         intent.putExtra(EXTRA_URI, uri);
         context.startService(intent);
@@ -58,7 +57,7 @@ public class AddIntentService extends IntentService {
     private void handleActionAdd(String uri) {
 
         if (!Patterns.WEB_URL.matcher(uri).matches()) {
-            sendMyBroadcast(CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
+            sendMyBroadcast(this,CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
             return;
         }
 
@@ -70,40 +69,34 @@ public class AddIntentService extends IntentService {
         try {
             url = new URL(uri);
             urlConnection = (HttpURLConnection) url.openConnection();
-            // urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
+            urlConnection.setConnectTimeout(ADD_INTENT_CONNECT_TIMEOUT);
             urlConnection.connect();
             is = urlConnection.getInputStream();
 
             XmlPullParser xpp = ParsHelper.prepareXpp(is, null);
 
-            ParsHelper helper = new ParsHelper(xpp, db);
-            long channelId = helper.addChannel(url);
-            if (channelId == -1) {
-                throw new DbException();
+            final ParsHelper helper = new ParsHelper(xpp, db);
+            final long channelId = helper.addChannel(url);
+            if (channelId == ParsHelper.OK_RESULT_WITHOUT_ID) {
+                sendMyBroadcast(this,CHANNEL_ALREADY_WAS_IN_DB_BROADCAST_MESS, channelId);
+                return;
             }
-            sendMyBroadcast(CHANNEL_ADD_BROADCAST_MESS, channelId);
+
+            sendMyBroadcast(this,CHANNEL_ADD_BROADCAST_MESS, channelId);
             helper.addNews(channelId);
-            sendMyBroadcast(CHANNEL_NEWS_ADD_BROADCAST_MESS, channelId);
-        } catch (DbException ex){
-            sendMyBroadcast(DB_EXCEPTION_BROADCAST_MESS,0);
-            ex.printStackTrace();
+            sendMyBroadcast(this,CHANNEL_NEWS_ADD_BROADCAST_MESS, channelId);
+
+        } catch (DbException e){
+            sendMyBroadcast(this,DB_EXCEPTION_BROADCAST_MESS,0);
+            e.printStackTrace();
         }catch ( IOException | ConnectionException | XmlPullParserException e) {
-            sendMyBroadcast(CONNECTION_EXCEPTION_BROADCAST_MESS,0);
+            sendMyBroadcast(this,CONNECTION_EXCEPTION_BROADCAST_MESS,0);
             e.printStackTrace();
         }
         finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-
         }
-    }
-
-
-    private void sendMyBroadcast(String message, long data) {
-        Intent serviceStartedIntent = new Intent("potapeyko.rss.activities");
-        serviceStartedIntent.putExtra("message", message);
-        serviceStartedIntent.putExtra("data", data);
-        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(serviceStartedIntent);
     }
 }

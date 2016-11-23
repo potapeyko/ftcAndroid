@@ -9,24 +9,32 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:weightSum="1">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="52dp"
-                      android:background="@color/colorTitleLists"
+            android:layout_height="match_parent"
+    >
+        <LinearLayout
+                android:layout_width="match_parent" android:layout_height="52dp"
+                android:background="@color/colorTitleLists"
 
         >
             <TextView
-                    android:layout_width="0dp"
+                    android:id="@+id/activity.main.txtTitle"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@android:color/white"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/title_txt"
-                    android:id="@+id/activity.main.txtTitle"
                     android:gravity="center"
-                    android:layout_gravity="center_horizontal" android:layout_weight="0.09"
+                    android:layout_gravity="center_horizontal"
             />
         </LinearLayout>
 
-        <ListView android:layout_width="match_parent" android:layout_height="match_parent"
-                  android:id="@+id/activity.main.newsList"></ListView>
+        <ListView
+                android:id="@+id/activity.main.newsList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/colorTitleLists"
+                android:dividerHeight="2dp"
+        />
 
 
     </LinearLayout>
@@ -35,8 +43,9 @@
               android:layout_width="240dp"
               android:layout_height="match_parent"
               android:choiceMode="singleChoice"
-              android:divider="@android:color/transparent"
-              android:dividerHeight="0dp"
-              android:background="@android:color/background_dark"
+              android:divider="@color/colorPrimary"
+              android:dividerHeight="2dp"
+              android:background="@color/colorPrimaryDark"
+
     />
 </android.support.v4.widget.DrawerLayout>

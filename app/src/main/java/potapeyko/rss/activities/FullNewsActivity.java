@@ -19,6 +19,7 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
     private final DB db;
     private News news;
     private static final String idKey = "FULL_NEWS_ID";
+    private static final int UNKNOWN_NEWS_ID = -10;
 
     public FullNewsActivity() {
         this.onSaveInstanceStateSubscribe(this);
@@ -32,23 +33,37 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         if (savedInstanceState != null && savedInstanceState.containsKey(idKey)) {
             newsId = savedInstanceState.getLong(idKey);
         } else {
-            newsId = getIntent().getLongExtra(idKey, 1);
+            newsId = getIntent().getLongExtra(idKey, UNKNOWN_NEWS_ID);
+        }
+
+        TextView title = (TextView) findViewById(R.id.activity_full_news_title);
+        WebView description = (WebView) findViewById(R.id.activity_full_news_description);
+        TextView link = (TextView) findViewById(R.id.activity_full_news_link);
+        if (newsId == UNKNOWN_NEWS_ID) {
+            if (title != null) {
+                title.setText(R.string.activity_full_news_unknown_news_title);
+            }
+            if (description != null) {
+                description.setVisibility(View.INVISIBLE);
+            }
+            if (link != null) {
+                link.setVisibility(View.INVISIBLE);
+            }
+            return;
         }
 
         try {
             db.open();
             news = db.getNewsById(newsId);
-            TextView title = (TextView)findViewById(R.id.activity_full_news_title);
             if (title != null) {
                 title.setText(news.getTitle());
             }
-            WebView description = (WebView)findViewById(R.id.activity_full_news_description);
+
             if (description != null) {
-                description.loadDataWithBaseURL(null,news.getDescription(),"text/html","utf-8",null);
+                description.loadDataWithBaseURL(null, news.getDescription(), "text/html", "utf-8", null);
             }
-            TextView link = (TextView)findViewById(R.id.activity_full_news_link);
             if (link != null) {
-                link.setText("Перейти на сайт с полной версией статьи");
+                link.setText(R.string.activity_full_news_link_text);
                 link.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -58,6 +73,8 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
                     }
                 });
             }
+        } catch (Throwable th) {
+            th.printStackTrace();
         } finally {
             db.close();
         }

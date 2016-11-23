@@ -6,27 +6,25 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import potapeyko.rss.R;
-import potapeyko.rss.constants.LogCodes;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.sql.DB;
 
-import static potapeyko.rss.constants.OtherCodes.CHANEL_CHANGE_CODE;
 import static potapeyko.rss.constants.OtherCodes.CHANEL_ID_KEY;
 
 
-public final class ChanelChangeActivityMy extends MyBaseActivity {
-    private ListView channelsList;
+public final class ChannelChangeActivity extends MyBaseActivity {
     private final DB db;
-    
-    private Cursor channelsListCursor =null;
+    public static final int CHANEL_CHANGE_CODE = 1235;
+    private Cursor channelsListCursor = null;
 
 
-    public ChanelChangeActivityMy() {
+    public ChannelChangeActivity() {
         this.db = new DB(this);
         this.onCreateSubscribe(new ActivityListenerAdapter() {
             @Override
@@ -38,26 +36,37 @@ public final class ChanelChangeActivityMy extends MyBaseActivity {
     }
 
     static void start(Activity other) {
-        Intent intent = new Intent(other, ChanelChangeActivityMy.class);
+        final Intent intent = new Intent(other, ChannelChangeActivity.class);
         other.startActivityForResult(intent, CHANEL_CHANGE_CODE);
     }
 
 
-    static long getResultChanelId(Intent intent) {
+    static long getResultChanelId(final Intent intent) {
         return intent.getLongExtra(CHANEL_ID_KEY, -1);
     }
 
     private void channelsListInit() {
-        channelsList = (ListView) findViewById(R.id.chanel_change_list);
+        final ListView channelsList = (ListView) findViewById(R.id.chanel_change_list);
+        TextView title = (TextView) findViewById(R.id.chanel_change_text);
         if (channelsList != null) {
-            db.open();
             try {
+                db.open();
                 channelsListCursor = db.getAllChannelsCursor();
-                String [] from = {DB.DbConvention.CHANEL_TABLE_TITLE,
+                if(!channelsListCursor.moveToFirst()){
+                    if (title != null) {
+                        title.setText(R.string.activity_channel_change_empty_list);
+                    }
+                    return;
+                }
+
+
+                final String[] from = {DB.DbConvention.CHANEL_TABLE_TITLE,
                         DB.DbConvention.CHANEL_TABLE_DESCRIPTION};
-                int [] to = {R.id.channels_list_item_title, R.id.channels_list_item_description};
-                SimpleCursorAdapter adapter =new SimpleCursorAdapter(this, R.layout.channels_list_item,
-                        channelsListCursor,from,to);
+                final int[] to = {R.id.channels_list_item_title, R.id.channels_list_item_description};
+
+                final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.channels_list_item,
+                        channelsListCursor, from, to);
+
                 channelsList.setAdapter(adapter);
                 channelsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
@@ -68,18 +77,19 @@ public final class ChanelChangeActivityMy extends MyBaseActivity {
                         finish();
                     }
                 });
+            } catch (Throwable th) {
+                th.printStackTrace();
+                Toast.makeText(this, R.string.db_exception, Toast.LENGTH_SHORT).show();
             } finally {
                 db.close();
             }
-        } else {
-            Log.e(LogCodes.MAIN_ACTIVITY, "не найден ListView activity_main_newsList");
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(channelsListCursor!=null){
+        if (channelsListCursor != null) {
             channelsListCursor.close();
         }
     }

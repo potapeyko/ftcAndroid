@@ -3,16 +3,15 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:color/white">
+              android:background="#88d4fb"
+              android:padding="10dp">
     <TextView
             android:id="@+id/news.list.title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Large Text"
             android:singleLine="false"
 
-            android:gravity="center_vertical|center_horizontal" android:background="#88d4fb"/>
+            android:gravity="center" />
 </LinearLayout>
