@@ -40,7 +40,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     private SharedPreferences sPref;
     private SimpleCursorAdapter adapter;
 
-    private BroadcastReceiver br = new BroadcastReceiver() {
+    private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra(

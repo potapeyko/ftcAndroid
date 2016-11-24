@@ -75,7 +75,7 @@ public class UpdateIntentService extends IntentService {
                 urlConnection.setConnectTimeout(UPDATE_INTENT_CONNECT_TIMEOUT);
                 urlConnection.connect();
                 is = urlConnection.getInputStream();
-                xpp = ParsHelper.prepareXpp(is, null);
+                xpp = ParsHelper.prepareXpp(is);
                 helper = new ParsHelper(xpp, db);
 
                 boolean areNewNews = helper.checkNews(channel.getId());

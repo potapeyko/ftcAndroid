@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Patterns;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -73,7 +72,7 @@ public class AddIntentService extends IntentService {
             urlConnection.connect();
             is = urlConnection.getInputStream();
 
-            XmlPullParser xpp = ParsHelper.prepareXpp(is, null);
+            XmlPullParser xpp = ParsHelper.prepareXpp(is);
 
             final ParsHelper helper = new ParsHelper(xpp, db);
             final long channelId = helper.addChannel(url);

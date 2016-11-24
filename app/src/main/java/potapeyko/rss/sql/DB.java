@@ -232,18 +232,6 @@ public final class DB {
         if (result == -1) throw new DbException();
     }
 
-    public void clearAll() {
-        if (dB == null) return;
-        try {
-            dB.beginTransaction();
-            dB.delete(DbConvention.DB_CHANEL_TABLE, null, null);
-            dB.delete(DbConvention.DB_NEWS_TABLE, null, null);
-            dB.setTransactionSuccessful();
-        } finally {
-            dB.endTransaction();
-        }
-    }
-
     public void deleteChanelById(final long id) {
         if (dB == null) return;
         final String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID + " = " + id;

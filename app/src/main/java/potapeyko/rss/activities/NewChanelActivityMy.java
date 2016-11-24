@@ -26,7 +26,7 @@ public final class NewChanelActivityMy extends MyBaseActivity {
     private final NetworkHelper nwHelper;
     private ProgressBar progressBar;
 
-    private BroadcastReceiver br = new BroadcastReceiver() {
+    final private BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);

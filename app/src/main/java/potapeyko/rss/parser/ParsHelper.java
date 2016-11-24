@@ -235,11 +235,11 @@ public final class ParsHelper {
         return result;
     }
 
-    public static XmlPullParser prepareXpp(InputStream is, String encoding) throws XmlPullParserException {
+    public static XmlPullParser prepareXpp(InputStream is) throws XmlPullParserException {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();
-        xpp.setInput(is, encoding);
+        xpp.setInput(is,null);
         return xpp;
     }
 }

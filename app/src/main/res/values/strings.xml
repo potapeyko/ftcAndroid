@@ -10,8 +10,6 @@
         <item>О приложении</item>
     </string-array>
     <string name="link_text">Ссылка на полную статью в Сети</string>
-    <string name="news_alter_text">эмблема новости</string>
-    <string name="main_chanel_title">Титул новости</string>
     <string name="new_chanel_tv">Введите канал</string>
     <string name="new_chanel_btn">Найти</string>
     <string name="new_chanel_no_connection">Соединение не установленно</string>
