@@ -20,7 +20,7 @@ import java.net.URL;
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
-public class AddIntentService extends IntentService {
+public class AddChannelIntentService extends IntentService {
 
     private static final String ACTION_ADD = "potapeyko.rss.activities.action.ADD";
 
@@ -29,12 +29,12 @@ public class AddIntentService extends IntentService {
 
     private static final int ADD_INTENT_CONNECT_TIMEOUT = 1000;
 
-    public AddIntentService() {
-        super("AddIntentService");
+    public AddChannelIntentService() {
+        super("AddChannelIntentService");
     }
 
     static void startActionADD(@NonNull Context context, @NonNull String uri) {
-        final Intent intent = new Intent(context, AddIntentService.class);
+        final Intent intent = new Intent(context, AddChannelIntentService.class);
         intent.setAction(ACTION_ADD);
         intent.putExtra(EXTRA_URI, uri);
         context.startService(intent);

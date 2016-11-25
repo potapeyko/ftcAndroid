@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
-public class UpdateIntentService extends IntentService {
+public class UpdateChannelIntentService extends IntentService {
 
     private static final String ACTION_UPDATE = "potapeyko.rss.activities.action.UPDATE";
 
@@ -29,12 +29,12 @@ public class UpdateIntentService extends IntentService {
     private static final int UPDATE_INTENT_CONNECT_TIMEOUT = 1000;
 
 
-    public UpdateIntentService() {
-        super("UpdateIntentService");
+    public UpdateChannelIntentService() {
+        super("UpdateChannelIntentService");
     }
 
     public static void startActionUpdate(@NonNull Context context) {
-        Intent intent = new Intent(context, UpdateIntentService.class);
+        Intent intent = new Intent(context, UpdateChannelIntentService.class);
         intent.setAction(ACTION_UPDATE);
         context.startService(intent);
     }

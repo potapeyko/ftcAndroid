@@ -20,20 +20,20 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NewChanelActivityMy"/>
-        <activity android:name=".activities.AboutAppActivityMy"/>
+        <activity android:name=".activities.NewChanelActivity"/>
+        <activity android:name=".activities.AboutAppActivity"/>
         <activity android:name=".activities.ChannelChangeActivity"/>
         <activity android:name=".activities.FullNewsActivity"/>
         <activity android:name=".activities.SettingsActivity"/>
 
 
         <service
-                android:name=".activities.AddIntentService"
+                android:name=".activities.AddChannelIntentService"
                 android:enabled="true"
                 >
         </service>
         <service
-                android:name=".activities.UpdateIntentService"
+                android:name=".activities.UpdateChannelIntentService"
                 android:enabled="true"
                >
         </service>

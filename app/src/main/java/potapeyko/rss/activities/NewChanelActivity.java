@@ -18,7 +18,7 @@ import potapeyko.rss.network.NetworkHelper;
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
-public final class NewChanelActivityMy extends MyBaseActivity {
+public final class NewChanelActivity extends MyBaseActivity {
 
     private Button btnNewChanel;
     private EditText etUri;
@@ -31,8 +31,8 @@ public final class NewChanelActivityMy extends MyBaseActivity {
         public void onReceive(Context context, Intent intent) {
             String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
             if(CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)){
-                MainActivity.start(NewChanelActivityMy.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
-                NewChanelActivityMy.this.finish();
+                MainActivity.start(NewChanelActivity.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
+                NewChanelActivity.this.finish();
             }
             else if(CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)){
                 showCauseToast(broadcastMessage);
@@ -64,14 +64,14 @@ public final class NewChanelActivityMy extends MyBaseActivity {
     }
 
 
-    public NewChanelActivityMy() {
+    public NewChanelActivity() {
 
         nwHelper = new NetworkHelper(this);
         this.onCreateSubscribe(new ActivityListenerAdapter(){
             @Override
             public void onCreateActivity(@Nullable Bundle savedInstanceState) {
 
-                LocalBroadcastManager.getInstance(NewChanelActivityMy.this).registerReceiver( br, new IntentFilter( "potapeyko.rss.activities" ) );
+                LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( "potapeyko.rss.activities" ) );
                 setContentView(R.layout.activity_new_chanel);
                 btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
                 etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
@@ -86,13 +86,13 @@ public final class NewChanelActivityMy extends MyBaseActivity {
                         @Override
                         public void onClick(View v) {
                             if(!isLinkCorrect()){
-                                Toast.makeText(NewChanelActivityMy.this,
+                                Toast.makeText(NewChanelActivity.this,
                                         R.string.new_chanel_not_correct_link_toast,
                                         Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
-                            AddIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
+                            AddChannelIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
                             btnNewChanel.setEnabled(false);
                             etUri.setEnabled(false);
                             progressBar.setVisibility(ProgressBar.VISIBLE);
@@ -133,7 +133,7 @@ public final class NewChanelActivityMy extends MyBaseActivity {
     }
 
     static void start(Activity other) {
-        Intent intent = new Intent(other, NewChanelActivityMy.class);
+        Intent intent = new Intent(other, NewChanelActivity.class);
         other.startActivity(intent);
     }
 

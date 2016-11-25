@@ -28,7 +28,7 @@ import potapeyko.rss.utils.UpdateAlarmListener;
 
 public final class MainActivity extends MyBaseActivity implements IActivityListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static final String CHANEL_ID = "chanel_id";
+    static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
 
     @Getter
@@ -181,6 +181,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                 if (currentChannel != null) {
                     chanelTitle = currentChannel.getTitle();
                 } else {
+                    chanelId = -1;
                     prepareEmptyActivity(newsList, title);
                     return;
                 }

@@ -37,7 +37,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
 
         switch (position) {
             case ADD_CHANNEL_ITEM: {
-                NewChanelActivityMy.start(mainActivity);
+                NewChanelActivity.start(mainActivity);
                 break;
             }
             case CHANGE_CHANNEL_ITEM: {
@@ -61,6 +61,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                         if (db != null) {
                             db.close();
                         }
+
                         ChannelChangeActivity.start(mainActivity);
                     }
                 }
@@ -72,7 +73,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                 break;
             }
             case ABOUT_ITEM: {
-                AboutAppActivityMy.start(mainActivity);
+                AboutAppActivity.start(mainActivity);
                 break;
             }
             default:

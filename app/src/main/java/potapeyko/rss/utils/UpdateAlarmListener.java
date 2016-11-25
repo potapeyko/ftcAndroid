@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import potapeyko.rss.R;
-import potapeyko.rss.activities.UpdateIntentService;
+import potapeyko.rss.activities.UpdateChannelIntentService;
 
 
 public class UpdateAlarmListener extends BroadcastReceiver {
@@ -35,7 +35,7 @@ public class UpdateAlarmListener extends BroadcastReceiver {
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        UpdateIntentService.startActionUpdate(context);
+        UpdateChannelIntentService.startActionUpdate(context);
         if (sPref.getBoolean(context.getString(R.string.settings_auto_update_key), true)) {
 
             final Long nextUpdateTime = setNextUpdateTime();

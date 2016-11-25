@@ -8,8 +8,8 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 
 
-public final class AboutAppActivityMy extends MyBaseActivity {
-    public AboutAppActivityMy() {
+public final class AboutAppActivity extends MyBaseActivity {
+    public AboutAppActivity() {
         this.onCreateSubscribe(new ActivityListenerAdapter()
         {
             @Override
@@ -20,7 +20,7 @@ public final class AboutAppActivityMy extends MyBaseActivity {
     }
 
     static void start(Activity other) {
-        Intent intent = new Intent(other, AboutAppActivityMy.class);
+        Intent intent = new Intent(other, AboutAppActivity.class);
         other.startActivity(intent);
     }
 
