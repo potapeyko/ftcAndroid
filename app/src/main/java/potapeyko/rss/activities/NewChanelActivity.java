@@ -98,14 +98,16 @@ public final class NewChanelActivity extends MyBaseActivity {
                     btnNewChanel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(!isLinkCorrect()){
+                            String uri = etUri.getText().toString();
+                            uri = addProtocol(uri);
+                            if(!isLinkCorrect(uri)){
                                 Toast.makeText(NewChanelActivity.this,
                                         R.string.new_chanel_not_correct_link_toast,
                                         Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
-                            AddChannelIntentService.startActionADD(getApplicationContext(),etUri.getText().toString());
+                            AddChannelIntentService.startActionADD(getApplicationContext(),uri);
                             btnNewChanel.setEnabled(false);
                             etUri.setEnabled(false);
                             progressBar.setVisibility(ProgressBar.VISIBLE);
@@ -117,10 +119,16 @@ public final class NewChanelActivity extends MyBaseActivity {
         });
     }
 
+    private String addProtocol(String uri) {
+        if(!uri.contains("://")){
+            return "http://"+uri;
+        }
+        return uri;
+
+    }
 
 
-    private boolean isLinkCorrect() {
-        String uri = etUri.getText().toString();
+    private boolean isLinkCorrect(String uri) {
         return Patterns.WEB_URL.matcher(uri).matches();
     }
 

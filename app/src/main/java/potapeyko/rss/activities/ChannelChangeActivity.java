@@ -15,6 +15,7 @@ import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 
 
@@ -61,8 +62,8 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                 }
 
 
-                final String[] from = {DB.DbConvention.CHANEL_TABLE_TITLE,
-                        DB.DbConvention.CHANEL_TABLE_DESCRIPTION};
+                final String[] from = {DbConvention.CHANEL_TABLE_TITLE,
+                        DbConvention.CHANEL_TABLE_DESCRIPTION};
                 final int[] to = {R.id.channels_list_item_title, R.id.channels_list_item_description};
 
                 final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.channels_list_item,

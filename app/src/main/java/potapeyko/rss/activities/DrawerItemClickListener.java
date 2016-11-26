@@ -48,7 +48,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                 break;
             }
             case DELETE_CHANNEL_ITEM: {
-                DB db = null;
+                DB db;
                 DbWriter dbWriter = null;
                 if (mainActivity.getChanelId() != -1) {
                     try {

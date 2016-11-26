@@ -74,7 +74,7 @@ public class AddChannelIntentService extends IntentService {
             DB db = new DB(this);
 
             final ParsHelper helper = new ParsHelper(xpp, db);
-            final long channelId = helper.addChannel(url);
+            final long channelId = helper.addChannel();
             if (channelId == ParsHelper.OK_RESULT_WITHOUT_ID) {
                 sendMyBroadcast(this,CHANNEL_ALREADY_WAS_IN_DB_BROADCAST_MESS, channelId);
                 return;

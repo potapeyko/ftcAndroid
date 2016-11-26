@@ -14,7 +14,7 @@ public class DbWriter extends DbReader {
         dB = dBHelper.getWritableDatabase();
     }
 
-    public DbWriter(@NonNull Context context) {
+    DbWriter(@NonNull Context context) {
         super(context);
     }
     public void addToNews(final long chanelId, final String title, final String link, final String description) throws DbException {

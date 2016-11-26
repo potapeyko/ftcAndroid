@@ -12,7 +12,6 @@ import potapeyko.rss.model.Channel;
 import potapeyko.rss.parser.ParsHelper;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
-import potapeyko.rss.sql.DbWriter;
 
 import java.io.IOException;
 import java.io.InputStream;

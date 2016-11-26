@@ -23,6 +23,7 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.model.Channel;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.utils.BroadcastSender;
 import potapeyko.rss.utils.UpdateAlarmListener;
@@ -79,8 +80,10 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     @Override
     protected void onPause() {
-
         saveLastChanel();
+        if (br != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+        }
         super.onPause();
     }
 
@@ -204,7 +207,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                 newsList.setVisibility(View.VISIBLE);
                 newsCursor = dbReader.getAllNewsOfChanelCursor(chanelId);
 
-                String[] from = {DB.DbConvention.NEWS_TABLE_TITLE};
+                String[] from = {DbConvention.NEWS_TABLE_TITLE};
                 int[] to = {R.id.news_list_title};
 
                 adapter =
@@ -237,14 +240,6 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         if (newsList != null) {
             newsList.setVisibility(View.INVISIBLE);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        if (br != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
-        }
-        super.onStop();
     }
 
     @Override

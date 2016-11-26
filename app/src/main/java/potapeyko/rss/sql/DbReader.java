@@ -14,57 +14,14 @@ import potapeyko.rss.model.News;
 import java.util.ArrayList;
 
 public class DbReader {
-    public static final class DbConvention {
-        private DbConvention() throws Exception {
-            throw new Exception();
-        }
 
-        static final String DB_NAME = "rssReaderDb";
-        static final int DB_VERSION = 1;
-
-        static final String DB_CHANEL_TABLE = "chanel";
-        static final String CHANEL_TABLE_TITLE = "title";
-        static final String CHANEL_TABLE_LINK = "link";
-        static final String CHANEL_TABLE_DESCRIPTION = "description";
-        static final String CHANEL_ID = "_id";
-
-
-        static final String DB_NEWS_TABLE = "news";
-        static final String NEWS_TABLE_DESCRIPTION = "description";
-        static final String NEWS_TABLE_TITLE = "title";
-        static final String NEWS_TABLE_LINK = "link";
-        static final String NEWS_TABLE_CHANEL_ID = "chanel_id";
-        static final String NEWS_ID = "_id";
-
-        static final String DB_CREATE_CHANEL_TABLE =
-                "create table " + DB_CHANEL_TABLE +
-                        "(_id integer primary key autoincrement, " +
-                        CHANEL_TABLE_TITLE + " text NOT NULL, " +
-                        CHANEL_TABLE_LINK + " text NOT NULL, " +
-                        CHANEL_TABLE_DESCRIPTION + " text);";
-
-
-        //у rss нет обязательный полей в новости, поэтому ограничения not null нет
-        static final String DB_CREATE_NEWS_TABLE =
-                "create table " + DB_NEWS_TABLE +
-                        "(_id integer primary key autoincrement, " +
-                        NEWS_TABLE_TITLE + " text, " +
-                        NEWS_TABLE_LINK + " text, " +
-                        NEWS_TABLE_DESCRIPTION + " text, " +
-                        NEWS_TABLE_CHANEL_ID + " INTEGER, " +
-                        " foreign key ( " + NEWS_TABLE_CHANEL_ID + " ) references " +
-                        DB_CHANEL_TABLE + " (_id) on delete cascade);";
-
-        static final String SORT_DESCENDING = " DESC ";
-
-    }
 
     final Context context;
     DBHelper dBHelper;
 
     SQLiteDatabase dB;
 
-    public DbReader(final @NonNull Context context) {
+    DbReader(final @NonNull Context context) {
         this.context = context;
     }
 
@@ -80,36 +37,51 @@ public class DbReader {
         dB = null;
     }
 
-
+    /**
+     * @param id - channel id
+     * @return channel or null if this channel not found.
+     */
     public Channel getChanelById(final long id) throws DbException {
         if (dB == null) throw new DbException();
         final String selection = "_id = " + id;
-        final Cursor cur = dB.query(DbConvention.DB_CHANEL_TABLE, null, selection, null, null, null, null);
+        Cursor cur = null;
         Channel resChanel = null;
         try {
+            cur = dB.query(DbConvention.DB_CHANEL_TABLE, null, selection, null, null, null, null);
             if (cur.moveToFirst()) {
                 resChanel = new Channel(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3));
             }
             return resChanel;
-        } finally {
-            cur.close();
+        }
+        catch (Throwable th){
+            throw new DbException(th);
+        }finally {
+            if (cur != null) {
+                cur.close();
+            }
         }
     }
 
     public News getNewsById(final long id) throws DbException {
         if (dB == null) throw new DbException();
-        final String[] columns = {DbConvention.NEWS_ID, DB.DbConvention.NEWS_TABLE_TITLE,
+        final String[] columns = {DbConvention.NEWS_ID, DbConvention.NEWS_TABLE_TITLE,
                 DbConvention.NEWS_TABLE_DESCRIPTION, DbConvention.NEWS_TABLE_LINK};
         final String selection = "_id = " + id;
-        final Cursor cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
-        News resNews = null;
+        Cursor cur = null;
         try {
+            cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
+            News resNews = null;
+
             if (cur.moveToFirst()) {
                 resNews = new News(cur.getLong(0), cur.getString(1), cur.getString(2), cur.getString(3));
             }
             return resNews;
+        } catch (Throwable th) {
+            throw new DbException(th);
         } finally {
-            cur.close();
+            if (cur != null) {
+                cur.close();
+            }
         }
     }
 
@@ -167,14 +139,14 @@ public class DbReader {
     public boolean isNewsInDb(final News news) throws DbException {
         if (news == null) return false;
         if (dB == null) throw new DbException();
-        final String[] columns = {DB.DbConvention.NEWS_TABLE_TITLE};
+        final String[] columns = {DbConvention.NEWS_TABLE_TITLE};
 
         final String whereLink = news.getFullNewsUri() == null ? DbConvention.NEWS_TABLE_LINK + "IS NULL" :
                 DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "'";
         final String whereDescription = news.getDescription() == null ? DbConvention.NEWS_TABLE_DESCRIPTION + "IS NULL" :
                 DbConvention.NEWS_TABLE_DESCRIPTION + " = '" + news.getDescription() + "'";
-        final String whereTitle = news.getTitle() == null ? DB.DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
-                DB.DbConvention.NEWS_TABLE_TITLE + " = '" + news.getTitle() + "'";
+        final String whereTitle = news.getTitle() == null ? DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
+                DbConvention.NEWS_TABLE_TITLE + " = '" + news.getTitle() + "'";
 
         final String selection = whereLink + " AND " + whereTitle + " AND " + whereDescription;
         Cursor cursor = null;

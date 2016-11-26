@@ -1,6 +1,7 @@
 package potapeyko.rss.parser;
 
 
+import lombok.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -9,19 +10,17 @@ import potapeyko.rss.exceptions.DbException;
 import potapeyko.rss.model.Channel;
 import potapeyko.rss.model.News;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-
-import lombok.NonNull;
-import potapeyko.rss.sql.DbWriter;
 
 public final class ParsHelper {
 
     private final static String RSS_TITLE = "title";
     private final static String RSS_DESCRIPTION = "description";
+    private final static String RSS_LINK = "link";
 
     private final static String RSS_ITEM = "item";
     private final static String RSS_ITEM_TITLE = "title";
@@ -46,14 +45,13 @@ public final class ParsHelper {
     }
 
     /**
-     * @param url - url of channel in Internet
      * @return id of new channel in db or OK_RESULT_WITHOUT_ID if this channel already was IN db
      * @throws ConnectionException - if can't pars channel info
      * @throws DbException         - if  can't keep a channel in the db
      */
-    public long addChannel(@NonNull URL url) throws ConnectionException, DbException {
+    public long addChannel() throws ConnectionException, DbException {
 
-        Channel channel = getChannel(url);
+        Channel channel = getChannel();
         if (channel == null) throw new ConnectionException(EXCEPTION_CHANNEL);
         DbWriter dbWriter = null;
         try {
@@ -67,7 +65,9 @@ public final class ParsHelper {
                 } else {
                     return result;
                 }
-            } else return OK_RESULT_WITHOUT_ID;
+            } else {
+                return OK_RESULT_WITHOUT_ID;
+            }
 
         } catch (Throwable th) {
             throw new DbException(th);
@@ -78,13 +78,13 @@ public final class ParsHelper {
         }
     }
 
-    private Channel getChannel(URL url) throws ConnectionException {
+    private Channel getChannel() throws ConnectionException {
         try {
 
             while (xpp.getEventType() != XmlPullParser.START_TAG || xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (xpp.getEventType() == XmlPullParser.START_TAG) {
                     if (("rss".equals(xpp.getName()))) {
-                        return parsChannel(url.toString());
+                        return parsChannel();
                     }
                 }
                 xpp.next();
@@ -96,26 +96,32 @@ public final class ParsHelper {
     }
 
 
-    private Channel parsChannel(String url) throws XmlPullParserException, IOException {
-        Channel channel = null;
+    private Channel parsChannel() throws XmlPullParserException, IOException {
+        String title = null;
+        String link = null;
+        String description = null;
         while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
             switch (xpp.getEventType()) {
                 case XmlPullParser.START_TAG:
                     if (RSS_TITLE.equals(xpp.getName())) {
                         xpp.next();
-                        String title = xpp.getText();
+                        title = xpp.getText();
                         if (title == null) return null;
-                        channel = new Channel(DEFAULT_ID, title, url, null);//id присваивается в бд
-                        break;
                     }
-                    if (RSS_DESCRIPTION.equals(xpp.getName()) && channel != null) {
+                    if (RSS_DESCRIPTION.equals(xpp.getName())) {
                         xpp.next();
-                        String description = xpp.getText();
-                        channel.setDescription(description);
-                        return channel;
+                        description = xpp.getText();
+                    }
+                    if (RSS_LINK.equals(xpp.getName())) {
+                        xpp.next();
+                        link = xpp.getText();
                     }
                     if (RSS_ITEM.equals(xpp.getName())) {
-                        return channel;
+                        if (link != null && title != null && description != null) {
+                            return new Channel(DEFAULT_ID, title, link, description);
+                        } else {
+                            return null;
+                        }
                     }
                     break;
                 default:
@@ -123,7 +129,7 @@ public final class ParsHelper {
             }
             xpp.next();
         }
-        return channel;
+        return null;
     }
 
 
