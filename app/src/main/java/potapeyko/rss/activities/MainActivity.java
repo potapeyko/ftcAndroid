@@ -43,6 +43,8 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     private Cursor newsCursor;
     private SharedPreferences sPref;
     private SimpleCursorAdapter adapter;
+    private boolean broadcastRegister =false;
+
 
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -77,12 +79,22 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         this.onCreateSubscribe(this);
     }
 
+    @Override
+    protected void onResume() {
+        if(!broadcastRegister){
+            broadcastRegister = true;
+            LocalBroadcastManager.getInstance(this).registerReceiver(br,
+                    new IntentFilter(BroadcastSender.INTENT_FILTER));
+        }
+        super.onResume();
+    }
 
     @Override
     protected void onPause() {
         saveLastChanel();
-        if (br != null) {
+        if (br != null && broadcastRegister) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+            broadcastRegister = false;
         }
         super.onPause();
     }
@@ -112,7 +124,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(br, new IntentFilter(BroadcastSender.INTENT_FILTER));
+
 
         leftDrawerLayoutInit();
         newsTitleAndListInit();
