@@ -14,6 +14,7 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.model.News;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbReader;
 
 public final class FullNewsActivity extends MyBaseActivity implements IActivityListener {
     private long newsId;
@@ -52,10 +53,10 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
             }
             return;
         }
-
+        DbReader dbReader = null;
         try {
-            db.open();
-            news = db.getNewsById(newsId);
+            dbReader = db.getReader();
+            news = dbReader.getNewsById(newsId);
             if (title != null) {
                 title.setText(news.getTitle());
             }
@@ -77,7 +78,9 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         } catch (Throwable th) {
             th.printStackTrace();
         } finally {
-            db.close();
+            if (dbReader != null) {
+                dbReader.close();
+            }
         }
 
 

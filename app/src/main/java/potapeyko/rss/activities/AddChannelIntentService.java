@@ -72,6 +72,7 @@ public class AddChannelIntentService extends IntentService {
             XmlPullParser xpp = ParsHelper.prepareXpp(is);
 
             DB db = new DB(this);
+
             final ParsHelper helper = new ParsHelper(xpp, db);
             final long channelId = helper.addChannel(url);
             if (channelId == ParsHelper.OK_RESULT_WITHOUT_ID) {

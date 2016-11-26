@@ -23,6 +23,7 @@ import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.model.Channel;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.utils.BroadcastSender;
 import potapeyko.rss.utils.UpdateAlarmListener;
 
@@ -53,16 +54,19 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             if (BroadcastSender.CHANNEL_UPDATE_BROADCAST_MESS.equals(intent.getStringExtra(
                     BroadcastSender.STRING_BROADCAST_MESSAGE)) &&
                     (intent.getLongExtra(BroadcastSender.LONG_BROADCAST_DATA, -1)) == chanelId) {
-
+                DbReader dbReader = null;
                 try {
-                    db.open();
-                    newsCursor = db.getAllNewsOfChanelCursor(chanelId);
+                    dbReader = db.getReader();
+                    dbReader.open();
+                    newsCursor = dbReader.getAllNewsOfChanelCursor(chanelId);
                     adapter.changeCursor(newsCursor);
                     adapter.notifyDataSetChanged();
                 } catch (Throwable th) {
                     th.printStackTrace();
                 } finally {
-                    db.close();
+                    if (dbReader != null) {
+                        dbReader.close();
+                    }
                 }
             }
         }
@@ -176,13 +180,13 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             prepareEmptyActivity(newsList, title);
             return;
         }
-
+        DbReader dbReader = null;
         try {
             db = new DB(this);
-            db.open();
-
+            dbReader = db.getReader();
+            dbReader.open();
             if ("".equals(chanelTitle)) {
-                Channel currentChannel = db.getChanelById(this.chanelId);
+                Channel currentChannel = dbReader.getChanelById(this.chanelId);
                 if (currentChannel != null) {
                     chanelTitle = currentChannel.getTitle();
                 } else {
@@ -198,7 +202,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
             if (newsList != null) {
                 newsList.setVisibility(View.VISIBLE);
-                newsCursor = db.getAllNewsOfChanelCursor(chanelId);
+                newsCursor = dbReader.getAllNewsOfChanelCursor(chanelId);
 
                 String[] from = {DB.DbConvention.NEWS_TABLE_TITLE};
                 int[] to = {R.id.news_list_title};
@@ -217,7 +221,9 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
         } catch (Throwable th) {
             th.printStackTrace();
         } finally {
-            db.close();
+            if (dbReader != null) {
+                dbReader.close();
+            }
         }
 
     }

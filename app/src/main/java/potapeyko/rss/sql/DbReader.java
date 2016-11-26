@@ -1,13 +1,11 @@
 package potapeyko.rss.sql;
 
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 import lombok.NonNull;
 import potapeyko.rss.exceptions.DbException;
 import potapeyko.rss.model.Channel;
@@ -15,33 +13,30 @@ import potapeyko.rss.model.News;
 
 import java.util.ArrayList;
 
-
-public final class DB {
-
-
+public class DbReader {
     public static final class DbConvention {
         private DbConvention() throws Exception {
             throw new Exception();
         }
 
-        private static final String DB_NAME = "rssReaderDb";
-        private static final int DB_VERSION = 1;
+        static final String DB_NAME = "rssReaderDb";
+        static final int DB_VERSION = 1;
 
-        private static final String DB_CHANEL_TABLE = "chanel";
-        public static final String CHANEL_TABLE_TITLE = "title";
-        private static final String CHANEL_TABLE_LINK = "link";
-        public static final String CHANEL_TABLE_DESCRIPTION = "description";
-        private static final String CHANEL_ID = "_id";
+        static final String DB_CHANEL_TABLE = "chanel";
+        static final String CHANEL_TABLE_TITLE = "title";
+        static final String CHANEL_TABLE_LINK = "link";
+        static final String CHANEL_TABLE_DESCRIPTION = "description";
+        static final String CHANEL_ID = "_id";
 
 
-        private static final String DB_NEWS_TABLE = "news";
-        private static final String NEWS_TABLE_DESCRIPTION = "description";
-        public static final String NEWS_TABLE_TITLE = "title";
-        private static final String NEWS_TABLE_LINK = "link";
-        private static final String NEWS_TABLE_CHANEL_ID = "chanel_id";
-        private static final String NEWS_ID = "_id";
+        static final String DB_NEWS_TABLE = "news";
+        static final String NEWS_TABLE_DESCRIPTION = "description";
+        static final String NEWS_TABLE_TITLE = "title";
+        static final String NEWS_TABLE_LINK = "link";
+        static final String NEWS_TABLE_CHANEL_ID = "chanel_id";
+        static final String NEWS_ID = "_id";
 
-        private static final String DB_CREATE_CHANEL_TABLE =
+        static final String DB_CREATE_CHANEL_TABLE =
                 "create table " + DB_CHANEL_TABLE +
                         "(_id integer primary key autoincrement, " +
                         CHANEL_TABLE_TITLE + " text NOT NULL, " +
@@ -50,7 +45,7 @@ public final class DB {
 
 
         //у rss нет обязательный полей в новости, поэтому ограничения not null нет
-        private static final String DB_CREATE_NEWS_TABLE =
+        static final String DB_CREATE_NEWS_TABLE =
                 "create table " + DB_NEWS_TABLE +
                         "(_id integer primary key autoincrement, " +
                         NEWS_TABLE_TITLE + " text, " +
@@ -60,35 +55,24 @@ public final class DB {
                         " foreign key ( " + NEWS_TABLE_CHANEL_ID + " ) references " +
                         DB_CHANEL_TABLE + " (_id) on delete cascade);";
 
-        private static final String SORT_DESCENDING = " DESC ";
+        static final String SORT_DESCENDING = " DESC ";
 
     }
 
+    final Context context;
+    DBHelper dBHelper;
 
-    private final Context context;
-    private DBHelper dBHelper;
-    private SQLiteDatabase dB;
+    SQLiteDatabase dB;
 
-    public DB(final @NonNull Context context) {
+    public DbReader(final @NonNull Context context) {
         this.context = context;
     }
 
-    public DbReader getReader(){
-        return new DbReader(context);
-    }
-    public DbWriter getWriter(){
-        return new DbWriter(context);
-    }
-
-
     public void open() {
-        dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
-        try {
-            dB = dBHelper.getWritableDatabase();
-        } catch (Exception e) {
-            dB = dBHelper.getReadableDatabase();
-            Log.e("DB_LOG", "БД НЕ МОЖЕТ БЫТЬ ОТКРЫТА ДЛЯ ПИСЬМА");
+        if (dBHelper == null) {
+            dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
         }
+        dB = dBHelper.getReadableDatabase();
     }
 
     public void close() {
@@ -96,11 +80,9 @@ public final class DB {
         dB = null;
     }
 
-    /**
-     * @param id - channel id
-     * @return channel or null if this channel not found.
-     */
-    public Channel getChanelById(final long id) {
+
+    public Channel getChanelById(final long id) throws DbException {
+        if (dB == null) throw new DbException();
         final String selection = "_id = " + id;
         final Cursor cur = dB.query(DbConvention.DB_CHANEL_TABLE, null, selection, null, null, null, null);
         Channel resChanel = null;
@@ -114,8 +96,9 @@ public final class DB {
         }
     }
 
-    public News getNewsById(final long id) {
-        final String[] columns = {DbConvention.NEWS_ID, DbConvention.NEWS_TABLE_TITLE,
+    public News getNewsById(final long id) throws DbException {
+        if (dB == null) throw new DbException();
+        final String[] columns = {DbConvention.NEWS_ID, DB.DbConvention.NEWS_TABLE_TITLE,
                 DbConvention.NEWS_TABLE_DESCRIPTION, DbConvention.NEWS_TABLE_LINK};
         final String selection = "_id = " + id;
         final Cursor cur = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
@@ -130,11 +113,14 @@ public final class DB {
         }
     }
 
-    public Cursor getAllChannelsCursor() {
+    public Cursor getAllChannelsCursor() throws DbException {
+        if (dB == null) throw new DbException();
         return dB.query(DbConvention.DB_CHANEL_TABLE, null, null, null, null, null, null);
     }
 
-    public ArrayList<Channel> getAllChannelsList() {
+
+    public ArrayList<Channel> getAllChannelsList() throws DbException {
+        if (dB == null) throw new DbException();
         final ArrayList<Channel> list = new ArrayList<>();
         Cursor cur = null;
         try {
@@ -152,7 +138,8 @@ public final class DB {
         return list;
     }
 
-    public Cursor getAllNewsOfChanelCursor(final long chanelId) {
+    public Cursor getAllNewsOfChanelCursor(final long chanelId) throws DbException {
+        if (dB == null) throw new DbException();
         final String[] columns = new String[]{
                 DbConvention.NEWS_ID,
                 DbConvention.NEWS_TABLE_TITLE,
@@ -164,24 +151,8 @@ public final class DB {
         return dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, orderBy);
     }
 
-    public long addChanel(final String title, final String link, final String description) {
-        final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.CHANEL_TABLE_TITLE, title);
-        cv.put(DbConvention.CHANEL_TABLE_LINK, link);
-        cv.put(DbConvention.CHANEL_TABLE_DESCRIPTION, description);
-        long resultId;
-
-        dB.beginTransaction();
-        try {
-            resultId = dB.insert(DbConvention.DB_CHANEL_TABLE, null, cv);
-            dB.setTransactionSuccessful();
-            return resultId;
-        } finally {
-            dB.endTransaction();
-        }
-    }
-
-    public boolean isChanelInDb(final String link) {
+    public boolean isChanelInDb(final String link) throws DbException {
+        if (dB == null) throw new DbException();
         if (link == null) return false;
 
         final String[] columns = {DbConvention.CHANEL_TABLE_TITLE};
@@ -195,14 +166,15 @@ public final class DB {
 
     public boolean isNewsInDb(final News news) throws DbException {
         if (news == null) return false;
-        final String[] columns = {DbConvention.NEWS_TABLE_TITLE};
+        if (dB == null) throw new DbException();
+        final String[] columns = {DB.DbConvention.NEWS_TABLE_TITLE};
 
         final String whereLink = news.getFullNewsUri() == null ? DbConvention.NEWS_TABLE_LINK + "IS NULL" :
                 DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "'";
         final String whereDescription = news.getDescription() == null ? DbConvention.NEWS_TABLE_DESCRIPTION + "IS NULL" :
                 DbConvention.NEWS_TABLE_DESCRIPTION + " = '" + news.getDescription() + "'";
-        final String whereTitle = news.getTitle() == null ? DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
-                DbConvention.NEWS_TABLE_TITLE + " = '" + news.getTitle() + "'";
+        final String whereTitle = news.getTitle() == null ? DB.DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
+                DB.DbConvention.NEWS_TABLE_TITLE + " = '" + news.getTitle() + "'";
 
         final String selection = whereLink + " AND " + whereTitle + " AND " + whereDescription;
         Cursor cursor = null;
@@ -220,41 +192,9 @@ public final class DB {
 
     }
 
-    public void addToNews(final long chanelId, final String title, final String link, final String description) throws DbException {
-        final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.NEWS_TABLE_CHANEL_ID, chanelId);
-        cv.put(DbConvention.NEWS_TABLE_TITLE, title);
-        cv.put(DbConvention.NEWS_TABLE_LINK, link);
-        cv.put(DbConvention.NEWS_TABLE_DESCRIPTION, description);
-        long result = -1;
 
-        dB.beginTransaction();
-        try {
-            result = dB.insert(DbConvention.DB_NEWS_TABLE, null, cv);
-            dB.setTransactionSuccessful();
-        } finally {
-            dB.endTransaction();
-        }
-        if (result == -1) throw new DbException();
-    }
-
-    public void deleteChanelById(final long id) {
-        if (dB == null) return;
-        final String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID + " = " + id;
-        final String chanelSelection = DbConvention.CHANEL_ID + " = " + id;
-
-        dB.beginTransaction();
-        try {
-            dB.delete(DbConvention.DB_NEWS_TABLE, newsSelection, null);
-            dB.delete(DbConvention.DB_CHANEL_TABLE, chanelSelection, null);
-            dB.setTransactionSuccessful();
-        } finally {
-            dB.endTransaction();
-        }
-    }
-
-    private final class DBHelper extends SQLiteOpenHelper {
-        DBHelper(final Context context, final String name, final CursorFactory factory, final int version) {
+    final class DBHelper extends SQLiteOpenHelper {
+        DBHelper(final Context context, final String name, final SQLiteDatabase.CursorFactory factory, final int version) {
             super(context, name, factory, version);
         }
 

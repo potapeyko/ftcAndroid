@@ -11,6 +11,8 @@ import potapeyko.rss.exceptions.DbException;
 import potapeyko.rss.model.Channel;
 import potapeyko.rss.parser.ParsHelper;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbReader;
+import potapeyko.rss.sql.DbWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,14 +57,18 @@ public class UpdateChannelIntentService extends IntentService {
     private void handleActionUpdate() {
 
         DB db = new DB(this);
+        DbReader dbReader = db.getReader();
         HttpURLConnection urlConnection = null;
         try {
             ArrayList<Channel> channels;
             try {
-                db.open();
-                channels = db.getAllChannelsList();
+                dbReader.open();
+                channels = dbReader.getAllChannelsList();
             } catch (Throwable th) {
                 throw new DbException(th);
+            }
+            finally {
+                dbReader.close();
             }
 
             for (Channel channel : channels) {
@@ -90,7 +96,6 @@ public class UpdateChannelIntentService extends IntentService {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            db.close();
         }
     }
 }

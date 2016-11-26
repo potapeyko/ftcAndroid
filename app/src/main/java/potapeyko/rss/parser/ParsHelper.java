@@ -1,7 +1,6 @@
 package potapeyko.rss.parser;
 
 
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -15,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+
 import lombok.NonNull;
+import potapeyko.rss.sql.DbWriter;
 
 public final class ParsHelper {
 
@@ -52,14 +53,15 @@ public final class ParsHelper {
      */
     public long addChannel(@NonNull URL url) throws ConnectionException, DbException {
 
-        Channel channel  = getChannel(url);
+        Channel channel = getChannel(url);
         if (channel == null) throw new ConnectionException(EXCEPTION_CHANNEL);
-
+        DbWriter dbWriter = null;
         try {
-            db.open();
-            boolean isInDb = db.isChanelInDb(channel.getLink());
+            dbWriter = db.getWriter();
+            dbWriter.open();
+            boolean isInDb = dbWriter.isChanelInDb(channel.getLink());
             if (!isInDb) {
-                long result = db.addChanel(channel.getTitle(), channel.getLink(), channel.getDescription());
+                long result = dbWriter.addChanel(channel.getTitle(), channel.getLink(), channel.getDescription());
                 if (result == -1) {
                     throw new DbException();
                 } else {
@@ -70,7 +72,9 @@ public final class ParsHelper {
         } catch (Throwable th) {
             throw new DbException(th);
         } finally {
-            db.close();
+            if (dbWriter != null) {
+                dbWriter.close();
+            }
         }
     }
 
@@ -124,7 +128,7 @@ public final class ParsHelper {
 
 
     /**
-     It does not check the channel format
+     * It does not check the channel format
      */
     public void addNews(long channelId) throws ConnectionException, DbException {
         ArrayList<News> news;
@@ -140,7 +144,7 @@ public final class ParsHelper {
     /**
      * @return true - if some news added to db.
      * false - if nothing added to db.
-     *
+     * <p>
      * Check channel format and add new news in db
      */
     public boolean checkNews(long channelId) throws ConnectionException, DbException {
@@ -213,23 +217,26 @@ public final class ParsHelper {
      */
     private boolean newsToDB(long channelId, ArrayList<News> news) throws DbException {
         boolean result = false;
+
         if (news != null) {
+            DbWriter dbWriter = db.getWriter();
             try {
-                db.open();
+                dbWriter.open();
             } catch (Throwable th) {
-                db.close();
+                dbWriter.close();
                 throw new DbException(th);
             }
+
             try {
                 for (News currentNews : news) {
-                    if (!db.isNewsInDb(currentNews)) {
-                        db.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
+                    if (!dbWriter.isNewsInDb(currentNews)) {
+                        dbWriter.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
                                 currentNews.getDescription());
                         result = true;
                     }
                 }
             } finally {
-                db.close();
+                dbWriter.close();
             }
         }
         return result;
@@ -239,7 +246,7 @@ public final class ParsHelper {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();
-        xpp.setInput(is,null);
+        xpp.setInput(is, null);
         return xpp;
     }
 }

@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import lombok.NonNull;
 import potapeyko.rss.sql.DB;
+import potapeyko.rss.sql.DbWriter;
 
 
 final class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -48,11 +49,13 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
             }
             case DELETE_CHANNEL_ITEM: {
                 DB db = null;
+                DbWriter dbWriter = null;
                 if (mainActivity.getChanelId() != -1) {
                     try {
                         db = new DB(mainActivity);
-                        db.open();
-                        db.deleteChanelById(mainActivity.getChanelId());
+                        dbWriter= db.getWriter();
+                        dbWriter.open();
+                        dbWriter.deleteChanelById(mainActivity.getChanelId());
                         final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
                         final SharedPreferences.Editor ed = sPref.edit();
                         ed.putLong(MainActivity.CHANEL_ID, -1);
@@ -60,8 +63,8 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                     } catch (Throwable r) {
                         r.printStackTrace();
                     } finally {
-                        if (db != null) {
-                            db.close();
+                        if (dbWriter != null) {
+                            dbWriter.close();
                         }
                         ChannelChangeActivity.start(mainActivity);
                     }

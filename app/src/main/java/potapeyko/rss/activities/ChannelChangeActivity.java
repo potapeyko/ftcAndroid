@@ -15,7 +15,7 @@ import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.sql.DB;
-
+import potapeyko.rss.sql.DbReader;
 
 
 public final class ChannelChangeActivity extends MyBaseActivity {
@@ -49,9 +49,10 @@ public final class ChannelChangeActivity extends MyBaseActivity {
         final ListView channelsList = (ListView) findViewById(R.id.chanel_change_list);
         TextView title = (TextView) findViewById(R.id.chanel_change_text);
         if (channelsList != null) {
+            DbReader dbReader = db.getReader();
             try {
-                db.open();
-                channelsListCursor = db.getAllChannelsCursor();
+                dbReader.open();
+                channelsListCursor = dbReader.getAllChannelsCursor();
                 if(!channelsListCursor.moveToFirst()){
                     if (title != null) {
                         title.setText(R.string.activity_channel_change_empty_list);
@@ -81,7 +82,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                 th.printStackTrace();
                 Toast.makeText(this, R.string.db_exception, Toast.LENGTH_SHORT).show();
             } finally {
-                db.close();
+                dbReader.close();
             }
         }
     }
