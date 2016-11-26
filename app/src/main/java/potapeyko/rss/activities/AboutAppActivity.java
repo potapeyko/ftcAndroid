@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 
@@ -19,7 +20,7 @@ public final class AboutAppActivity extends MyBaseActivity {
         });
     }
 
-    static void start(Activity other) {
+    static void start(@NonNull Activity other) {
         Intent intent = new Intent(other, AboutAppActivity.class);
         other.startActivity(intent);
     }

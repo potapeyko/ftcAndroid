@@ -9,9 +9,10 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
+import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
-import potapeyko.rss.models.News;
+import potapeyko.rss.model.News;
 import potapeyko.rss.sql.DB;
 
 public final class FullNewsActivity extends MyBaseActivity implements IActivityListener {
@@ -87,7 +88,7 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         outState.putLong(idKey, newsId);
     }
 
-    static void start(Activity other, long newsId) {
+    static void start(@NonNull Activity other, long newsId) {
         Intent intent = new Intent(other, FullNewsActivity.class);
         intent.putExtra(idKey, newsId);
         other.startActivity(intent);

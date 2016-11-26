@@ -8,9 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import potapeyko.rss.Exeptions.DbException;
-import potapeyko.rss.models.Channel;
-import potapeyko.rss.models.News;
+import lombok.NonNull;
+import potapeyko.rss.exceptions.DbException;
+import potapeyko.rss.model.Channel;
+import potapeyko.rss.model.News;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public final class DB {
         }
 
         private static final String DB_NAME = "rssReaderDb";
-        private static final int DB_VERSION = 6;
+        private static final int DB_VERSION = 1;
 
         private static final String DB_CHANEL_TABLE = "chanel";
         public static final String CHANEL_TABLE_TITLE = "title";
@@ -68,7 +69,7 @@ public final class DB {
     private DBHelper dBHelper;
     private SQLiteDatabase dB;
 
-    public DB(final Context context) {
+    public DB(final @NonNull Context context) {
         this.context = context;
     }
 
@@ -81,7 +82,23 @@ public final class DB {
             dB = dBHelper.getReadableDatabase();
             Log.e("DB_LOG", "БД НЕ МОЖЕТ БЫТЬ ОТКРЫТА ДЛЯ ПИСЬМА");
         }
+    }
 
+    public void openToRead() {
+        if (dBHelper == null) {
+            dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
+        }
+        dBHelper.close();
+        dB = dBHelper.getReadableDatabase();
+    }
+
+    public void openToWrite() {
+
+        if (dBHelper == null) {
+            dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
+        }
+        dBHelper.close();
+        dB = dBHelper.getWritableDatabase();
     }
 
 
@@ -90,9 +107,7 @@ public final class DB {
         dB = null;
     }
 
-
     /**
-     *
      * @param id - channel id
      * @return channel or null if this channel not found.
      */
@@ -166,8 +181,9 @@ public final class DB {
         cv.put(DbConvention.CHANEL_TABLE_LINK, link);
         cv.put(DbConvention.CHANEL_TABLE_DESCRIPTION, description);
         long resultId;
+
+        dB.beginTransaction();
         try {
-            dB.beginTransaction();
             resultId = dB.insert(DbConvention.DB_CHANEL_TABLE, null, cv);
             dB.setTransactionSuccessful();
             return resultId;
@@ -215,15 +231,16 @@ public final class DB {
 
     }
 
-    public void addToNews(final Long chanelId, final String title, final String link, final String description) throws DbException {
+    public void addToNews(final long chanelId, final String title, final String link, final String description) throws DbException {
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.NEWS_TABLE_CHANEL_ID, chanelId);
         cv.put(DbConvention.NEWS_TABLE_TITLE, title);
         cv.put(DbConvention.NEWS_TABLE_LINK, link);
         cv.put(DbConvention.NEWS_TABLE_DESCRIPTION, description);
         long result = -1;
+
+        dB.beginTransaction();
         try {
-            dB.beginTransaction();
             result = dB.insert(DbConvention.DB_NEWS_TABLE, null, cv);
             dB.setTransactionSuccessful();
         } finally {
@@ -236,8 +253,9 @@ public final class DB {
         if (dB == null) return;
         final String newsSelection = DbConvention.NEWS_TABLE_CHANEL_ID + " = " + id;
         final String chanelSelection = DbConvention.CHANEL_ID + " = " + id;
+
+        dB.beginTransaction();
         try {
-            dB.beginTransaction();
             dB.delete(DbConvention.DB_NEWS_TABLE, newsSelection, null);
             dB.delete(DbConvention.DB_CHANEL_TABLE, chanelSelection, null);
             dB.setTransactionSuccessful();
@@ -250,11 +268,13 @@ public final class DB {
         DBHelper(final Context context, final String name, final CursorFactory factory, final int version) {
             super(context, name, factory, version);
         }
+
         @Override
         public void onCreate(final SQLiteDatabase db) {
             db.execSQL(DbConvention.DB_CREATE_CHANEL_TABLE);
             db.execSQL(DbConvention.DB_CREATE_NEWS_TABLE);
         }
+
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

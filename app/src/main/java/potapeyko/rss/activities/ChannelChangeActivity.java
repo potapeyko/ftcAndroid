@@ -11,18 +11,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.sql.DB;
 
-import static potapeyko.rss.constants.OtherCodes.CHANEL_ID_KEY;
 
 
 public final class ChannelChangeActivity extends MyBaseActivity {
     private final DB db;
-    public static final int CHANEL_CHANGE_CODE = 1235;
+    static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
-
+    private static final String CHANEL_ID_KEY= "CHANEL_ID";
 
     public ChannelChangeActivity() {
         this.db = new DB(this);
@@ -35,13 +35,13 @@ public final class ChannelChangeActivity extends MyBaseActivity {
         });
     }
 
-    static void start(Activity other) {
+    static void start(@NonNull final Activity other) {
         final Intent intent = new Intent(other, ChannelChangeActivity.class);
         other.startActivityForResult(intent, CHANEL_CHANGE_CODE);
     }
 
 
-    static long getResultChanelId(final Intent intent) {
+    static long getResultChanelId(@NonNull final Intent intent) {
         return intent.getLongExtra(CHANEL_ID_KEY, -1);
     }
 

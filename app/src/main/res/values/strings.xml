@@ -42,6 +42,9 @@
     </string>
 
 
+    <string name="LOG_KEY">rss_reader_log</string>
+
+
 
 
 </resources>

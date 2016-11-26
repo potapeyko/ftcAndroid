@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import lombok.NonNull;
 import potapeyko.rss.R;
 
 public class SettingsActivity extends PreferenceActivity  {
@@ -14,7 +15,7 @@ public class SettingsActivity extends PreferenceActivity  {
         addPreferencesFromResource(R.xml.pref);
     }
 
-    static void start(Context other){
+    static void start(@NonNull Context other){
         Intent  intent = new Intent(other,SettingsActivity.class);
         other.startActivity(intent);
     }

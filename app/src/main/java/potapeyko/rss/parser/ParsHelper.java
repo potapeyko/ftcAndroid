@@ -1,30 +1,30 @@
 package potapeyko.rss.parser;
 
 
-import android.support.annotation.NonNull;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
-import potapeyko.rss.Exeptions.ConnectionException;
-import potapeyko.rss.Exeptions.DbException;
-import potapeyko.rss.models.Channel;
-import potapeyko.rss.models.News;
+import potapeyko.rss.exceptions.ConnectionException;
+import potapeyko.rss.exceptions.DbException;
+import potapeyko.rss.model.Channel;
+import potapeyko.rss.model.News;
 import potapeyko.rss.sql.DB;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-
+import lombok.NonNull;
 
 public final class ParsHelper {
 
     private final static String RSS_TITLE = "title";
-    private final static String RSS_DESCR = "description";
+    private final static String RSS_DESCRIPTION = "description";
 
     private final static String RSS_ITEM = "item";
     private final static String RSS_ITEM_TITLE = "title";
-    private final static String RSS_ITEM_DESCR = "description";
+    private final static String RSS_ITEM_DESCRIPTION = "description";
     private final static String RSS_ITEM_LINK = "link";
     private final static long DEFAULT_ID = -100;
 
@@ -50,7 +50,7 @@ public final class ParsHelper {
      * @throws ConnectionException - if can't pars channel info
      * @throws DbException         - if  can't keep a channel in the db
      */
-    public long addChannel(URL url) throws ConnectionException, DbException {
+    public long addChannel(@NonNull URL url) throws ConnectionException, DbException {
 
         Channel channel  = getChannel(url);
         if (channel == null) throw new ConnectionException(EXCEPTION_CHANNEL);
@@ -104,7 +104,7 @@ public final class ParsHelper {
                         channel = new Channel(DEFAULT_ID, title, url, null);//id присваивается в бд
                         break;
                     }
-                    if (RSS_DESCR.equals(xpp.getName()) && channel != null) {
+                    if (RSS_DESCRIPTION.equals(xpp.getName()) && channel != null) {
                         xpp.next();
                         String description = xpp.getText();
                         channel.setDescription(description);
@@ -126,7 +126,7 @@ public final class ParsHelper {
     /**
      It does not check the channel format
      */
-    public void addNews(Long channelId) throws ConnectionException, DbException {
+    public void addNews(long channelId) throws ConnectionException, DbException {
         ArrayList<News> news;
         try {
             news = parsNews();
@@ -179,7 +179,7 @@ public final class ParsHelper {
                         xpp.next();
                         String title = xpp.getText();
                         currentNews.setTitle(title);
-                    } else if (inItem && RSS_ITEM_DESCR.equals(xpp.getName())) {
+                    } else if (inItem && RSS_ITEM_DESCRIPTION.equals(xpp.getName())) {
                         xpp.next();
                         String description = xpp.getText();
                         currentNews.setDescription(description);
@@ -235,7 +235,7 @@ public final class ParsHelper {
         return result;
     }
 
-    public static XmlPullParser prepareXpp(InputStream is) throws XmlPullParserException {
+    public static XmlPullParser prepareXpp(@NonNull InputStream is) throws XmlPullParserException {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();

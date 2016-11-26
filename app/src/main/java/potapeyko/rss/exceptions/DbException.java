@@ -1,4 +1,4 @@
-package potapeyko.rss.Exeptions;
+package potapeyko.rss.exceptions;
 public class DbException extends Exception{
 
 

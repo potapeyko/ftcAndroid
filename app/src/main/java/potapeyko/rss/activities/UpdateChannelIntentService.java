@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import potapeyko.rss.Exeptions.ConnectionException;
-import potapeyko.rss.Exeptions.DbException;
-import potapeyko.rss.models.Channel;
+import potapeyko.rss.exceptions.ConnectionException;
+import potapeyko.rss.exceptions.DbException;
+import potapeyko.rss.model.Channel;
 import potapeyko.rss.parser.ParsHelper;
 import potapeyko.rss.sql.DB;
 
@@ -53,30 +53,26 @@ public class UpdateChannelIntentService extends IntentService {
     }
 
     private void handleActionUpdate() {
-        URL url;
-        InputStream is;
-        HttpURLConnection urlConnection = null;
-        DB db = new DB(this);
-        XmlPullParser xpp;
-        ParsHelper helper;
-        ArrayList<Channel> channels;
 
+        DB db = new DB(this);
+        HttpURLConnection urlConnection = null;
         try {
+            ArrayList<Channel> channels;
             try {
                 db.open();
                 channels = db.getAllChannelsList();
-            }catch (Throwable th){
+            } catch (Throwable th) {
                 throw new DbException(th);
             }
 
             for (Channel channel : channels) {
-                url = new URL(channel.getLink());
+                URL url = new URL(channel.getLink());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setConnectTimeout(UPDATE_INTENT_CONNECT_TIMEOUT);
                 urlConnection.connect();
-                is = urlConnection.getInputStream();
-                xpp = ParsHelper.prepareXpp(is);
-                helper = new ParsHelper(xpp, db);
+                InputStream is = urlConnection.getInputStream();
+                XmlPullParser xpp = ParsHelper.prepareXpp(is);
+                ParsHelper helper = new ParsHelper(xpp, db);
 
                 boolean areNewNews = helper.checkNews(channel.getId());
 
@@ -85,10 +81,10 @@ public class UpdateChannelIntentService extends IntentService {
             }
 
         } catch (DbException e) {
-            sendMyBroadcast(this,DB_EXCEPTION_BROADCAST_MESS, 0);
+            sendMyBroadcast(this, DB_EXCEPTION_BROADCAST_MESS, 0);
             e.printStackTrace();
         } catch (IOException | XmlPullParserException | ConnectionException e) {
-            sendMyBroadcast(this,CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
+            sendMyBroadcast(this, CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {

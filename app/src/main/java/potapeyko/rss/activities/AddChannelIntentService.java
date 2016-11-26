@@ -3,12 +3,12 @@ package potapeyko.rss.activities;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import lombok.NonNull;
 import android.util.Patterns;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import potapeyko.rss.Exeptions.ConnectionException;
-import potapeyko.rss.Exeptions.DbException;
+import potapeyko.rss.exceptions.ConnectionException;
+import potapeyko.rss.exceptions.DbException;
 import potapeyko.rss.parser.ParsHelper;
 import potapeyko.rss.sql.DB;
 
@@ -53,27 +53,25 @@ public class AddChannelIntentService extends IntentService {
         }
     }
 
-    private void handleActionAdd(String uri) {
+    private void handleActionAdd(@NonNull String uri) {
 
         if (!Patterns.WEB_URL.matcher(uri).matches()) {
             sendMyBroadcast(this,CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
             return;
         }
 
-        URL url;
-        InputStream is;
         HttpURLConnection urlConnection = null;
-        DB db = new DB(this);
 
         try {
-            url = new URL(uri);
+            URL url = new URL(uri);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(ADD_INTENT_CONNECT_TIMEOUT);
             urlConnection.connect();
-            is = urlConnection.getInputStream();
+            InputStream is = urlConnection.getInputStream();
 
             XmlPullParser xpp = ParsHelper.prepareXpp(is);
 
+            DB db = new DB(this);
             final ParsHelper helper = new ParsHelper(xpp, db);
             final long channelId = helper.addChannel(url);
             if (channelId == ParsHelper.OK_RESULT_WITHOUT_ID) {

@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import lombok.NonNull;
 import potapeyko.rss.sql.DB;
 
 
@@ -21,7 +22,8 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
     private static final int ABOUT_ITEM = 4;
 
 
-    DrawerItemClickListener(DrawerLayout drawerLayout, ListView drawerList, MainActivity mainActivity) {
+    DrawerItemClickListener(@NonNull DrawerLayout drawerLayout, @NonNull ListView drawerList,
+                            @NonNull MainActivity mainActivity) {
         this.drawerLayout = drawerLayout;
         this.drawerList = drawerList;
         this.mainActivity = mainActivity;
@@ -46,7 +48,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
             }
             case DELETE_CHANNEL_ITEM: {
                 DB db = null;
-                if (mainActivity != null && mainActivity.getChanelId()!=-1) {
+                if (mainActivity.getChanelId() != -1) {
                     try {
                         db = new DB(mainActivity);
                         db.open();
@@ -61,7 +63,6 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                         if (db != null) {
                             db.close();
                         }
-
                         ChannelChangeActivity.start(mainActivity);
                     }
                 }

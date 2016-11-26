@@ -38,7 +38,7 @@ public class UpdateAlarmListener extends BroadcastReceiver {
         UpdateChannelIntentService.startActionUpdate(context);
         if (sPref.getBoolean(context.getString(R.string.settings_auto_update_key), true)) {
 
-            final Long nextUpdateTime = setNextUpdateTime();
+            final long nextUpdateTime = setNextUpdateTime();
             am.set(AlarmManager.RTC_WAKEUP, nextUpdateTime, pendingIntent);
 
         }
@@ -49,11 +49,11 @@ public class UpdateAlarmListener extends BroadcastReceiver {
      */
     private long setNextUpdateTime() {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        final Long period = Long.parseLong(sp.getString(
+        final long period = Long.parseLong(sp.getString(
                 context.getString(R.string.settings_period_key),
                 DEFAULT_PERIOD));
         final SharedPreferences.Editor ed = sPref.edit();
-        final Long nextUpdateTime = System.currentTimeMillis() + period * 1000 * 60;
+        final long nextUpdateTime = System.currentTimeMillis() + period * 1000 * 60;
         ed.putLong(NEXT_UPDATE_TIME_KEY, nextUpdateTime);
         ed.apply();
         return nextUpdateTime;

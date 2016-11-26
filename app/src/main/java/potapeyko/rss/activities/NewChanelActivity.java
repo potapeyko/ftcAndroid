@@ -8,17 +8,21 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.*;
+import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.network.NetworkHelper;
+import potapeyko.rss.utils.BroadcastSender;
 
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
 public final class NewChanelActivity extends MyBaseActivity {
+
 
     private Button btnNewChanel;
     private EditText etUri;
@@ -29,6 +33,12 @@ public final class NewChanelActivity extends MyBaseActivity {
     final private BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            if (intent == null) {
+                Log.e(getString(R.string.LOG_KEY), "onReceive intent == null");
+                return;
+            }
+
             String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
             if(CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)){
                 MainActivity.start(NewChanelActivity.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
@@ -61,6 +71,9 @@ public final class NewChanelActivity extends MyBaseActivity {
         else if (CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)){
             Toast.makeText(this,R.string.channel_add_broadcast_message,Toast.LENGTH_SHORT).show();
         }
+        else{
+            Log.d(getString(R.string.LOG_KEY), "showCauseToast unknown broadcastMessage");
+        }
     }
 
 
@@ -71,7 +84,7 @@ public final class NewChanelActivity extends MyBaseActivity {
             @Override
             public void onCreateActivity(@Nullable Bundle savedInstanceState) {
 
-                LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( "potapeyko.rss.activities" ) );
+                LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( BroadcastSender.INTENT_FILTER ) );
                 setContentView(R.layout.activity_new_chanel);
                 btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
                 etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
@@ -132,7 +145,7 @@ public final class NewChanelActivity extends MyBaseActivity {
         super.onDestroy();
     }
 
-    static void start(Activity other) {
+    static void start(@NonNull Activity other) {
         Intent intent = new Intent(other, NewChanelActivity.class);
         other.startActivity(intent);
     }

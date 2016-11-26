@@ -1,4 +1,4 @@
-package potapeyko.rss.models;
+package potapeyko.rss.model;
 
 
 import lombok.*;

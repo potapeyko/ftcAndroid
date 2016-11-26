@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,7 +21,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
-import potapeyko.rss.models.Channel;
+import potapeyko.rss.model.Channel;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.utils.BroadcastSender;
 import potapeyko.rss.utils.UpdateAlarmListener;
@@ -30,6 +31,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
+
 
     @Getter
     @NonNull
@@ -43,9 +45,13 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra(
-                    BroadcastSender.STRING_BROADCAST_MESSAGE)
-                    .equals(BroadcastSender.CHANNEL_UPDATE_BROADCAST_MESS) &&
+            if (intent == null) {
+                Log.e(getString(R.string.LOG_KEY), "onReceive intent == null");
+                return;
+            }
+
+            if (BroadcastSender.CHANNEL_UPDATE_BROADCAST_MESS.equals(intent.getStringExtra(
+                    BroadcastSender.STRING_BROADCAST_MESSAGE)) &&
                     (intent.getLongExtra(BroadcastSender.LONG_BROADCAST_DATA, -1)) == chanelId) {
 
                 try {
@@ -53,7 +59,6 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                     newsCursor = db.getAllNewsOfChanelCursor(chanelId);
                     adapter.changeCursor(newsCursor);
                     adapter.notifyDataSetChanged();
-                    db.close();
                 } catch (Throwable th) {
                     th.printStackTrace();
                 } finally {
@@ -100,7 +105,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(br, new IntentFilter("potapeyko.rss.activities"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(br, new IntentFilter(BroadcastSender.INTENT_FILTER));
 
         leftDrawerLayoutInit();
         newsTitleAndListInit();
@@ -125,7 +130,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             long nextUpdateForPeriod = 1000 * 60 * Long.parseLong(
                     sPref.getString(getString(R.string.settings_period_key), "0"))
                     + System.currentTimeMillis();
-            Long nextUpdate = nextPlanedUpdate > nextUpdateForPeriod ? nextUpdateForPeriod : nextPlanedUpdate;
+            long nextUpdate = nextPlanedUpdate > nextUpdateForPeriod ? nextUpdateForPeriod : nextPlanedUpdate;
             am.set(AlarmManager.RTC_WAKEUP, nextUpdate, pendingIntent);
         } else {
             am.cancel(pendingIntent);
@@ -229,8 +234,15 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     }
 
     @Override
+    protected void onStop() {
+        if (br != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+        }
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
         super.onDestroy();
         if (newsCursor != null) {
             newsCursor.close();
@@ -238,7 +250,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     }
 
-    static void start(Activity other, Long aLong) {
+    static void start(@NonNull Activity other, long aLong) {
         Intent intent = new Intent(other, MainActivity.class);
         intent.putExtra(CHANEL_ID, aLong);
         other.startActivity(intent);
