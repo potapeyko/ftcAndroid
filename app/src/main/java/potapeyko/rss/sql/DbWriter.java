@@ -9,7 +9,7 @@ public class DbWriter extends DbReader {
     @Override
     public void open() {
         if (dBHelper == null) {
-            dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
+            dBHelper = new DBHelper(context);
         }
         dB = dBHelper.getWritableDatabase();
     }

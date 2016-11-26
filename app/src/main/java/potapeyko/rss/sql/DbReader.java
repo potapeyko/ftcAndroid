@@ -27,7 +27,7 @@ public class DbReader {
 
     public void open() {
         if (dBHelper == null) {
-            dBHelper = new DBHelper(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
+            dBHelper = new DBHelper(context);
         }
         dB = dBHelper.getReadableDatabase();
     }
@@ -166,8 +166,8 @@ public class DbReader {
 
 
     final class DBHelper extends SQLiteOpenHelper {
-        DBHelper(final Context context, final String name, final SQLiteDatabase.CursorFactory factory, final int version) {
-            super(context, name, factory, version);
+        DBHelper(final Context context) {
+            super(context, DbConvention.DB_NAME, null, DbConvention.DB_VERSION);
         }
 
         @Override
