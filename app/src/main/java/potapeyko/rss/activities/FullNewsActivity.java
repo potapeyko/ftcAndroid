@@ -56,6 +56,7 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         DbReader dbReader = null;
         try {
             dbReader = db.getReader();
+            dbReader.open();
             news = dbReader.getNewsById(newsId);
             if (title != null) {
                 title.setText(news.getTitle());
@@ -69,7 +70,7 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
                 link.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Uri address = Uri.parse(news.getFullNewsUri());
+                        Uri address = Uri.parse(news.getLink());
                         Intent uriOpen = new Intent(Intent.ACTION_VIEW, address);
                         view.getContext().startActivity(uriOpen);
                     }

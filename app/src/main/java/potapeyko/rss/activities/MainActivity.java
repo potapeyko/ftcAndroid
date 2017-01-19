@@ -240,7 +240,6 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                 dbReader.close();
             }
         }
-
     }
 
     private void prepareEmptyActivity(ListView newsList, TextView title) {

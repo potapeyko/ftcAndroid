@@ -141,8 +141,8 @@ public class DbReader {
         if (dB == null) throw new DbException();
         final String[] columns = {DbConvention.NEWS_TABLE_TITLE};
 
-        final String whereLink = news.getFullNewsUri() == null ? DbConvention.NEWS_TABLE_LINK + "IS NULL" :
-                DbConvention.NEWS_TABLE_LINK + " = '" + news.getFullNewsUri() + "'";
+        final String whereLink = news.getLink() == null ? DbConvention.NEWS_TABLE_LINK + "IS NULL" :
+                DbConvention.NEWS_TABLE_LINK + " = '" + news.getLink() + "'";
         final String whereDescription = news.getDescription() == null ? DbConvention.NEWS_TABLE_DESCRIPTION + "IS NULL" :
                 DbConvention.NEWS_TABLE_DESCRIPTION + " = '" + news.getDescription() + "'";
         final String whereTitle = news.getTitle() == null ? DbConvention.NEWS_TABLE_TITLE + "IS NULL" :
@@ -152,6 +152,7 @@ public class DbReader {
         Cursor cursor = null;
         boolean res;
         try {
+
             cursor = dB.query(DbConvention.DB_NEWS_TABLE, columns, selection, null, null, null, null);
             res = cursor.getCount() > 0;
             return res;

@@ -1,6 +1,7 @@
 package potapeyko.rss.parser;
 
 
+import android.util.Log;
 import lombok.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -100,24 +101,27 @@ public final class ParsHelper {
         String title = null;
         String link = null;
         String description = null;
+        byte channelItemsFlag=0;
         while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
             switch (xpp.getEventType()) {
                 case XmlPullParser.START_TAG:
                     if (RSS_TITLE.equals(xpp.getName())) {
                         xpp.next();
                         title = xpp.getText();
-                        if (title == null) return null;
+                        channelItemsFlag++;
                     }
                     if (RSS_DESCRIPTION.equals(xpp.getName())) {
                         xpp.next();
                         description = xpp.getText();
+                        channelItemsFlag++;
                     }
                     if (RSS_LINK.equals(xpp.getName())) {
                         xpp.next();
                         link = xpp.getText();
+                        channelItemsFlag++;
                     }
                     if (RSS_ITEM.equals(xpp.getName())) {
-                        if (link != null && title != null && description != null) {
+                        if (channelItemsFlag==3) {
                             return new Channel(DEFAULT_ID, title, link, description);
                         } else {
                             return null;
@@ -196,7 +200,7 @@ public final class ParsHelper {
                     } else if (inItem && RSS_ITEM_LINK.equals(xpp.getName())) {
                         xpp.next();
                         String link = xpp.getText();
-                        currentNews.setFullNewsUri(link);
+                        currentNews.setLink(link);
                     }
                     break;
 
@@ -232,13 +236,16 @@ public final class ParsHelper {
                 dbWriter.close();
                 throw new DbException(th);
             }
-
+            int debugId=0;
             try {
                 for (News currentNews : news) {
                     if (!dbWriter.isNewsInDb(currentNews)) {
-                        dbWriter.addToNews(channelId, currentNews.getTitle(), currentNews.getFullNewsUri(),
+
+                        dbWriter.addToNews(channelId, currentNews.getTitle(), currentNews.getLink(),
                                 currentNews.getDescription());
+
                         result = true;
+                        Log.d("1111",String.valueOf(debugId++));
                     }
                 }
             } finally {
