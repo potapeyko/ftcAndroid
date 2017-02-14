@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:orientation="horizontal"
               android:background="#88d4fb"
               android:padding="10dp">
     <TextView
-            android:id="@+id/news.list.title"
+            android:id="@+id/feedItem.list.title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"

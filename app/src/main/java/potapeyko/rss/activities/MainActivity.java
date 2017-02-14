@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
-import potapeyko.rss.model.Channel;
+import potapeyko.rss.model.Feed;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
@@ -61,7 +61,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                 try {
                     dbReader = db.getReader();
                     dbReader.open();
-                    newsCursor = dbReader.getAllNewsOfChanelCursor(chanelId);
+                    newsCursor = dbReader.getAllItemsOfFeedCursor(chanelId);
                     adapter.changeCursor(newsCursor);
                     adapter.notifyDataSetChanged();
                 } catch (Throwable th) {
@@ -188,7 +188,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
     }
 
     private void newsTitleAndListInit() {
-        ListView newsList = (ListView) findViewById(R.id.activity_main_newsList);
+        ListView newsList = (ListView) findViewById(R.id.activity_main_feedsList);
         TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
 
         if (chanelId == -1) {
@@ -201,7 +201,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
             dbReader = db.getReader();
             dbReader.open();
             if ("".equals(chanelTitle)) {
-                Channel currentChannel = dbReader.getChanelById(this.chanelId);
+                Feed currentChannel = dbReader.getFeedById(this.chanelId);
                 if (currentChannel != null) {
                     chanelTitle = currentChannel.getTitle();
                 } else {
@@ -217,13 +217,13 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
             if (newsList != null) {
                 newsList.setVisibility(View.VISIBLE);
-                newsCursor = dbReader.getAllNewsOfChanelCursor(chanelId);
+                newsCursor = dbReader.getAllItemsOfFeedCursor(chanelId);
 
-                String[] from = {DbConvention.NEWS_TABLE_TITLE};
-                int[] to = {R.id.news_list_title};
+                String[] from = {DbConvention.FEED_ITEM_TITLE};
+                int[] to = {R.id.feedItem_list_title};
 
                 adapter =
-                        new SimpleCursorAdapter(this, R.layout.news_list_item, newsCursor, from, to);
+                        new SimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to);
 
                 newsList.setAdapter(adapter);
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {

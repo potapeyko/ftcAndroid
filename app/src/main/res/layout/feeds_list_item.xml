@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:orientation="vertical"
               android:background="#88d4fb"
               android:gravity="center"
               android:padding="10dp"
 >
-    <TextView android:id="@+id/channels.list.item.title"
+    <TextView android:id="@+id/feeds.list.item.title"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:gravity="center_horizontal"
 
     />
-    <TextView android:id="@+id/channels.list.item.description"
+    <TextView android:id="@+id/feeds.list.item.description"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceSmall"
               />
-
 
 </LinearLayout>

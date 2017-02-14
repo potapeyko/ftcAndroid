@@ -55,7 +55,7 @@ final class DrawerItemClickListener implements ListView.OnItemClickListener {
                         db = new DB(mainActivity);
                         dbWriter= db.getWriter();
                         dbWriter.open();
-                        dbWriter.deleteChanelById(mainActivity.getChanelId());
+                        dbWriter.deleteFeedById(mainActivity.getChanelId());
                         final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mainActivity);
                         final SharedPreferences.Editor ed = sPref.edit();
                         ed.putLong(MainActivity.CHANEL_ID, -1);

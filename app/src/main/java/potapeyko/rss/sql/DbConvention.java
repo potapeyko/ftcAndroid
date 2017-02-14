@@ -1,46 +1,57 @@
 package potapeyko.rss.sql;
 
-public  final class DbConvention {
+public final class DbConvention {
     private DbConvention() throws Exception {
         throw new Exception();
     }
 
     static final String DB_NAME = "rssReaderDb";
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
 
-    static final String DB_CHANEL_TABLE = "chanel";
-    public static final String CHANEL_TABLE_TITLE = "title";
-    static final String CHANEL_TABLE_LINK = "link";
-    public static final String CHANEL_TABLE_DESCRIPTION = "description";
-    static final String CHANEL_ID = "_id";
+    //FEED
+    static final String FEED_TABLE_NAME = "feed";
+    static final String FEED_ID = "_id";
+    public static final String FEED_TITLE = "title";
+    static final String FEED_SITE_LINK = "siteLink";
+    static final String FEED_LINK = "link";
+    public static final String FEED_DESCRIPTION = "description";
+    static final String FEED_BUILD_DATE = "lastBuildDate";
+    static final String FEED_PUBLICATION_DATE = "pubDate";
 
-
-    static final String DB_NEWS_TABLE = "news";
-    static final String NEWS_TABLE_DESCRIPTION = "description";
-    public static final String NEWS_TABLE_TITLE = "title";
-    static final String NEWS_TABLE_LINK = "link";
-    static final String NEWS_TABLE_CHANEL_ID = "chanel_id";
-    static final String NEWS_ID = "_id";
-
-    static final String DB_CREATE_CHANEL_TABLE =
-            "create table " + DB_CHANEL_TABLE +
+    static final String CREATE_FEED_TABLE_COMMAND =
+            "create table " + FEED_TABLE_NAME +
                     "(_id integer primary key autoincrement, " +
-                    CHANEL_TABLE_TITLE + " text NOT NULL, " +
-                    CHANEL_TABLE_LINK + " text NOT NULL, " +
-                    CHANEL_TABLE_DESCRIPTION + " text);";
+                    FEED_TITLE + " text NOT NULL, " +
+                    FEED_LINK + " text NOT NULL, " +
+                    FEED_SITE_LINK + " text, " +
+                    FEED_DESCRIPTION + " text, " +
+                    FEED_BUILD_DATE + " integer, " +
+                    FEED_PUBLICATION_DATE + " integer  );";
 
+    //FEED_ITEM
+    static final String FEED_ITEM_TABLE_NAME = "feedItem";
+    static final String FEED_ITEM_ID = "_id";
+    public static final String FEED_ITEM_TITLE = "title";
+    static final String FEED_ITEM_DESCRIPTION = "description";
+    static final String FEED_ITEM_LINK = "link";
+    static final String FEED_ITEM_FEED_ID = "chanel_id";
+    static final String FEED_ITEM_PUBLICATION_DATE = "pubDate";
+    static final String FEED_ITEM_MEDIA_URL = "mediaURL";
+    static final String FEED_ITEM_MEDIA_SIZE = "mediaSize";
 
-    //у rss нет обязательный полей в новости, поэтому ограничения not null нет
     static final String DB_CREATE_NEWS_TABLE =
-            "create table " + DB_NEWS_TABLE +
+            "create table " + FEED_ITEM_TABLE_NAME +
                     "(_id integer primary key autoincrement, " +
-                    NEWS_TABLE_TITLE + " text, " +
-                    NEWS_TABLE_LINK + " text, " +
-                    NEWS_TABLE_DESCRIPTION + " text, " +
-                    NEWS_TABLE_CHANEL_ID + " INTEGER, " +
-                    " foreign key ( " + NEWS_TABLE_CHANEL_ID + " ) references " +
-                    DB_CHANEL_TABLE + " (_id) on delete cascade);";
+                    FEED_ITEM_TITLE + " text, " +
+                    FEED_ITEM_LINK + " text, " +
+                    FEED_ITEM_DESCRIPTION + " text, " +
+                    FEED_ITEM_PUBLICATION_DATE + " INTEGER, " +
+                    FEED_ITEM_MEDIA_URL + " text, " +
+                    FEED_ITEM_MEDIA_SIZE + " INTEGER, " +
+                    FEED_ITEM_FEED_ID + " INTEGER, " +
+                    " foreign key (" + FEED_ITEM_FEED_ID + ") references " +
+                    FEED_TABLE_NAME + " (_id) on delete cascade);";
 
-    static final String SORT_DESCENDING = " DESC ";
+    static final String SORT_DESCENDING = " DESC ";//ПО УБЫВАНИЮ
 
 }

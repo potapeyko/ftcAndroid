@@ -19,6 +19,4 @@ public class SettingsActivity extends PreferenceActivity  {
         Intent  intent = new Intent(other,SettingsActivity.class);
         other.startActivity(intent);
     }
-
-
 }

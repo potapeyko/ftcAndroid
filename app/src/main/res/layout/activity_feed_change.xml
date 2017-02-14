@@ -7,7 +7,7 @@
 >
 
     <TextView
-            android:id="@+id/chanel.change.text"
+            android:id="@+id/feed.change.text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="52dp"
@@ -18,7 +18,7 @@
             android:textColor="@android:color/white"
     />
     <ListView
-            android:id="@+id/chanel.change.list"
+            android:id="@+id/feed.change.list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"

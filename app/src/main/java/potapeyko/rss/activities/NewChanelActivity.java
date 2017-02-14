@@ -13,6 +13,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.*;
 import lombok.NonNull;
+
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 import potapeyko.rss.network.NetworkHelper;
@@ -85,11 +86,11 @@ public final class NewChanelActivity extends MyBaseActivity {
             public void onCreateActivity(@Nullable Bundle savedInstanceState) {
 
                 LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( BroadcastSender.INTENT_FILTER ) );
-                setContentView(R.layout.activity_new_chanel);
-                btnNewChanel = (Button) findViewById(R.id.activity_new_chanel_btnNewChanel);
-                etUri = (EditText) findViewById(R.id.activity_new_chanel_etNewChanelUri);
-                tvNewChanel = (TextView) findViewById(R.id.activity_new_chanel_tvNewChanel);
-                progressBar= (ProgressBar)findViewById(R.id.activity_new_chanel_progressBar);
+                setContentView(R.layout.activity_new_feed);
+                btnNewChanel = (Button) findViewById(R.id.activity_new_feed_btnNewChanel);
+                etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
+                tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
+                progressBar= (ProgressBar)findViewById(R.id.activity_new_feed_progressBar);
                 if (!nwHelper.isNetworkAvailable()) {
                     notConnectionCase();
                 }

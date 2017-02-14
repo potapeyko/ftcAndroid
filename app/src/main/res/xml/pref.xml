@@ -19,6 +19,17 @@
     </EditTextPreference>
 
 
+    <!--<PreferenceScreen-->
+            <!--android:summary="Импортированная системная настройка"-->
+            <!--android:title="Настройка через намерение">-->
+        <!--<intent android:action="android.settings.AIRPLANE_MODE_SETTINGS"/>-->
+    <!--</PreferenceScreen>-->
 
-
+    <ListPreference
+            android:key="lang"
+            android:title="@string/LangTitle"
+            android:summary="@string/LangSummary"
+            android:entries="@array/entries_lang"
+            android:entryValues="@array/entryvalues_lang"
+            android:dialogTitle="@string/LangDialogTitle" />
 </PreferenceScreen>

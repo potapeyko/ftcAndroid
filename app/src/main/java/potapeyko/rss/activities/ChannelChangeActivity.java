@@ -30,7 +30,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
         this.onCreateSubscribe(new ActivityListenerAdapter() {
             @Override
             public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-                setContentView(R.layout.activity_chanel_change);
+                setContentView(R.layout.activity_feed_change);
                 channelsListInit();
             }
         });
@@ -47,8 +47,8 @@ public final class ChannelChangeActivity extends MyBaseActivity {
     }
 
     private void channelsListInit() {
-        final ListView channelsList = (ListView) findViewById(R.id.chanel_change_list);
-        TextView title = (TextView) findViewById(R.id.chanel_change_text);
+        final ListView channelsList = (ListView) findViewById(R.id.feed_change_list);
+        TextView title = (TextView) findViewById(R.id.feed_change_text);
         if (channelsList != null) {
             DbReader dbReader = db.getReader();
             try {
@@ -62,11 +62,11 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                 }
 
 
-                final String[] from = {DbConvention.CHANEL_TABLE_TITLE,
-                        DbConvention.CHANEL_TABLE_DESCRIPTION};
-                final int[] to = {R.id.channels_list_item_title, R.id.channels_list_item_description};
+                final String[] from = {DbConvention.FEED_TITLE,
+                        DbConvention.FEED_DESCRIPTION};
+                final int[] to = {R.id.feeds_list_item_title, R.id.feeds_list_item_description};
 
-                final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.channels_list_item,
+                final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.feeds_list_item,
                         channelsListCursor, from, to);
 
                 channelsList.setAdapter(adapter);

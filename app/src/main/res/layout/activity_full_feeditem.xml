@@ -15,7 +15,7 @@
     >
 
         <TextView
-                android:id="@+id/activity.full.news.title"
+                android:id="@+id/activity.full.feedItem.title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@android:color/white"
@@ -27,13 +27,13 @@
         />
 
     </LinearLayout>
-    <WebView android:id="@+id/activity.full.news.description"
+    <WebView android:id="@+id/activity.full.feedItem.description"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
     >
 
     </WebView>
-    <TextView android:id="@+id/activity.full.news.link"
+    <TextView android:id="@+id/activity.full.feedItem.link"
               android:layout_width="match_parent" android:layout_height="wrap_content"
               android:text="@string/link_text"
               android:layout_marginTop="20dp"

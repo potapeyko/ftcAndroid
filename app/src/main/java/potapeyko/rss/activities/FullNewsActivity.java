@@ -12,14 +12,14 @@ import android.widget.TextView;
 import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.IActivityListener;
-import potapeyko.rss.model.News;
+import potapeyko.rss.model.FeedItem;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
 
 public final class FullNewsActivity extends MyBaseActivity implements IActivityListener {
     private long newsId;
     private final DB db;
-    private News news;
+    private FeedItem feedItem;
     private static final String idKey = "FULL_NEWS_ID";
     private static final int UNKNOWN_NEWS_ID = -10;
 
@@ -31,16 +31,16 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
 
     @Override
     public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-        setContentView(R.layout.activity_full_news);
+        setContentView(R.layout.activity_full_feeditem);
         if (savedInstanceState != null && savedInstanceState.containsKey(idKey)) {
             newsId = savedInstanceState.getLong(idKey);
         } else {
             newsId = getIntent().getLongExtra(idKey, UNKNOWN_NEWS_ID);
         }
 
-        TextView title = (TextView) findViewById(R.id.activity_full_news_title);
-        WebView description = (WebView) findViewById(R.id.activity_full_news_description);
-        TextView link = (TextView) findViewById(R.id.activity_full_news_link);
+        TextView title = (TextView) findViewById(R.id.activity_full_feedItem_title);
+        WebView description = (WebView) findViewById(R.id.activity_full_feedItem_description);
+        TextView link = (TextView) findViewById(R.id.activity_full_feedItem_link);
         if (newsId == UNKNOWN_NEWS_ID) {
             if (title != null) {
                 title.setText(R.string.activity_full_news_unknown_news_title);
@@ -57,20 +57,20 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         try {
             dbReader = db.getReader();
             dbReader.open();
-            news = dbReader.getNewsById(newsId);
+            feedItem = dbReader.getFeedItemById(newsId);
             if (title != null) {
-                title.setText(news.getTitle());
+                title.setText(feedItem.getTitle());
             }
 
             if (description != null) {
-                description.loadDataWithBaseURL(null, news.getDescription(), "text/html", "utf-8", null);
+                description.loadDataWithBaseURL(null, feedItem.getDescription(), "text/html", "utf-8", null);
             }
             if (link != null) {
                 link.setText(R.string.activity_full_news_link_text);
                 link.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Uri address = Uri.parse(news.getLink());
+                        Uri address = Uri.parse(feedItem.getLink());
                         Intent uriOpen = new Intent(Intent.ACTION_VIEW, address);
                         view.getContext().startActivity(uriOpen);
                     }
