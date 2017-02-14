@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connection_exception">
+        Unable to perform the operation. Check the access to the network and correct the specified address.
+    </string>
+    <string name="db_exception">
+
+        An error occurred while accessing the database. Try restarting the application.
+    </string>
+    <string name="channel_already_was_in_db">
+        The channel with the specified address has been added previously. Select a channel in "Change Channel".
+    </string>
+
+
+
+
+</resources>

@@ -3,15 +3,15 @@
     <string name="title_txt">Неизмененный текст</string>
     <string name="hint_new_chanel_uti">Введите URL ленты</string>
     <string-array name="drawer_items_array">
-        <item>Add feed</item>
-        <item>Change feed</item>
-        <item>Delete feed</item>
-        <item>Settings</item>
-        <item>About Application</item>
+        <item>Добавить канал</item>
+        <item>Сменить канал</item>
+        <item>Удалить канал</item>
+        <item>Настройки</item>
+        <item>О приложении</item>
     </string-array>
     <string name="link_text">Ссылка на полную статью в Сети</string>
     <string name="new_chanel_tv">Введите канал</string>
-    <string name="new_chanel_btn">Search</string>
+    <string name="new_chanel_btn">Найти</string>
     <string name="new_chanel_no_connection">Соединение не установленно</string>
     <string name="new_chanel_no_connection_toast">Проверьте соединение и попробуйте снова</string>
     <string name="new_chanel_not_correct_link_toast">Введена неверная ссылка</string>
@@ -48,8 +48,8 @@
     <string name="LangDialogTitle">Выберите язык:</string>
     <string name="LangSummary">Язык приложения.\nНеобходимо перезапустить приложение для принятия изменений.</string>
 
-    <string name="test">test</string>
 
+    <string name="test">тест</string>
 
 
 </resources>
