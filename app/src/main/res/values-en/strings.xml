@@ -29,8 +29,6 @@
     <string name = "activity_settings_auto_title">
         Automatic update</string>
     <string name="activity_full_news_unknown_news_title">Selected unknown news, try to open the news again</string>
-    <string name="settings_auto_update_key">auto_update</string>
-    <string name="settings_period_key">period</string>
     <string name="activity_full_news_link_text">
         Go to the website with the full version of the article</string>
     <string name="channel_add_broadcast_message">
@@ -50,9 +48,7 @@
     </string>
 
 
-    <string name="LOG_KEY">rss_reader_log</string>
-
-    <string name="LangTitle">Язык</string>
+    <string name="LangTitle">Language</string>
     <string name="LangDialogTitle">Choose language:</string>
     <string name="LangSummary">language of the application. \nYou need to restart the application to apply the changes.</string>
 

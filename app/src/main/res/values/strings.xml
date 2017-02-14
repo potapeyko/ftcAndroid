@@ -26,6 +26,7 @@
     <string name="activity_full_news_unknown_news_title">Выбрана неизвестная новость, попробуйте открыть новость снова</string>
     <string name="settings_auto_update_key">auto_update</string>
     <string name="settings_period_key">period</string>
+    <string name="settings_lang_key">lang</string>
     <string name="activity_full_news_link_text">Перейти на сайт с полной версией статьи</string>
     <string name="channel_add_broadcast_message">Канал добавлен, ожидайте добавления новостей</string>
     <string name="activity_channel_change_empty_list">Не добавленно ни одного канала. Добавьте канал в пункте

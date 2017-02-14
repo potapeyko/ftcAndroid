@@ -26,7 +26,8 @@
     <!--</PreferenceScreen>-->
 
     <ListPreference
-            android:key="lang"
+            android:key="@string/settings_lang_key"
+            android:defaultValue="default"
             android:title="@string/LangTitle"
             android:summary="@string/LangSummary"
             android:entries="@array/entries_lang"

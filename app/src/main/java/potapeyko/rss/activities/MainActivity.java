@@ -270,6 +270,9 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        alarmSettings();
+        if(getString(R.string.settings_period_key).equals(key)||
+                getString(R.string.settings_auto_update_key).equals(key)) {
+            alarmSettings();
+        }
     }
 }
