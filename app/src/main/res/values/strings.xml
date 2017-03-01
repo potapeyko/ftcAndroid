@@ -52,5 +52,9 @@
 
     <string name="test">тест</string>
 
+    <string name="notification_up">Обновление каналов</string>
+    <string name="notification_updated_subtext">(Кликните для просмотра)</string>
+    <string name="notification_updating_subtext">(Кликните для отмены)</string>
+
 
 </resources>

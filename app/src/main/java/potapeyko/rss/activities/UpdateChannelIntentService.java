@@ -1,11 +1,15 @@
 package potapeyko.rss.activities;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import potapeyko.rss.R;
@@ -35,9 +39,76 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
 
     private static final int UPDATE_INTENT_CONNECT_TIMEOUT = 1000;
 
+    private static final int NOTIFICATION_ID = 1294124;
+
     private Long feedId;
+
     private boolean isNewFeedItem = false;
+    private int quantityOfNewFeedItem = 0;
+    private int quantityOfFeeds = 0;
+    private int numberOfFeed = 0;
     private DB db;
+    private NotificationManager notificationManager;
+    private static FeedParser parser;
+    private static boolean stopProcessing = false;
+
+    public static void stop() {
+        parser.stopProcessing();
+        stopProcessing = true;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Toast toast = Toast.makeText(getApplicationContext(),
+                "it work ftc onCreate Service", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * @param progress if process is completed use null.
+     * @param quantity - the amount of added news. Use null if this number is unknown.
+     *                 ONE of the two options must be NULL
+     */
+
+    private Notification getNotification(String title, String text, String subText, Integer progress, Integer quantity) {
+        NotificationCompat.Builder
+            builder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_update_white_24dp)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSubText(subText)
+                    .setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_SERVICE);
+        }
+        Intent notificationIntent;
+        PendingIntent contentIntent;
+        if (progress != null) {
+            builder.setProgress(quantityOfFeeds, progress, false);
+            notificationIntent = new Intent(this, UpdateChannelIntentServiceStopper.class);
+            notificationIntent.setAction(ACTION_UPDATE_STOP);
+
+            contentIntent = PendingIntent.getService(this,
+                    0, notificationIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+        } else {
+            notificationIntent = new Intent(this, ChannelChangeActivity.class);
+            contentIntent = PendingIntent.getActivity(this,
+                    0, notificationIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+        }
+        if (quantity != null) {
+            builder.setNumber(quantity);
+        }
+        builder.setContentIntent(contentIntent);
+        return builder.build();
+    }
+
+    private void sendNotification(Notification nf) {
+        notificationManager.notify(NOTIFICATION_ID, nf);
+    }
 
     public UpdateChannelIntentService() {
         super("UpdateChannelIntentService");
@@ -56,8 +127,6 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
             final String action = intent.getAction();
             if (ACTION_UPDATE.equals(action)) {
                 handleActionUpdate();
-            } else if (ACTION_UPDATE_STOP.equals(action)) {
-                //todo // STOPSHIP: 04.02.2017  
             }
         }
     }
@@ -77,8 +146,11 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
             } finally {
                 dbReader.close();
             }
-
+            quantityOfFeeds = feeds.size();
             for (Feed feed : feeds) {
+                if (stopProcessing) {
+                    break;
+                }
                 String uri = feed.getLink();
                 URL url = new URL(uri);
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -87,7 +159,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 InputStream is = urlConnection.getInputStream();
                 XmlPullParser xpp = FeedParser.prepareXpp(is);
 
-                FeedParser parser = new FeedParser();
+                parser = new FeedParser();
                 //регистрация класса в качестве получателя сообщений
                 parser.setFeedHandler(this);
                 parser.setFeedItemHandler(this);
@@ -95,14 +167,20 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 isNewFeedItem = false;
                 parser.parseFeed(xpp, uri); //запуск парсинга
                 //отправка собщения об обновлении канала.
+
                 if (isNewFeedItem) {
                     sendMyBroadcast(this, CHANNEL_UPDATE_BROADCAST_MESS,
                             feed.getId());
-                }
-                else {
-                    Log.d("wtf","Обнова. Нового нет");
+                } else {
+                    Log.d("wtf", "Обнова. Нового нет");
                 }
             }
+            stopProcessing = false;
+            this.sendNotification(
+                    this.getNotification(getString(R.string.notification_up),
+                            "", getString(R.string.notification_updated_subtext),
+                            null, quantityOfNewFeedItem));
+            quantityOfNewFeedItem = 0;
         } catch (IOException | XmlPullParserException | FeedParser.UnknownFeedException e) {
             sendMyBroadcast(this, CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
             //todo логирование
@@ -120,7 +198,13 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
 
     @Override
     public void OnFeedInfo(FeedParser feedParser, Feed feed) {
-        //do nothing
+        numberOfFeed++;
+        Notification nf = this.getNotification(
+                getString(R.string.notification_up),
+                feed.getTitle(),
+                getString(R.string.notification_updating_subtext),
+                numberOfFeed, null);
+        this.sendNotification(nf);
     }
 
     @Override
@@ -132,8 +216,9 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
             dbWriter.open();
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedId, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
-                        feedItem.getPubDate(),feedItem.getMediaURL(),feedItem.getMediaSize());//todo добавить поля
+                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize());//todo добавить поля
                 isNewFeedItem = true;
+                quantityOfNewFeedItem++;
             }
 
         } catch (Throwable th) {

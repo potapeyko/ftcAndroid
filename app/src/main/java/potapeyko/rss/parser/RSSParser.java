@@ -1,6 +1,5 @@
 package potapeyko.rss.parser;
 
-import android.util.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import potapeyko.rss.model.Feed;
@@ -9,9 +8,7 @@ import potapeyko.rss.model.FeedItem;
 import java.io.IOException;
 import java.util.Date;
 
-/**
- * Created by Дмитрий on 25.01.2017.
- */
+
 class RSSParser {
     private RSSParser() {
     }
@@ -44,7 +41,7 @@ class RSSParser {
             } else if (name.equals("image")) {
                 in_image = true;
                 continue;
-            } else if (parser.getDepth() != 3) {//todo почему 3?
+            } else if (parser.getDepth() != 3) {
                 continue;
             } else if (name.equalsIgnoreCase("pubDate")) {
                 Date date = ParserDateUtils.parseDate(parser.nextText());
@@ -105,6 +102,7 @@ class RSSParser {
                 if (name.equalsIgnoreCase("item")) {
                     if (feedParser.getFeedItemHandler() != null)
                         feedParser.getFeedItemHandler().OnFeedItem(feedParser, item);
+
                     if (feedParser.shouldStopProcessing()) {
                         return;
                     }

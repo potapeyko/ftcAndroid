@@ -18,15 +18,11 @@ public class UpdateAlarmListener extends BroadcastReceiver {
     private static final String DEFAULT_PERIOD = "1440";
     public static final String NEXT_UPDATE_TIME_KEY = "nextUpdate";
 
-
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if (context == null || intent == null) {
             return;
         }
-
 
         this.context = context;
         sPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -37,10 +33,8 @@ public class UpdateAlarmListener extends BroadcastReceiver {
 
         UpdateChannelIntentService.startActionUpdate(context);
         if (sPref.getBoolean(context.getString(R.string.settings_auto_update_key), true)) {
-
             final long nextUpdateTime = setNextUpdateTime();
             am.set(AlarmManager.RTC_WAKEUP, nextUpdateTime, pendingIntent);
-
         }
     }
 

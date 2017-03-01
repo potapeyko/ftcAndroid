@@ -54,6 +54,10 @@
 
     <string name="test">test</string>
 
+    <string name="notification_up">Feed updating</string>
+    <string name="notification_updating_subtext">(Click to cancel)</string>
+    <string name="notification_updated_subtext">(Click to watch)</string>
+
 
 
 </resources>

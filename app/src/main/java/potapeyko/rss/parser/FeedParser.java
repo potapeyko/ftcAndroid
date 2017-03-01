@@ -12,9 +12,7 @@ import potapeyko.rss.model.FeedItem;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by Дмитрий on 25.01.2017.
- */
+
 public class FeedParser {
     public interface FeedHandler {
         public void OnFeedInfo(FeedParser feedParser, Feed feed);
@@ -59,11 +57,15 @@ public class FeedParser {
     }
 
     public boolean shouldStopProcessing() {
-        return stopProcessing;
+        synchronized (this) {
+            return stopProcessing;
+        }
     }
 
     public void stopProcessing() {
-        stopProcessing = true;
+        synchronized (this) {
+            stopProcessing = true;
+        }
     }
 
     public void parseFeed(@NonNull XmlPullParser parser, @NonNull String FeedUrl)
