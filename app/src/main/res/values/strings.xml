@@ -2,6 +2,12 @@
     <string name="app_name">rssReader</string>
     <string name="title_txt">Неизмененный текст</string>
     <string name="hint_new_chanel_uti">Введите URL ленты</string>
+    <string name="drawer_items_array_add">Добавить канал</string>
+
+    <string name="drawer_items_array_change">Сменить канал</string>
+    <string name="drawer_items_array_delete">Удалить канал</string>
+    <string name="drawer_items_array_setting">Настройки</string>
+    <string name="drawer_items_array_about">О приложении</string>
     <string-array name="drawer_items_array">
         <item>Добавить канал</item>
         <item>Сменить канал</item>
@@ -18,27 +24,33 @@
     <string name="back">Назад</string>
     <string name="chanel_change_textView">Выбор канала</string>
     <string name="activity_about_title">О приложении</string>
-    <string name= "activity_main_add_new_chanel">Выберите или добавьте канал</string>
-    <string name = "activity_settings_period_title">Введите период в минутах</string>
-    <string name = "activity_settings_period_summary">Введите период обновления в минутах</string>
-    <string name = "activity_settings_auto_summary">Будет ли приложение проверять новости автоматичеки</string>
-    <string name = "activity_settings_auto_title">Автоматическое обновление</string>
-    <string name="activity_full_news_unknown_news_title">Выбрана неизвестная новость, попробуйте открыть новость снова</string>
+    <string name="activity_main_add_new_chanel">Выберите или добавьте канал</string>
+    <string name="activity_settings_period_title">Введите период в минутах</string>
+    <string name="activity_settings_period_summary">Введите период обновления в минутах</string>
+    <string name="activity_settings_auto_summary">Будет ли приложение проверять новости автоматичеки</string>
+    <string name="activity_settings_auto_title">Автоматическое обновление</string>
+    <string name="activity_full_news_unknown_news_title">Выбрана неизвестная новость, попробуйте открыть новость снова
+    </string>
     <string name="settings_auto_update_key">auto_update</string>
     <string name="settings_period_key">period</string>
     <string name="settings_lang_key">lang</string>
     <string name="activity_full_news_link_text">Перейти на сайт с полной версией статьи</string>
     <string name="channel_add_broadcast_message">Канал добавлен, ожидайте добавления новостей</string>
     <string name="activity_channel_change_empty_list">Не добавленно ни одного канала. Добавьте канал в пункте
-        "Добавить канал"</string>
+        "Добавить канал"
+    </string>
 
     <string name="activity_about_text">
         Приложение является агрегатором новостей. Получает данные в формате RSS. Однажды загруженный материав в
         дальнейшем можно просматривать без доступа к интернету. Программа проверяет новости с заданной периодичностью.
-        Периодичность необходимо установить в пункте \"Настройки приложения\". Добавить новый канал можно введя url ссылку
-        в поле ввода на странице Добавления канала. Ссылку лучше всего скопировать из браузера, чтобы не допустить ошибок.
-        В противном случае, приложение сообщит предложит ввести ссылку снова. Однако, ссылка может привести к другому (не ожидаемому)
-        rss каналу, который и будет загружен. Для удаления канала необходимо открыть его и выбрать пункт меню \"Удалить канал\".
+        Периодичность необходимо установить в пункте \"Настройки приложения\". Добавить новый канал можно введя url
+        ссылку
+        в поле ввода на странице Добавления канала. Ссылку лучше всего скопировать из браузера, чтобы не допустить
+        ошибок.
+        В противном случае, приложение сообщит предложит ввести ссылку снова. Однако, ссылка может привести к другому
+        (не ожидаемому)
+        rss каналу, который и будет загружен. Для удаления канала необходимо открыть его и выбрать пункт меню \"Удалить
+        канал\".
         Канал будет удален.
     </string>
 
@@ -55,6 +67,11 @@
     <string name="notification_up">Обновление каналов</string>
     <string name="notification_updated_subtext">(Кликните для просмотра)</string>
     <string name="notification_updating_subtext">(Кликните для отмены)</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 
 
 </resources>

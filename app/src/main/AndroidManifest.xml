@@ -16,10 +16,19 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".activities.MyBaseActivity"/>
-        <activity android:name=".activities.MainActivity">
+        <activity
+                android:name=".activities.Main2Activity"
+                android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.MainActivity">
+            <intent-filter>
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
                 <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
         </activity>
@@ -42,16 +51,17 @@
                 android:name=".activities.UpdateChannelIntentServiceStopper"
                 android:enabled="true">
         </service>
+
         <receiver android:name=".utils.UpdateAlarmListener">
         </receiver>
-        <receiver
-                android:name=".activities.BootReceiver">
+        <receiver android:name=".activities.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

@@ -2,6 +2,12 @@
     <string name="app_name">rssReader</string>
     <string name="title_txt">Неизмененный text</string>
     <string name="hint_new_chanel_uti">Enter the URL of the feed</string>
+
+    <string name="drawer_items_array_add">Add feed</string>
+    <string name="drawer_items_array_change">Change feed</string>
+    <string name="drawer_items_array_delete">Delete feed</string>
+    <string name="drawer_items_array_setting">Settings</string>
+    <string name="drawer_items_array_about">About Application</string>
     <string-array name="drawer_items_array">
         <item>Add feed</item>
         <item>Change feed</item>
@@ -10,54 +16,65 @@
         <item>About Application</item>
     </string-array>
     <string name="link_text">
-        Link to the full article on the Web</string>
+        Link to the full article on the Web
+    </string>
     <string name="new_chanel_tv">Enter the feed</string>
     <string name="new_chanel_btn">Search</string>
     <string name="new_chanel_no_connection">Connection not set in</string>
     <string name="new_chanel_no_connection_toast">Check the connection and try again</string>
     <string name="new_chanel_not_correct_link_toast">
-        An invalid link</string>
+        An invalid link
+    </string>
     <string name="back">Back</string>
     <string name="chanel_change_textView">Feed selection</string>
     <string name="activity_about_title">About application</string>
-    <string name= "activity_main_add_new_chanel">Select or add the channel</string>
-    <string name = "activity_settings_period_title">Enter the period in minutes</string>
-    <string name = "activity_settings_period_summary">
-        Enter the refresh period in minutes</string>
-    <string name = "activity_settings_auto_summary">
-        Will the app to check the news AUTOMATIC</string>
-    <string name = "activity_settings_auto_title">
-        Automatic update</string>
+    <string name="activity_main_add_new_chanel">Select or add the channel</string>
+    <string name="activity_settings_period_title">Enter the period in minutes</string>
+    <string name="activity_settings_period_summary">
+        Enter the refresh period in minutes
+    </string>
+    <string name="activity_settings_auto_summary">
+        Will the app to check the news AUTOMATIC
+    </string>
+    <string name="activity_settings_auto_title">
+        Automatic update
+    </string>
     <string name="activity_full_news_unknown_news_title">Selected unknown news, try to open the news again</string>
     <string name="activity_full_news_link_text">
-        Go to the website with the full version of the article</string>
+        Go to the website with the full version of the article
+    </string>
     <string name="channel_add_broadcast_message">
-        The channel is added, expect to add news</string>
+        The channel is added, expect to add news
+    </string>
     <string name="activity_channel_change_empty_list">
         Not added to any channel. Add channel in paragraph
-        "Add Channel"</string>
+        "Add Channel"
+    </string>
 
     <string name="activity_about_text">
         The app is a news aggregator. Gets the data in RSS format. Once loaded material in
         Later, you can view without access to the Internet. The program checks the news at specified intervals.
         The frequency must be set to point \ "Application settings \". Add a new channel by entering a URL link can be
         in the input field on the channel page additions. Best link copy from the browser to prevent errors.
-        Otherwise, the application will ask for the report link again. However, the link may lead to another (not expected)
-        RSS feeds, which will be loaded. To delete a channel, you must open it and select the menu item \"Delete channel \".
+        Otherwise, the application will ask for the report link again. However, the link may lead to another (not
+        expected)
+        RSS feeds, which will be loaded. To delete a channel, you must open it and select the menu item \"Delete channel
+        \".
         The channel will be removed.
     </string>
 
 
     <string name="LangTitle">Language</string>
     <string name="LangDialogTitle">Choose language:</string>
-    <string name="LangSummary">language of the application. \nYou need to restart the application to apply the changes.</string>
+    <string name="LangSummary">language of the application. \nYou need to restart the application to apply the
+        changes.
+    </string>
 
     <string name="test">test</string>
 
     <string name="notification_up">Feed updating</string>
     <string name="notification_updating_subtext">(Click to cancel)</string>
     <string name="notification_updated_subtext">(Click to watch)</string>
-
 
 
 </resources>
