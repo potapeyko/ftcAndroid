@@ -164,7 +164,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
 
     private void leftDrawerLayoutInit() {
         String[] drawerTitles = getResources().getStringArray(R.array.drawer_items_array);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout2);
         ListView drawerList = (ListView) findViewById(R.id.activity_main_left_drawer);
         if (drawerList != null) {
             drawerList.setAdapter(new ArrayAdapter<>(this,
