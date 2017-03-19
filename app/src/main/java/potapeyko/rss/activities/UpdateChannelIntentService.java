@@ -74,12 +74,12 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
 
     private Notification getNotification(String title, String text, String subText, Integer progress, Integer quantity) {
         NotificationCompat.Builder
-            builder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_update_white_24dp)
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setSubText(subText)
-                    .setAutoCancel(true);
+                builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_update_white_24dp)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSubText(subText)
+                .setAutoCancel(true);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(Notification.CATEGORY_SERVICE);
         }
@@ -216,7 +216,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
             dbWriter.open();
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedId, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
-                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize());//todo добавить поля
+                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),0);//todo добавить поля
                 isNewFeedItem = true;
                 quantityOfNewFeedItem++;
             }
