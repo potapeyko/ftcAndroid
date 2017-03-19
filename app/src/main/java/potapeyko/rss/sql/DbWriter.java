@@ -22,7 +22,7 @@ public class DbWriter extends DbReader {
 
     public void addFeedItemToDB(final long feedId, final String title, final String link,
                                 final String description, final Date pubDate, final String mediaUrl,
-                                Long mediaSize) throws DbException {
+                                Long mediaSize,int flags) throws DbException {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.FEED_ITEM_FEED_ID, feedId);
@@ -32,6 +32,7 @@ public class DbWriter extends DbReader {
         cv.put(DbConvention.FEED_ITEM_PUBLICATION_DATE, pubDate.getTime());
         cv.put(DbConvention.FEED_ITEM_MEDIA_URL, mediaUrl);
         cv.put(DbConvention.FEED_ITEM_MEDIA_SIZE, mediaSize);
+        cv.put(DbConvention.FEED_ITEM_FLAGS, flags);
         long result = -1;
 
         dB.beginTransaction();
@@ -44,8 +45,22 @@ public class DbWriter extends DbReader {
         if (result == -1) throw new DbException();
     }
 
+    public void changeFeedItemFlags(final long feedItemId,int newFlags){
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS,newFlags);
+        dB.beginTransaction();
+        try {
+            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
+                    new String[] { String.valueOf(feedItemId) });
+            dB.setTransactionSuccessful();
+        } finally {
+            dB.endTransaction();
+        }
+    }
+
     public long addFeedToDB(final String title, final String link, final String siteLink, final String description,
-                            Date lastBuildDate, Date pubDate) {
+                            Date lastBuildDate, Date pubDate,int flags) {
         if (dB == null) return -1;
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.FEED_TITLE, title);
@@ -56,9 +71,7 @@ public class DbWriter extends DbReader {
         cv.put(DbConvention.FEED_BUILD_DATE, lastBuildD);
         Long pubD = pubDate == null ? 1 : pubDate.getTime();
         cv.put(DbConvention.FEED_PUBLICATION_DATE, pubD);
-
-
-
+        cv.put(DbConvention.FEED_FLAGS,flags);
 
         long resultId;
 
@@ -67,6 +80,20 @@ public class DbWriter extends DbReader {
             resultId = dB.insert(DbConvention.FEED_TABLE_NAME, null, cv);
             dB.setTransactionSuccessful();
             return resultId;
+        } finally {
+            dB.endTransaction();
+        }
+    }
+
+    public void changeFeedFlags(final long feedId,int newFlags){
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS,newFlags);
+        dB.beginTransaction();
+        try {
+            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
+                    new String[] { String.valueOf(feedId) });
+            dB.setTransactionSuccessful();
         } finally {
             dB.endTransaction();
         }

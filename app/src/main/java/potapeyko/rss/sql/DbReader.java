@@ -49,14 +49,15 @@ public class DbReader {
         try {
             cur = dB.query(DbConvention.FEED_TABLE_NAME, null, selection, null, null, null, null);
             if (cur.moveToFirst()) {
-                Date lastBuildDate = cur.isNull(5) ? null : new Date(cur.getLong(5));
-                Date pubDate = cur.isNull(6) ? null : new Date(cur.getLong(6));
                 String title = cur.isNull(1) ? null : cur.getString(1);
                 String link = cur.isNull(2) ? null : cur.getString(2);
                 String siteLink = cur.isNull(3) ? null : cur.getString(3);
                 String description = cur.isNull(4) ? null : cur.getString(4);
+                Date lastBuildDate = cur.isNull(5) ? null : new Date(cur.getLong(5));
+                Date pubDate = cur.isNull(6) ? null : new Date(cur.getLong(6));
+
                 resFeed = new Feed(cur.getLong(0), title, link, siteLink, description,
-                        lastBuildDate, pubDate);
+                        lastBuildDate, pubDate,cur.getInt(7));
             }
             return resFeed;
         } catch (Throwable th) {
@@ -72,7 +73,7 @@ public class DbReader {
         if (dB == null) throw new DbException();
         final String[] columns = {DbConvention.FEED_ITEM_ID, DbConvention.FEED_ITEM_TITLE,
                 DbConvention.FEED_ITEM_DESCRIPTION, DbConvention.FEED_ITEM_LINK, DbConvention.FEED_ITEM_PUBLICATION_DATE,
-                DbConvention.FEED_ITEM_MEDIA_URL, DbConvention.FEED_ITEM_MEDIA_SIZE};
+                DbConvention.FEED_ITEM_MEDIA_URL, DbConvention.FEED_ITEM_MEDIA_SIZE, DbConvention.FEED_ITEM_FLAGS};
         final String selection = "_id = " + id;
         Cursor cur = null;
         try {
@@ -87,7 +88,7 @@ public class DbReader {
                 String mediaUrl = cur.isNull(5) ? null : cur.getString(5);
                 Long mediaSize = cur.isNull(6) ? null : cur.getLong(6);
 
-                resFeedItem = new FeedItem(cur.getLong(0), title, description, link, pubDate, mediaUrl, mediaSize);
+                resFeedItem = new FeedItem(cur.getLong(0), title, description, link, pubDate, mediaUrl, mediaSize,cur.getInt(7));
             }
             return resFeedItem;
         } catch (Throwable th) {
@@ -113,14 +114,14 @@ public class DbReader {
             if (cur.moveToFirst()) {
                 Feed feed;
                 do {
-                    Date lastBuildDate = cur.isNull(5) ? null : new Date(cur.getLong(5));
-                    Date pubDate = cur.isNull(6) ? null : new Date(cur.getLong(6));
                     String title = cur.isNull(1) ? null : cur.getString(1);
                     String link = cur.isNull(2) ? null : cur.getString(2);
                     String siteLink = cur.isNull(3) ? null : cur.getString(3);
                     String description = cur.isNull(4) ? null : cur.getString(4);
+                    Date lastBuildDate = cur.isNull(5) ? null : new Date(cur.getLong(5));
+                    Date pubDate = cur.isNull(6) ? null : new Date(cur.getLong(6));
                     feed = new Feed(cur.getLong(0), title, link, siteLink, description,
-                            lastBuildDate, pubDate);
+                            lastBuildDate, pubDate,cur.getInt(7));
                     list.add(feed);
                 }
                 while (cur.moveToNext());
@@ -141,7 +142,8 @@ public class DbReader {
                 DbConvention.FEED_ITEM_LINK,
                 DbConvention.FEED_ITEM_PUBLICATION_DATE,
                 DbConvention.FEED_ITEM_MEDIA_URL,
-                DbConvention.FEED_ITEM_MEDIA_SIZE
+                DbConvention.FEED_ITEM_MEDIA_SIZE,
+                DbConvention.FEED_ITEM_FLAGS
         };
         final String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId;
         final String orderBy = DbConvention.FEED_ITEM_ID + DbConvention.SORT_DESCENDING;

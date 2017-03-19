@@ -17,6 +17,7 @@ public final class DbConvention {
     public static final String FEED_DESCRIPTION = "description";
     static final String FEED_BUILD_DATE = "lastBuildDate";
     static final String FEED_PUBLICATION_DATE = "pubDate";
+    public static final String FEED_FLAGS = "flags";
 
     static final String CREATE_FEED_TABLE_COMMAND =
             "create table " + FEED_TABLE_NAME +
@@ -26,7 +27,8 @@ public final class DbConvention {
                     FEED_SITE_LINK + " text, " +
                     FEED_DESCRIPTION + " text, " +
                     FEED_BUILD_DATE + " integer, " +
-                    FEED_PUBLICATION_DATE + " integer  );";
+                    FEED_PUBLICATION_DATE + " integer, " +
+                    FEED_FLAGS+" integer );";
 
     //FEED_ITEM
     static final String FEED_ITEM_TABLE_NAME = "feedItem";
@@ -38,6 +40,7 @@ public final class DbConvention {
     static final String FEED_ITEM_PUBLICATION_DATE = "pubDate";
     static final String FEED_ITEM_MEDIA_URL = "mediaURL";
     static final String FEED_ITEM_MEDIA_SIZE = "mediaSize";
+    public static final String FEED_ITEM_FLAGS = "flags";
 
     static final String DB_CREATE_NEWS_TABLE =
             "create table " + FEED_ITEM_TABLE_NAME +
@@ -48,6 +51,7 @@ public final class DbConvention {
                     FEED_ITEM_PUBLICATION_DATE + " INTEGER, " +
                     FEED_ITEM_MEDIA_URL + " text, " +
                     FEED_ITEM_MEDIA_SIZE + " INTEGER, " +
+                    FEED_ITEM_FLAGS + " INTEGER, "+
                     FEED_ITEM_FEED_ID + " INTEGER, " +
                     " foreign key (" + FEED_ITEM_FEED_ID + ") references " +
                     FEED_TABLE_NAME + " (_id) on delete cascade);";
