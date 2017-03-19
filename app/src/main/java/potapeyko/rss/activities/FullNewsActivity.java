@@ -1,23 +1,27 @@
 package potapeyko.rss.activities;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 import lombok.NonNull;
 import potapeyko.rss.R;
-import potapeyko.rss.interfaces.IActivityListener;
 import potapeyko.rss.model.FeedItem;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
+import potapeyko.rss.sql.DbWriter;
 
-public final class FullNewsActivity extends MyBaseActivity implements IActivityListener {
+public class FullNewsActivity extends AppCompatActivity {
     private long newsId;
+    private boolean mViewedKey = true;
     private final DB db;
     private FeedItem feedItem;
     private static final String idKey = "FULL_NEWS_ID";
@@ -25,18 +29,28 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
     private static final int UNKNOWN_NEWS_ID = -10;
 
     public FullNewsActivity() {
-        this.onSaveInstanceStateSubscribe(this);
-        this.onCreateSubscribe(this);
         db = new DB(this);
     }
 
     @Override
-    public void onCreateActivity(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_feeditem);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         if (savedInstanceState != null && savedInstanceState.containsKey(idKey)) {
             newsId = savedInstanceState.getLong(idKey);
         } else {
             newsId = getIntent().getLongExtra(idKey, UNKNOWN_NEWS_ID);
+            mViewedKey = getIntent().getBooleanExtra(viewedKey, true);
         }
 
         TextView title = (TextView) findViewById(R.id.activity_full_feedItem_title);
@@ -54,10 +68,28 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
             }
             return;
         }
-        DbReader dbReader = null;
+
+        DbWriter dbWriter = null;
+        if (!mViewedKey) {
+            try {
+                dbWriter = db.getWriter();
+                dbWriter.open();
+                dbWriter.changeFeedFlags(newsId, 1);
+            } catch (Throwable th) {
+                th.printStackTrace();
+                if (dbWriter != null) {
+                    dbWriter.close();
+                    dbWriter = null;
+                }
+            }
+        }
+
+        DbReader dbReader = dbWriter;
         try {
-            dbReader = db.getReader();
-            dbReader.open();
+            if (dbReader == null) {
+                dbReader = db.getReader();
+                dbReader.open();
+            }
             feedItem = dbReader.getFeedItemById(newsId);
             if (title != null) {
                 title.setText(feedItem.getTitle());
@@ -89,10 +121,26 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
     }
 
     @Override
-    public void onSaveInstanceStateActivity(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putLong(idKey, newsId);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.refresh, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.refreshButton) {
+            UpdateChannelIntentService.startActionUpdate(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     static void start(@NonNull Activity other, long newsId, boolean isAlreadyViewed) {
         Intent intent = new Intent(other, FullNewsActivity.class);
         intent.putExtra(idKey, newsId);
