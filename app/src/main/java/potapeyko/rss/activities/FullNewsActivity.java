@@ -21,6 +21,7 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
     private final DB db;
     private FeedItem feedItem;
     private static final String idKey = "FULL_NEWS_ID";
+    private static final String viewedKey = "FULL_NEWS_VIEWED_KEY";
     private static final int UNKNOWN_NEWS_ID = -10;
 
     public FullNewsActivity() {
@@ -92,9 +93,10 @@ public final class FullNewsActivity extends MyBaseActivity implements IActivityL
         outState.putLong(idKey, newsId);
     }
 
-    static void start(@NonNull Activity other, long newsId) {
+    static void start(@NonNull Activity other, long newsId, boolean isAlreadyViewed) {
         Intent intent = new Intent(other, FullNewsActivity.class);
         intent.putExtra(idKey, newsId);
+        intent.putExtra(viewedKey, isAlreadyViewed);
         other.startActivity(intent);
     }
 }

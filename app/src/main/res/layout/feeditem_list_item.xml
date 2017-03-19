@@ -3,15 +3,22 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="#88d4fb"
-              android:padding="10dp">
+              android:padding="10dp"
+
+>
     <TextView
-            android:id="@+id/feedItem.list.title"
+            android:id="@+id/feedItem_list_flag"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+    />
+    <TextView
+            android:id="@+id/feedItem_list_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorPrimaryDark"
             android:text="Large Text"
             android:singleLine="false"
-
             android:gravity="center" />
+
 </LinearLayout>

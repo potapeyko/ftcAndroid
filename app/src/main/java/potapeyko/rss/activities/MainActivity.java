@@ -229,7 +229,7 @@ public final class MainActivity extends MyBaseActivity implements IActivityListe
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        FullNewsActivity.start(MainActivity.this, id);
+                        FullNewsActivity.start(MainActivity.this, id,true);
                     }
                 });
             }
