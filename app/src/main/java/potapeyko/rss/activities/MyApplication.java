@@ -42,6 +42,7 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
 
     @Override
     public void onCreate() {
+        super.onCreate();
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         lang = preferences.getString("lang", "default");
         if (lang.equals("default")) {
