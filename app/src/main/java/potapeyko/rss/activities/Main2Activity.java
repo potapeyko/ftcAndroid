@@ -272,8 +272,8 @@ public class Main2Activity extends AppCompatActivity
     }
 
     private void newsTitleAndListInit() {
-        ListView newsList = (ListView) findViewById(R.id.activity_main_feedsList);
-        TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
+        ListView newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
+        TextView title = (TextView) findViewById(R.id.activity_main2_txtTitle);
 
         if (chanelId == -1) {
             prepareEmptyActivity(newsList, title);
