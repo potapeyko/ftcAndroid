@@ -23,6 +23,7 @@ public class FeedItem {
     private String mediaURL;
     @Getter @Setter
     private Long mediaSize;
+    @Getter @Setter private int flags=0;
 
     public FeedItem(){
         Log.d("wtf","constr");
