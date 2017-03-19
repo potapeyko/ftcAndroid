@@ -8,7 +8,6 @@ import android.util.Patterns;
 import lombok.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import potapeyko.rss.exceptions.DbException;
 import potapeyko.rss.model.Feed;
 import potapeyko.rss.model.FeedItem;
 import potapeyko.rss.parser.FeedParser;
@@ -126,17 +125,10 @@ public class AddChannelIntentService extends IntentService implements FeedParser
         DbWriter dbWriter = null;
         Log.d("wtf","FEED  "+feed.getTitle()+" "+feed.getLink()+"\n");
         try {
-            int aa =0;
-            Thread.sleep(1000);
             dbWriter = db.getWriter();
-            Log.d("wtf","FEED get");
             dbWriter.open();
-            Log.d("wtf","FEED open");
-
             long result = dbWriter.addFeedToDB(feed.getTitle(), feed.getLink(), feed.getSiteLink(), feed.getDescription(),
-                    feed.getLastBuildDate(), feed.getPubDate());
-            Log.d("wtf","FEED write");
-
+                    feed.getLastBuildDate(), feed.getPubDate(),0);
             if (result == -1) {
                 sendMyBroadcast(this, DB_EXCEPTION_BROADCAST_MESS, 0);
                 //todo логирование
@@ -172,7 +164,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
 
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedID, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
-                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize());
+                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),0);
             }
 
         } catch (Throwable th) {
