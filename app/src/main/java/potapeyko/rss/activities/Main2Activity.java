@@ -219,7 +219,7 @@ public class Main2Activity extends AppCompatActivity
                 dbWriter.deleteFeedById(this.getChanelId());
                 final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
                 final SharedPreferences.Editor ed = sPref.edit();
-                ed.putLong(MainActivity.CHANEL_ID, -1);
+                ed.putLong(Main2Activity.CHANEL_ID, -1);
                 ed.apply();
             } catch (Throwable r) {
                 r.printStackTrace();

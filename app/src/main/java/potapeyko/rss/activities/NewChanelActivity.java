@@ -42,7 +42,7 @@ public final class NewChanelActivity extends MyBaseActivity {
 
             String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
             if(CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)){
-                MainActivity.start(NewChanelActivity.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
+                Main2Activity.start(NewChanelActivity.this,intent.getLongExtra(LONG_BROADCAST_DATA,-1));
                 NewChanelActivity.this.finish();
             }
             else if(CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)){
