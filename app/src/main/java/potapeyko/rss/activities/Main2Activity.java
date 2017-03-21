@@ -35,22 +35,23 @@ public class Main2Activity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
-    private static final String FLAG_VIEWED_ITEM ="1";
-    private static final String FLAG_NOT_VIEWED_ITEM ="0";
+    private static final String FLAG_VIEWED_ITEM = "1";
+    private static final String FLAG_NOT_VIEWED_ITEM = "0";
 
-    private static final int LAYOUT =R.layout.activity_main2;
+    private static final int LAYOUT = R.layout.activity_main2;
 
     @Getter
     @NonNull
     private long chanelId;
     private String chanelTitle = "";
-    private int chanelTitleNumber=0;
-    private boolean feedItemViewedChange =false;
+    private int chanelTitleNumber = 0;
+    private boolean feedItemViewedChange = false;
     private DB db;
     private Cursor newsCursor;
     private SharedPreferences sPref;
     private SimpleCursorAdapter adapter;
     private boolean broadcastRegister = false;
+    private TextView txtNumberTitle;
 
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -85,6 +86,7 @@ public class Main2Activity extends MyBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
+        txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
         initToolbar();
         initNavigationView();
 
@@ -111,7 +113,7 @@ public class Main2Activity extends MyBaseActivity
         }
 
         //если смотерли активность, не просмотренную ранее, то перегружаем все.
-        if(feedItemViewedChange){
+        if (feedItemViewedChange) {
             newsTitleAndListInit();
         }
         super.onResume();
@@ -151,7 +153,6 @@ public class Main2Activity extends MyBaseActivity
         outState.putLong(CHANEL_ID, chanelId);
         outState.putString(CHANEL_TITLE, chanelTitle);
     }
-
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -230,13 +231,16 @@ public class Main2Activity extends MyBaseActivity
             navigationView.setNavigationItemSelectedListener(this);
         }
     }
+
     @Override
     protected Toolbar initToolbar() {
         Toolbar toolbar = super.initToolbar();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        if (drawer != null) {
+            drawer.addDrawerListener(toggle);
+        }
         toggle.syncState();
         return toolbar;
     }
@@ -245,6 +249,8 @@ public class Main2Activity extends MyBaseActivity
         if (title != null) {
             title.setText(R.string.activity_main_add_new_chanel);
         }
+        if(txtNumberTitle!=null)
+            txtNumberTitle.setVisibility(View.INVISIBLE);
         if (newsCursor != null)
             newsCursor.close();
         if (newsList != null) {
@@ -269,6 +275,7 @@ public class Main2Activity extends MyBaseActivity
                 Feed currentChannel = dbReader.getFeedById(this.chanelId);
                 if (currentChannel != null) {
                     chanelTitle = currentChannel.getTitle();
+                    chanelTitleNumber = currentChannel.getItemsNumberAndFlags();
                 } else {
                     chanelId = -1;
                     prepareEmptyActivity(newsList, title);
@@ -276,8 +283,13 @@ public class Main2Activity extends MyBaseActivity
                 }
             }
 
+
             if (title != null) {
                 title.setText(chanelTitle);
+            }
+            txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
+            if (txtNumberTitle != null) {
+                txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
             }
 
             if (newsList != null) {
@@ -292,13 +304,11 @@ public class Main2Activity extends MyBaseActivity
                             @Override
                             public View getView(int position, View convertView, ViewGroup parent) {
                                 View row = super.getView(position, convertView, parent);
-
                                 TextView tv = (TextView) row.findViewById(R.id.feedItem_list_flag);
                                 if (tv != null && tv.getText() != null) {
                                     if (tv.getText().toString().equals(FLAG_VIEWED_ITEM)) {
                                         row.setBackgroundColor(getResources().getColor(R.color.colorGray));
-                                    }
-                                    else{
+                                    } else {
                                         row.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                                     }
                                 }
@@ -309,18 +319,18 @@ public class Main2Activity extends MyBaseActivity
                 newsList.setAdapter(adapter);
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        boolean isItemViewed=true;
-                        if(view!=null) {
-                            TextView tv = (TextView)view.findViewById(R.id.feedItem_list_flag);
-                            if(tv.getText().toString().equals(FLAG_NOT_VIEWED_ITEM))
-                            {
-                                Main2Activity.this.chanelTitleNumber--;//// TODO: закончить логику
-                                feedItemViewedChange=true;
-                                isItemViewed=false;
-                                Log.d("wtf","111");
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long feedItemId) {
+                        boolean isItemViewed = true;
+                        if (view != null) {
+                            TextView tv = (TextView) view.findViewById(R.id.feedItem_list_flag);
+                            if (tv.getText().toString().equals(FLAG_NOT_VIEWED_ITEM)) {
+                                chanelTitleNumber--;
+                                txtNumberTitle.setText(chanelTitleNumber);
+                                feedItemViewedChange = true;
+                                isItemViewed = false;
+                                Log.d("wtf", "111");
                             }
-                            FullNewsActivity.start(Main2Activity.this, id,isItemViewed);
+                            FullNewsActivity.start(Main2Activity.this, feedItemId,chanelId, isItemViewed);
                         }
                     }
                 });

@@ -22,7 +22,7 @@ public class DbWriter extends DbReader {
 
     public void addFeedItemToDB(final long feedId, final String title, final String link,
                                 final String description, final Date pubDate, final String mediaUrl,
-                                Long mediaSize,int flags) throws DbException {
+                                Long mediaSize, int flags) throws DbException {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.FEED_ITEM_FEED_ID, feedId);
@@ -45,22 +45,9 @@ public class DbWriter extends DbReader {
         if (result == -1) throw new DbException();
     }
 
-    public void changeFeedItemFlags(final long feedItemId,int newFlags){
-        if (dB == null) return;
-        final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.FEED_ITEM_FLAGS,newFlags);
-        dB.beginTransaction();
-        try {
-            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
-                    new String[] { String.valueOf(feedItemId) });
-            dB.setTransactionSuccessful();
-        } finally {
-            dB.endTransaction();
-        }
-    }
 
     public long addFeedToDB(final String title, final String link, final String siteLink, final String description,
-                            Date lastBuildDate, Date pubDate,int flags) {
+                            Date lastBuildDate, Date pubDate, int flags) {
         if (dB == null) return -1;
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.FEED_TITLE, title);
@@ -71,7 +58,7 @@ public class DbWriter extends DbReader {
         cv.put(DbConvention.FEED_BUILD_DATE, lastBuildD);
         Long pubD = pubDate == null ? 1 : pubDate.getTime();
         cv.put(DbConvention.FEED_PUBLICATION_DATE, pubD);
-        cv.put(DbConvention.FEED_FLAGS,flags);
+        cv.put(DbConvention.FEED_FLAGS, flags);
 
         long resultId;
 
@@ -85,14 +72,42 @@ public class DbWriter extends DbReader {
         }
     }
 
-    public void changeFeedFlags(final long feedId,int newFlags){
+    public void changeFlagsOnOpenNewFeedItem(final long feedItemId,final long feedId){
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.FEED_ITEM_FLAGS,newFlags);
+        cv.put(DbConvention.FEED_ITEM_FLAGS, 1);
+        dB.beginTransaction();
+        try {
+            String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME + "` SET `field` = `field` - 1 WHERE _id = " + feedId;
+            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
+                    new String[]{String.valueOf(feedItemId)});
+            dB.execSQL(sql);
+            dB.setTransactionSuccessful();
+        } finally {
+            dB.endTransaction();
+        }
+    }
+    public void changeFeedItemFlags(final long feedItemId, int newFlags) {
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS, newFlags);
         dB.beginTransaction();
         try {
             dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
-                    new String[] { String.valueOf(feedId) });
+                    new String[]{String.valueOf(feedItemId)});
+            dB.setTransactionSuccessful();
+        } finally {
+            dB.endTransaction();
+        }
+    }
+    public void changeFeedFlags(final long feedId, int newFlags) {
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_FLAGS, newFlags);
+        dB.beginTransaction();
+        try {
+            dB.update(DbConvention.FEED_TABLE_NAME, cv, "_id = ?",
+                    new String[]{String.valueOf(feedId)});
             dB.setTransactionSuccessful();
         } finally {
             dB.endTransaction();

@@ -20,13 +20,15 @@ import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 
 public class FullNewsActivity extends AppCompatActivity {
-    private long newsId;
+    private long feedItemId;
+    private long feedId;
     private boolean mViewedKey = true;
     private final DB db;
     private FeedItem feedItem;
-    private static final String idKey = "FULL_NEWS_ID";
+    private static final String idFeedItemKey = "FULL_NEWS_ID";
+    private static final String idFeedKey = "FEED_ID";
     private static final String viewedKey = "FULL_NEWS_VIEWED_KEY";
-    private static final int UNKNOWN_NEWS_ID = -10;
+    private static final int UNKNOWN_ID = -10;
 
     public FullNewsActivity() {
         db = new DB(this);
@@ -46,17 +48,19 @@ public class FullNewsActivity extends AppCompatActivity {
             }
         });
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(idKey)) {
-            newsId = savedInstanceState.getLong(idKey);
+        if (savedInstanceState != null && savedInstanceState.containsKey(idFeedItemKey)) {
+            feedItemId = savedInstanceState.getLong(idFeedItemKey);
+            feedId = savedInstanceState.getLong(idFeedKey);
         } else {
-            newsId = getIntent().getLongExtra(idKey, UNKNOWN_NEWS_ID);
+            feedItemId = getIntent().getLongExtra(idFeedItemKey, UNKNOWN_ID);
+            feedItemId = getIntent().getLongExtra(idFeedKey, UNKNOWN_ID);
             mViewedKey = getIntent().getBooleanExtra(viewedKey, true);
         }
 
         TextView title = (TextView) findViewById(R.id.activity_full_feedItem_title);
         WebView description = (WebView) findViewById(R.id.activity_full_feedItem_description);
         TextView link = (TextView) findViewById(R.id.activity_full_feedItem_link);
-        if (newsId == UNKNOWN_NEWS_ID) {
+        if (feedItemId == UNKNOWN_ID || feedId == UNKNOWN_ID) {
             if (title != null) {
                 title.setText(R.string.activity_full_news_unknown_news_title);
             }
@@ -74,7 +78,8 @@ public class FullNewsActivity extends AppCompatActivity {
             try {
                 dbWriter = db.getWriter();
                 dbWriter.open();
-                dbWriter.changeFeedFlags(newsId, 1);
+                dbWriter.changeFlagsOnOpenNewFeedItem(feedItemId,feedId);
+
             } catch (Throwable th) {
                 th.printStackTrace();
                 if (dbWriter != null) {
@@ -90,7 +95,7 @@ public class FullNewsActivity extends AppCompatActivity {
                 dbReader = db.getReader();
                 dbReader.open();
             }
-            feedItem = dbReader.getFeedItemById(newsId);
+            feedItem = dbReader.getFeedItemById(feedItemId);
             if (title != null) {
                 title.setText(feedItem.getTitle());
             }
@@ -116,14 +121,13 @@ public class FullNewsActivity extends AppCompatActivity {
                 dbReader.close();
             }
         }
-
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(idKey, newsId);
+        outState.putLong(idFeedItemKey, feedItemId);
+        outState.putLong(idFeedKey, feedId);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,9 +145,10 @@ public class FullNewsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    static void start(@NonNull Activity other, long newsId, boolean isAlreadyViewed) {
+    static void start(@NonNull Activity other, long feedItemId, long feedId,boolean isAlreadyViewed) {
         Intent intent = new Intent(other, FullNewsActivity.class);
-        intent.putExtra(idKey, newsId);
+        intent.putExtra(idFeedItemKey, feedItemId);
+        intent.putExtra(idFeedKey, feedId);
         intent.putExtra(viewedKey, isAlreadyViewed);
         other.startActivity(intent);
     }
