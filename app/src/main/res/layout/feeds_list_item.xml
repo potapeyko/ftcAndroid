@@ -3,21 +3,22 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:background="#88d4fb"
               android:gravity="center"
               android:padding="10dp"
 >
-    <TextView android:id="@+id/feeds.list.item.title"
+    <TextView android:id="@+id/feeds_list_item_title"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:gravity="center_horizontal"
+              android:textColor="@color/colorTitleLists"
 
     />
-    <TextView android:id="@+id/feeds.list.item.description"
+    <TextView android:id="@+id/feeds_list_item_description"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceSmall"
+              android:textColor="@color/colorTitleLists"
               />
 
 </LinearLayout>

@@ -3,7 +3,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/colorPrimary"
+
 >
     <include layout="@layout/toolbar"/>
     <TextView
@@ -18,12 +18,12 @@
             android:textColor="@android:color/white"
     />
     <ListView
-            android:id="@+id/feed.change.list"
+            android:id="@+id/feed_change_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:choiceMode="singleChoice"
             android:divider="@color/colorTitleLists"
-            android:dividerHeight="2dp"
+            android:dividerHeight="1dp"
     />
 </LinearLayout>
