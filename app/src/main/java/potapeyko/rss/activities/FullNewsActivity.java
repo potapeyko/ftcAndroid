@@ -40,13 +40,15 @@ public class FullNewsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_feeditem);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(idFeedItemKey)) {
             feedItemId = savedInstanceState.getLong(idFeedItemKey);
