@@ -14,13 +14,16 @@
             android:minHeight="52dp"
             android:background="@color/colorTitleLists"
             android:gravity="center" android:textColor="@android:color/white"/>
-    <TextView
-            android:id="@+id/activity.about.tvText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/activity_about_text"
-            android:padding="5dp"
-    />
+    <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView
+                android:id="@+id/activity.about.tvText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/activity_about_text"
+                android:textColor="@color/colorPrimaryDark"
+                android:padding="5dp"
+        />
+    </ScrollView>
 
 </LinearLayout>

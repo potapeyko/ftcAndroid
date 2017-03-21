@@ -11,7 +11,7 @@
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:gravity="center_horizontal"
-              android:textColor="@color/colorTitleLists"
+              android:textColor="@color/colorPrimaryDark"
 
     />
     <TextView android:id="@+id/feeds_list_item_description"

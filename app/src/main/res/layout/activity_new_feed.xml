@@ -11,6 +11,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/new_chanel_tv"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_gravity="center_horizontal"
     />
     <EditText

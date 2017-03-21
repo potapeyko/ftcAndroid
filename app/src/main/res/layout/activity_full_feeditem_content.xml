@@ -12,7 +12,7 @@
             android:id="@+id/activity.full.feedItem.title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#3F51B5"
+            android:background="@color/colorTitleLists"
             android:textColor="@android:color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/title_txt"
@@ -26,14 +26,14 @@
     <WebView android:id="@+id/activity.full.feedItem.description"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-
              android:layout_below="@+id/activity.full.feedItem.title"
              android:paddingLeft="@dimen/activity_horizontal_margin"
              android:paddingRight="@dimen/activity_horizontal_margin"
     />
 
     <TextView android:id="@+id/activity.full.feedItem.link"
-              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:text="@string/link_text"
               android:background="#455A64"
               android:textColor="@color/colorWhite"
