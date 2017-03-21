@@ -4,20 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.interfaces.ActivityListenerAdapter;
 
 
-public final class AboutAppActivity extends MyBaseActivity {
-    public AboutAppActivity() {
-        this.onCreateSubscribe(new ActivityListenerAdapter()
-        {
-            @Override
-            public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-                setContentView(R.layout.activity_about);
-            }
-        });
+public final class AboutAppActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_about);
     }
 
     static void start(@NonNull Activity other) {

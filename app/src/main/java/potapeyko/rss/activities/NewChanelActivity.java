@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -22,7 +23,7 @@ import potapeyko.rss.utils.BroadcastSender;
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
-public final class NewChanelActivity extends MyBaseActivity {
+public final class NewChanelActivity extends AppCompatActivity {
 
 
     private Button btnNewChanel;
@@ -76,48 +77,43 @@ public final class NewChanelActivity extends MyBaseActivity {
             Log.d(getString(R.string.LOG_KEY), "showCauseToast unknown broadcastMessage");
         }
     }
-
-
     public NewChanelActivity() {
-
         nwHelper = new NetworkHelper(this);
-        this.onCreateSubscribe(new ActivityListenerAdapter(){
-            @Override
-            public void onCreateActivity(@Nullable Bundle savedInstanceState) {
+    }
 
-                LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( BroadcastSender.INTENT_FILTER ) );
-                setContentView(R.layout.activity_new_feed);
-                btnNewChanel = (Button) findViewById(R.id.activity_new_feed_btnNewChanel);
-                etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
-                tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
-                progressBar= (ProgressBar)findViewById(R.id.activity_new_feed_progressBar);
-                if (!nwHelper.isNetworkAvailable()) {
-                    notConnectionCase();
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( BroadcastSender.INTENT_FILTER ) );
+        setContentView(R.layout.activity_new_feed);
+        btnNewChanel = (Button) findViewById(R.id.activity_new_feed_btnNewChanel);
+        etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
+        tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
+        progressBar= (ProgressBar)findViewById(R.id.activity_new_feed_progressBar);
+        if (!nwHelper.isNetworkAvailable()) {
+            notConnectionCase();
+        }
+        else {
+            btnNewChanel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String uri = etUri.getText().toString();
+                    uri = addProtocol(uri);
+                    if(!isLinkCorrect(uri)){
+                        Toast.makeText(NewChanelActivity.this,
+                                R.string.new_chanel_not_correct_link_toast,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    AddChannelIntentService.startActionADD(getApplicationContext(),uri);
+                    btnNewChanel.setEnabled(false);
+                    etUri.setEnabled(false);
+                    progressBar.setVisibility(ProgressBar.VISIBLE);
                 }
-                else {
+            });
 
-                    btnNewChanel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String uri = etUri.getText().toString();
-                            uri = addProtocol(uri);
-                            if(!isLinkCorrect(uri)){
-                                Toast.makeText(NewChanelActivity.this,
-                                        R.string.new_chanel_not_correct_link_toast,
-                                        Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            AddChannelIntentService.startActionADD(getApplicationContext(),uri);
-                            btnNewChanel.setEnabled(false);
-                            etUri.setEnabled(false);
-                            progressBar.setVisibility(ProgressBar.VISIBLE);
-                        }
-                    });
-
-                }
-            }
-        });
+        }
     }
 
     private String addProtocol(String uri) {
@@ -125,9 +121,7 @@ public final class NewChanelActivity extends MyBaseActivity {
             return "http://"+uri;
         }
         return uri;
-
     }
-
 
     private boolean isLinkCorrect(String uri) {
         return Patterns.WEB_URL.matcher(uri).matches();

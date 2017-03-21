@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,7 +20,7 @@ import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 
 
-public final class ChannelChangeActivity extends MyBaseActivity {
+public final class ChannelChangeActivity extends AppCompatActivity {
     private final DB db;
     static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
@@ -27,13 +28,13 @@ public final class ChannelChangeActivity extends MyBaseActivity {
 
     public ChannelChangeActivity() {
         this.db = new DB(this);
-        this.onCreateSubscribe(new ActivityListenerAdapter() {
-            @Override
-            public void onCreateActivity(@Nullable Bundle savedInstanceState) {
-                setContentView(R.layout.activity_feed_change);
-                channelsListInit();
-            }
-        });
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_feed_change);
+        channelsListInit();
     }
 
     static void start(@NonNull final Activity other) {
