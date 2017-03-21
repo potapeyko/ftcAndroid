@@ -5,7 +5,7 @@
                 android:padding="10dp"
 >
     <TextView
-            android:id="@+id/id"
+            android:id="@+id/feeds_list_item_flag"
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:textColor="@color/colorSecondary"
@@ -19,8 +19,8 @@
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:textColor="@color/colorPrimaryDark"
-              android:layout_toStartOf="@+id/id"
-              android:layout_toLeftOf="@+id/id"/>
+              android:layout_toStartOf="@+id/feeds_list_item_flag"
+              android:layout_toLeftOf="@+id/feeds_list_item_flag"/>
 
     <TextView android:id="@+id/feeds_list_item_description"
               android:layout_width="match_parent"
@@ -28,8 +28,8 @@
               android:textAppearance="?android:attr/textAppearanceSmall"
               android:textColor="@color/colorTitleLists"
               android:layout_below="@+id/feeds_list_item_title"
-              android:layout_toStartOf="@+id/id"
-              android:layout_toLeftOf="@+id/id"
+              android:layout_toStartOf="@+id/feeds_list_item_flag"
+              android:layout_toLeftOf="@+id/feeds_list_item_flag"
     />
 
 
