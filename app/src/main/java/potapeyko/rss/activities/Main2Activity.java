@@ -31,7 +31,7 @@ import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 import potapeyko.rss.utils.BroadcastSender;
 
-public class Main2Activity extends AppCompatActivity
+public class Main2Activity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
@@ -85,7 +85,6 @@ public class Main2Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
-
         initToolbar();
         initNavigationView();
 
@@ -153,22 +152,7 @@ public class Main2Activity extends AppCompatActivity
         outState.putString(CHANEL_TITLE, chanelTitle);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.refresh, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.refreshButton) {
-            UpdateChannelIntentService.startActionUpdate(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -246,19 +230,16 @@ public class Main2Activity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
         }
     }
-
-    private void initToolbar() {
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+    @Override
+    protected Toolbar initToolbar() {
+        Toolbar toolbar = super.initToolbar();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        return toolbar;
     }
-
 
     private void prepareEmptyActivity(ListView newsList, TextView title) {
         if (title != null) {

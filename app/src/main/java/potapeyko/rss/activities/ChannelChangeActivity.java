@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,7 +21,7 @@ import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 
 
-public final class ChannelChangeActivity extends AppCompatActivity {
+public final class ChannelChangeActivity extends MyBaseActivity {
     private final DB db;
     static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
@@ -34,6 +35,14 @@ public final class ChannelChangeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_change);
+        Toolbar toolbar = initToolbar();
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         channelsListInit();
     }
 

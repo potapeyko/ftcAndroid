@@ -14,11 +14,11 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
-        <activity android:name=".activities.MyBaseActivity"/>
+            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".activities.MyBaseActivity"
+        />
         <activity
-                android:name=".activities.Main2Activity"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:name=".activities.Main2Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -27,8 +27,7 @@
         <activity android:name=".activities.NewChanelActivity"/>
         <activity android:name=".activities.AboutAppActivity"/>
         <activity android:name=".activities.ChannelChangeActivity"/>
-        <activity android:name=".activities.FullNewsActivity"
-                  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.FullNewsActivity"/>
         <activity android:name=".activities.SettingsActivity">
         </activity>
 

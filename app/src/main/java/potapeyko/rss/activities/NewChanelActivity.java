@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.*;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -23,7 +24,7 @@ import potapeyko.rss.utils.BroadcastSender;
 import static potapeyko.rss.utils.BroadcastSender.*;
 
 
-public final class NewChanelActivity extends AppCompatActivity {
+public final class NewChanelActivity extends MyBaseActivity {
 
 
     private Button btnNewChanel;
@@ -86,6 +87,14 @@ public final class NewChanelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(NewChanelActivity.this).registerReceiver( br, new IntentFilter( BroadcastSender.INTENT_FILTER ) );
         setContentView(R.layout.activity_new_feed);
+        android.support.v7.widget.Toolbar toolbar = initToolbar();
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         btnNewChanel = (Button) findViewById(R.id.activity_new_feed_btnNewChanel);
         etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
         tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
