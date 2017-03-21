@@ -55,7 +55,7 @@ public class FullNewsActivity extends AppCompatActivity {
             feedId = savedInstanceState.getLong(idFeedKey);
         } else {
             feedItemId = getIntent().getLongExtra(idFeedItemKey, UNKNOWN_ID);
-            feedItemId = getIntent().getLongExtra(idFeedKey, UNKNOWN_ID);
+            feedId = getIntent().getLongExtra(idFeedKey, UNKNOWN_ID);
             mViewedKey = getIntent().getBooleanExtra(viewedKey, true);
         }
 

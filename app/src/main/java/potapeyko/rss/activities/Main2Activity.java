@@ -35,6 +35,7 @@ public class Main2Activity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
+    private static final String CHANEL_TITLE_NUMBER = "chanel_title_number";
     private static final String FLAG_VIEWED_ITEM = "1";
     private static final String FLAG_NOT_VIEWED_ITEM = "0";
 
@@ -98,6 +99,7 @@ public class Main2Activity extends MyBaseActivity
 
         if (chanelId == -1) {
             chanelId = sPref.getLong(CHANEL_ID, chanelId);
+            chanelTitleNumber = sPref.getInt(CHANEL_TITLE_NUMBER,-1);
             chanelTitle = getString(R.string.activity_main_add_new_chanel);
             chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
         }
@@ -152,6 +154,7 @@ public class Main2Activity extends MyBaseActivity
         super.onSaveInstanceState(outState);
         outState.putLong(CHANEL_ID, chanelId);
         outState.putString(CHANEL_TITLE, chanelTitle);
+        outState.putInt(CHANEL_TITLE_NUMBER, chanelTitleNumber);
     }
 
 
@@ -222,6 +225,7 @@ public class Main2Activity extends MyBaseActivity
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(CHANEL_TITLE, chanelTitle);
         ed.putLong(CHANEL_ID, chanelId);
+        ed.putInt(CHANEL_TITLE_NUMBER,chanelTitleNumber);
         ed.apply();
     }
 
@@ -261,7 +265,6 @@ public class Main2Activity extends MyBaseActivity
     private void newsTitleAndListInit() {
         ListView newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
         TextView title = (TextView) findViewById(R.id.activity_main2_txtTitle);
-
         if (chanelId == -1) {
             prepareEmptyActivity(newsList, title);
             return;
@@ -282,7 +285,6 @@ public class Main2Activity extends MyBaseActivity
                     return;
                 }
             }
-
 
             if (title != null) {
                 title.setText(chanelTitle);
@@ -325,7 +327,7 @@ public class Main2Activity extends MyBaseActivity
                             TextView tv = (TextView) view.findViewById(R.id.feedItem_list_flag);
                             if (tv.getText().toString().equals(FLAG_NOT_VIEWED_ITEM)) {
                                 chanelTitleNumber--;
-                                txtNumberTitle.setText(chanelTitleNumber);
+                                txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
                                 feedItemViewedChange = true;
                                 isItemViewed = false;
                                 Log.d("wtf", "111");

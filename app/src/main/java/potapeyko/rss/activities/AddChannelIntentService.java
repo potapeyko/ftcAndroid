@@ -165,6 +165,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedID, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
                         feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),0);
+
             }
 
         } catch (Throwable th) {

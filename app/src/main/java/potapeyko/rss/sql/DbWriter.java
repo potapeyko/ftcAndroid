@@ -38,6 +38,12 @@ public class DbWriter extends DbReader {
         dB.beginTransaction();
         try {
             result = dB.insert(DbConvention.FEED_ITEM_TABLE_NAME, null, cv);
+            if(result!=-1){
+                String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
+                        "` SET `"+DbConvention.FEED_ITEM_FLAGS+"` = `"+
+                        DbConvention.FEED_ITEM_FLAGS+"` + 1 WHERE _id = " + feedId;
+                dB.execSQL(sql);
+            }
             dB.setTransactionSuccessful();
         } finally {
             dB.endTransaction();
@@ -78,7 +84,9 @@ public class DbWriter extends DbReader {
         cv.put(DbConvention.FEED_ITEM_FLAGS, 1);
         dB.beginTransaction();
         try {
-            String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME + "` SET `field` = `field` - 1 WHERE _id = " + feedId;
+            String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
+                    "` SET `"+DbConvention.FEED_ITEM_FLAGS+"` = `"
+                    +DbConvention.FEED_ITEM_FLAGS+"` - 1 WHERE _id = " + feedId;
             dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
                     new String[]{String.valueOf(feedItemId)});
             dB.execSQL(sql);
