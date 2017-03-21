@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:gravity="center"
-              android:padding="10dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
 >
+    <TextView
+            android:id="@+id/id"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorSecondary"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
     <TextView android:id="@+id/feeds_list_item_title"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
-              android:gravity="center_horizontal"
               android:textColor="@color/colorPrimaryDark"
+              android:layout_toStartOf="@+id/id"
+              android:layout_toLeftOf="@+id/id"/>
 
-    />
     <TextView android:id="@+id/feeds_list_item_description"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceSmall"
               android:textColor="@color/colorTitleLists"
-              />
+              android:layout_below="@+id/feeds_list_item_title"
+              android:layout_toStartOf="@+id/id"
+              android:layout_toLeftOf="@+id/id"
+    />
 
-</LinearLayout>
+
+</RelativeLayout>
