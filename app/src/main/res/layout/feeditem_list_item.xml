@@ -3,8 +3,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:padding="10dp"
-
+              android:paddingLeft="16dp"
+              android:paddingRight="16dp"
+              android:paddingTop="6dp"
+              android:paddingBottom="6dp"
 >
     <TextView
             android:id="@+id/feedItem_list_flag"
@@ -13,12 +15,50 @@
     />
     <TextView
             android:id="@+id/feedItem_list_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/colorPrimaryDark"
             android:text="Large Text"
             android:singleLine="false"
-            android:gravity="center" />
+            android:gravity="left"
+            android:layout_weight="1"
+    />
+    <RelativeLayout android:layout_width="64dp" android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+    >
+        <ImageView
+                android:layout_width="32dp"
+                android:layout_height="24dp"
+                android:id="@+id/myBTN1"
+                android:layout_marginTop="9dp"
+                android:layout_marginBottom="24dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_toolbar_refresh"
+                android:layout_alignParentLeft="true" android:contentDescription="as"
+                android:onClick="fvrClic"
+
+        />
+        <ImageView
+                android:layout_marginTop="9dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginStart="15dp"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
+                android:id="@+id/myBTN2"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_menu_delete"
+                android:layout_marginLeft="15dp" android:contentDescription="gsdf"
+                android:onClick="fvrClic2"
+             />
+
+        <TextView android:layout_width="match_parent" android:layout_height="24dp"
+                  android:layout_alignParentBottom="true"
+                  android:text="27/06/67"
+                  android:padding="2dp"
+        />
+
+    </RelativeLayout>
 
 </LinearLayout>

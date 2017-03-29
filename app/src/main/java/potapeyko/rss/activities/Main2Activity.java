@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import lombok.Getter;
 import lombok.NonNull;
 import potapeyko.rss.R;
@@ -351,5 +352,11 @@ public class Main2Activity extends MyBaseActivity
         intent.putExtra(CHANEL_ID, aLong);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         other.startActivity(intent);
+    }
+    public void fvrClic(View v){
+        Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();
+    }
+    public void fvrClic2(View v){
+        Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();
     }
 }
