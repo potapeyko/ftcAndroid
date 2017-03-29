@@ -105,7 +105,7 @@ public class Main2Activity extends MyBaseActivity
 
         if (chanelId == -1) {
             chanelId = sPref.getLong(CHANEL_ID, chanelId);
-            chanelTitleNumber = sPref.getInt(CHANEL_TITLE_NUMBER,-1);
+            chanelTitleNumber = sPref.getInt(CHANEL_TITLE_NUMBER, -1);
             chanelTitle = getString(R.string.activity_main_add_new_chanel);
             chanelTitle = sPref.getString(CHANEL_TITLE, chanelTitle);
         }
@@ -231,7 +231,7 @@ public class Main2Activity extends MyBaseActivity
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(CHANEL_TITLE, chanelTitle);
         ed.putLong(CHANEL_ID, chanelId);
-        ed.putInt(CHANEL_TITLE_NUMBER,chanelTitleNumber);
+        ed.putInt(CHANEL_TITLE_NUMBER, chanelTitleNumber);
         ed.apply();
     }
 
@@ -259,7 +259,7 @@ public class Main2Activity extends MyBaseActivity
         if (title != null) {
             title.setText(R.string.activity_main_add_new_chanel);
         }
-        if(txtNumberTitle!=null)
+        if (txtNumberTitle != null)
             txtNumberTitle.setVisibility(View.INVISIBLE);
         if (newsCursor != null)
             newsCursor.close();
@@ -304,7 +304,7 @@ public class Main2Activity extends MyBaseActivity
                 newsList.setVisibility(View.VISIBLE);
                 newsCursor = dbReader.getAllItemsOfFeedCursor(chanelId);
 
-                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS,DbConvention.FEED_ITEM_PUBLICATION_DATE};
+                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS, DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_flag, R.id.feedItem_list_date};
 
                 adapter =
@@ -327,6 +327,13 @@ public class Main2Activity extends MyBaseActivity
                             public void bindView(View view, Context context, Cursor cursor) {
                                 super.bindView(view, context, cursor);
                                 final View v = view.findViewById(mTo[2]);
+                                View im = view.findViewById(R.id.myBTN2);
+                                im.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        v.getTag(); //метод для передачи данных вместе с вью!!!
+                                    }
+                                });
                                 Long date = cursor.getLong(mFrom[2]);
                                 Date d = new Date(date);
                                 Calendar c = Calendar.getInstance();
@@ -350,7 +357,7 @@ public class Main2Activity extends MyBaseActivity
                                 isItemViewed = false;
                                 Log.d("wtf", "111");
                             }
-                            FullNewsActivity.start(Main2Activity.this, feedItemId,chanelId, isItemViewed);
+                            FullNewsActivity.start(Main2Activity.this, feedItemId, chanelId, isItemViewed);
                         }
                     }
                 });
@@ -371,12 +378,13 @@ public class Main2Activity extends MyBaseActivity
         other.startActivity(intent);
     }
 
-    public void fvrClic(View v){
-        Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();
-        ImageView im = (ImageView)v;
+    public void fvrClic(View v) {
+        Toast.makeText(this, "aaaa", Toast.LENGTH_SHORT).show();
+        ImageView im = (ImageView) v;
         im.setImageResource(R.drawable.ic_item_bookmark_not);
     }
-    public void fvrClic2(View v){
-        Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();
+
+    public void fvrClic2(View v) {
+        Toast.makeText(this, "aaaa", Toast.LENGTH_SHORT).show();
     }
 }
