@@ -1,10 +1,14 @@
 package potapeyko.rss.activities;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.*;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
+import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -18,10 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import lombok.Getter;
 import lombok.NonNull;
 import potapeyko.rss.R;
@@ -31,6 +32,10 @@ import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 import potapeyko.rss.utils.BroadcastSender;
+
+import java.text.Format;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Main2Activity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -299,8 +304,8 @@ public class Main2Activity extends MyBaseActivity
                 newsList.setVisibility(View.VISIBLE);
                 newsCursor = dbReader.getAllItemsOfFeedCursor(chanelId);
 
-                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS};
-                int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_flag};
+                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS,DbConvention.FEED_ITEM_PUBLICATION_DATE};
+                int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_flag, R.id.feedItem_list_date};
 
                 adapter =
                         new SimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to) {
@@ -316,6 +321,18 @@ public class Main2Activity extends MyBaseActivity
                                     }
                                 }
                                 return row;
+                            }
+
+                            @Override
+                            public void bindView(View view, Context context, Cursor cursor) {
+                                super.bindView(view, context, cursor);
+                                final View v = view.findViewById(mTo[2]);
+                                Long date = cursor.getLong(mFrom[2]);
+                                Date d = new Date(date);
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(d);
+                                String dateText = String.format("%te.%tm.%ty%n", c, c, c);
+                                setViewText((TextView) v, dateText);
                             }
                         };
 
@@ -353,8 +370,11 @@ public class Main2Activity extends MyBaseActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         other.startActivity(intent);
     }
+
     public void fvrClic(View v){
         Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();
+        ImageView im = (ImageView)v;
+        im.setImageResource(R.drawable.ic_item_bookmark_not);
     }
     public void fvrClic2(View v){
         Toast.makeText(this,"aaaa",Toast.LENGTH_SHORT).show();

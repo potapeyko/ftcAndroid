@@ -37,7 +37,7 @@ public final class DbConvention {
     static final String FEED_ITEM_DESCRIPTION = "description";
     static final String FEED_ITEM_LINK = "link";
     static final String FEED_ITEM_FEED_ID = "chanel_id";
-    static final String FEED_ITEM_PUBLICATION_DATE = "pubDate";
+    public static final String FEED_ITEM_PUBLICATION_DATE = "pubDate";
     static final String FEED_ITEM_MEDIA_URL = "mediaURL";
     static final String FEED_ITEM_MEDIA_SIZE = "mediaSize";
     public static final String FEED_ITEM_FLAGS = "flags";
