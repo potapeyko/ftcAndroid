@@ -32,7 +32,7 @@ public final class DbConvention {
 
     //FEED_ITEM
     static final String FEED_ITEM_TABLE_NAME = "feedItem";
-    static final String FEED_ITEM_ID = "_id";
+    public static final String FEED_ITEM_ID = "_id";
     public static final String FEED_ITEM_TITLE = "title";
     static final String FEED_ITEM_DESCRIPTION = "description";
     static final String FEED_ITEM_LINK = "link";

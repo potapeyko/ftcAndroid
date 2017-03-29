@@ -307,41 +307,47 @@ public class Main2Activity extends MyBaseActivity
                 String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS, DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_flag, R.id.feedItem_list_date};
 
-                adapter =
-                        new SimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to) {
-                            @Override
-                            public View getView(int position, View convertView, ViewGroup parent) {
-                                View row = super.getView(position, convertView, parent);
-                                TextView tv = (TextView) row.findViewById(R.id.feedItem_list_flag);
-                                if (tv != null && tv.getText() != null) {
-                                    if (tv.getText().toString().equals(FLAG_VIEWED_ITEM)) {
-                                        row.setBackgroundColor(getResources().getColor(R.color.colorGray));
-                                    } else {
-                                        row.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                                    }
-                                }
-                                return row;
-                            }
-
-                            @Override
-                            public void bindView(View view, Context context, Cursor cursor) {
-                                super.bindView(view, context, cursor);
-                                final View v = view.findViewById(mTo[2]);
-                                View im = view.findViewById(R.id.myBTN2);
-                                im.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        v.getTag(); //метод для передачи данных вместе с вью!!!
-                                    }
-                                });
-                                Long date = cursor.getLong(mFrom[2]);
-                                Date d = new Date(date);
-                                Calendar c = Calendar.getInstance();
-                                c.setTime(d);
-                                String dateText = String.format("%te.%tm.%ty%n", c, c, c);
-                                setViewText((TextView) v, dateText);
-                            }
-                        };
+                adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to);
+//                        new SimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to) {
+//                            class l{
+//                                int ll;
+//                                public l(int b){ll=b;}
+//                            }
+//                            @Override
+//                            public View getView(int position, View convertView, ViewGroup parent) {
+//                                View row = super.getView(position, convertView, parent);
+//                                TextView tv = (TextView) row.findViewById(R.id.feedItem_list_flag);
+//                                if (tv != null && tv.getText() != null) {
+//                                    if (tv.getText().toString().equals(FLAG_VIEWED_ITEM)) {
+//                                        row.setBackgroundColor(getResources().getColor(R.color.colorGray));
+//                                    } else {
+//                                        row.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+//                                    }
+//                                }
+//                                return row;
+//                            }
+//
+//                            @Override
+//                            public void bindView(View view, final Context context, Cursor cursor) {
+//                                super.bindView(view, context, cursor);
+//                                final View v = view.findViewById(mTo[2]);
+//                                View im = view.findViewById(R.id.myBTN2);
+//                                im.setTag(new l(242));
+//                                im.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        l myl=(l)v.getTag(); //метод для передачи данных вместе с вью!!!
+//                                        Toast.makeText(Main2Activity.this,String.valueOf(myl.ll),Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                                Long date = cursor.getLong(mFrom[2]);
+//                                Date d = new Date(date);
+//                                Calendar c = Calendar.getInstance();
+//                                c.setTime(d);
+//                                String dateText = String.format("%te.%tm.%ty%n", c, c, c);
+//                                setViewText((TextView) v, dateText);
+//                            }
+//                        };
 
                 newsList.setAdapter(adapter);
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
