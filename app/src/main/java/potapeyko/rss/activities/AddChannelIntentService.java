@@ -150,6 +150,8 @@ public class AddChannelIntentService extends IntentService implements FeedParser
     @Override
     public void OnFeedItem(FeedParser feedParser, FeedItem feedItem) {
         //получение от парсера инфы о новости канала
+        int FLAG_NOT_CHECKED_ITEM=0;
+        int FLAG_NOT_FAVORITE_ITEM=0;
 
         if (feedID == NOTHING_ID) {
             Log.d("wtf","item  \n");
@@ -164,7 +166,8 @@ public class AddChannelIntentService extends IntentService implements FeedParser
 
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedID, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
-                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),0);
+                        feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),
+                        FLAG_NOT_CHECKED_ITEM,FLAG_NOT_FAVORITE_ITEM);
 
             }
 

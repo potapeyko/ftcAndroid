@@ -73,7 +73,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
 
 
                 final String[] from = {DbConvention.FEED_TITLE,
-                        DbConvention.FEED_DESCRIPTION,DbConvention.FEED_ITEM_FLAGS};
+                        DbConvention.FEED_DESCRIPTION,DbConvention.FEED_COUNT};
                 final int[] to = {R.id.feeds_list_item_title, R.id.feeds_list_item_description,R.id.feeds_list_item_flag};
 
                 final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.feeds_list_item,

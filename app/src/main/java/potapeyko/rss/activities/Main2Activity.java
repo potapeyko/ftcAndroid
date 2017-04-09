@@ -304,7 +304,8 @@ public class Main2Activity extends MyBaseActivity
                 newsList.setVisibility(View.VISIBLE);
                 newsCursor = dbReader.getAllItemsOfFeedCursor(chanelId);
 
-                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS, DbConvention.FEED_ITEM_PUBLICATION_DATE};
+                String[] from = {DbConvention.FEED_ITEM_TITLE, DbConvention.FEED_ITEM_FLAGS_CHECKED,
+                        DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_flag, R.id.feedItem_list_date};
 
                 adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to);
