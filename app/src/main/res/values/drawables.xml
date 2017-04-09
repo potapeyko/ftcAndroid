@@ -1,10 +1,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <item name="ic_menu_add" type="drawable">@android:drawable/ic_input_add</item>
-    <item name="ic_menu_change" type="drawable">@android:drawable/ic_menu_set_as</item>
-    <item name="ic_menu_delete" type="drawable">@android:drawable/ic_menu_delete</item>
-    <item name="ic_menu_manage" type="drawable">@android:drawable/ic_menu_manage</item>
+    <item name="ic_menu_change" type="drawable">@drawable/ic_list_white_24dp</item>
+    <item name="ic_menu_delete" type="drawable">@drawable/ic_delete_white_24dp</item>
+    <item name="ic_menu_manage" type="drawable">@drawable/ic_settings_white_24dp</item>
     <item name="ic_menu_share" type="drawable">@android:drawable/ic_menu_share</item>
-    <item name="ic_menu_about" type="drawable">@android:drawable/ic_menu_info_details</item>
+    <item name="ic_menu_about" type="drawable">@drawable/ic_info_outline_white_24dp</item>
     <item name="ic_toolbar_refresh" type="drawable">@drawable/ic_update_white_24dp</item>
     <item name="ic_item_bookmark" type="drawable">@drawable/ic_bookmark_black_24dp</item>
     <item name="ic_item_bookmark_not" type="drawable">@drawable/ic_bookmark_border_black_24dp</item>
