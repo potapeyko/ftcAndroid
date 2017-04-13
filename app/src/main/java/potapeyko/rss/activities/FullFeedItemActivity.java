@@ -11,12 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import lombok.NonNull;
 import potapeyko.rss.R;
 import potapeyko.rss.model.FeedItem;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
+import potapeyko.rss.sql.DbWriter;
 
 public class FullFeedItemActivity extends AppCompatActivity {
     private long feedItemId;
@@ -27,6 +29,7 @@ public class FullFeedItemActivity extends AppCompatActivity {
     private static final String idFeedItemKey = "FULL_NEWS_ID";
     private static final String idFeedKey = "FEED_ID";
     private static final int UNKNOWN_ID = -10;
+    private ImageView favoriteBtn;
 
     public FullFeedItemActivity() {
         db = new DB(this);
@@ -59,6 +62,7 @@ public class FullFeedItemActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.activity_full_feedItem_title);
         WebView description = (WebView) findViewById(R.id.activity_full_feedItem_description);
         TextView link = (TextView) findViewById(R.id.activity_full_feedItem_link);
+        favoriteBtn = (ImageView) findViewById(R.id.activity_full_feeditem_favoriteBtn);
         if (feedItemId == UNKNOWN_ID || feedId == UNKNOWN_ID) {
             if (title != null) {
                 title.setText(R.string.activity_full_news_unknown_news_title);
@@ -95,6 +99,28 @@ public class FullFeedItemActivity extends AppCompatActivity {
                     }
                 });
             }
+            if (favoriteBtn != null) {
+                if (feedItem.getFavoriteFlag() == MyTag.trueValue) {
+                    favoriteBtn.setImageResource(R.drawable.ic_item_bookmark_white);
+                } else {
+                    favoriteBtn.setImageResource(R.drawable.ic_item_bookmark_not_white);
+                }
+                favoriteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean result = changeFavoriteFlagInDb();
+                        if(result) {
+                            if (feedItem.getFavoriteFlag() == MyTag.trueValue) {
+                                favoriteBtn.setImageResource(R.drawable.ic_item_bookmark_not_white);
+                                feedItem.setFavoriteFlag(MyTag.falseValue);
+                            } else {
+                                favoriteBtn.setImageResource(R.drawable.ic_item_bookmark_white);
+                                feedItem.setFavoriteFlag(MyTag.trueValue);
+                            }
+                        }
+                    }
+                });
+            }
         } catch (Throwable th) {
             th.printStackTrace();
         } finally {
@@ -102,6 +128,32 @@ public class FullFeedItemActivity extends AppCompatActivity {
                 dbReader.close();
             }
         }
+    }
+
+    private boolean changeFavoriteFlagInDb() {
+        if (feedItem != null) {
+            int newFlag;
+            DbWriter dbWriter = null;
+            try {
+                if (feedItem.getFavoriteFlag() == MyTag.trueValue) {
+                    newFlag = MyTag.falseValue;
+                } else {
+                    newFlag = MyTag.trueValue;
+                }
+                dbWriter = db.getWriter();
+                dbWriter.open();
+                dbWriter.changeFeedItemFlags(feedItemId, feedId, feedItem.getCheckedFlag(), feedItem.getCheckedFlag(),
+                        newFlag, feedItem.getFavoriteFlag());
+                return true;
+            }catch (Throwable th){
+                th.printStackTrace();
+                return false;
+            }
+            finally {
+                if(dbWriter!=null){dbWriter.close();}
+            }
+        }
+        return false;
     }
 
     @Override

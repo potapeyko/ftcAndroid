@@ -44,7 +44,7 @@
                 android:id="@+id/feedItem_list_favoriteBtn"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_item_bookmark"
+                android:src="@drawable/ic_item_bookmark_black"
                 android:layout_marginLeft="15dp"
                 android:clickable="true"
              >

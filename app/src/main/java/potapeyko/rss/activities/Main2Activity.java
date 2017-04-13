@@ -402,7 +402,7 @@ public class Main2Activity extends MyBaseActivity
                             MyTag.trueValue, MyTag.falseValue);
 
                     tag.favoriteFlag = MyTag.trueValue;
-                    im.setImageResource(R.drawable.ic_item_bookmark);
+                    im.setImageResource(R.drawable.ic_item_bookmark_black);
                 } catch (Throwable th) {
                     th.printStackTrace();
                     if (dbWriter != null) {
@@ -415,7 +415,7 @@ public class Main2Activity extends MyBaseActivity
                     dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, tag.checkedFlag, tag.checkedFlag,
                             MyTag.falseValue, MyTag.trueValue);
                     tag.favoriteFlag = MyTag.falseValue;
-                    im.setImageResource(R.drawable.ic_item_bookmark_not);
+                    im.setImageResource(R.drawable.ic_item_bookmark_not_black);
                 } catch (Throwable th) {
                     th.printStackTrace();
                     if (dbWriter != null) {

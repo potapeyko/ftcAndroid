@@ -8,27 +8,40 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".activities.FullFeedItemActivity" tools:showIn="@layout/activity_full_feeditem">
 
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/activity.full.feedItem.title.container" android:orientation="horizontal"
+                  android:background="@color/colorTitleLists"
+                  android:paddingLeft="@dimen/activity_horizontal_margin"
+                  android:paddingRight="2dp">
     <TextView
             android:id="@+id/activity.full.feedItem.title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@color/colorTitleLists"
             android:textColor="@android:color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/title_txt"
             android:gravity="center"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:layout_gravity="center_horizontal"
-    />
+            />
+        <ImageView
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:id="@+id/activity_full_feeditem_favoriteBtn"
+                android:src="@drawable/ic_item_bookmark_white"
+                android:scaleType="center"
+                android:clickable="true"
+                android:layout_weight="0"
+                android:layout_gravity="center_vertical"
+               />
+    </LinearLayout>
     <WebView android:id="@+id/activity.full.feedItem.description"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_below="@+id/activity.full.feedItem.title"
-             android:paddingLeft="@dimen/activity_horizontal_margin"
-             android:paddingRight="@dimen/activity_horizontal_margin"
+             android:layout_below="@+id/activity.full.feedItem.title.container"
     />
 
     <TextView android:id="@+id/activity.full.feedItem.link"
