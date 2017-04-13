@@ -57,9 +57,9 @@ class mySimpleCursorAdapter extends android.support.v4.widget.SimpleCursorAdapte
         }
 
         if (((MyTag) im2.getTag()).favoriteFlag == 0) {
-            im2.setImageResource(R.drawable.ic_item_bookmark_not);
+            im2.setImageResource(R.drawable.ic_item_bookmark_not_black);
         } else {
-            im2.setImageResource(R.drawable.ic_item_bookmark);
+            im2.setImageResource(R.drawable.ic_item_bookmark_black);
         }
 
         im.setOnClickListener(itemIconsClickListener);
