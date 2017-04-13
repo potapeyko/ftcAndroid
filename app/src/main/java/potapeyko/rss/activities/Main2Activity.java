@@ -29,7 +29,7 @@ import potapeyko.rss.sql.DbWriter;
 import potapeyko.rss.utils.BroadcastSender;
 
 public class Main2Activity extends MyBaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
     private static final String CHANEL_TITLE_NUMBER = "chanel_title_number";
@@ -49,7 +49,7 @@ public class Main2Activity extends MyBaseActivity
     private SimpleCursorAdapter adapter;
     private boolean broadcastRegister = false;
     private TextView txtNumberTitle;
-    private  DbReader.WhereFlags currentFilter;
+    private DbReader.WhereFlags currentFilter;
 
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -66,7 +66,7 @@ public class Main2Activity extends MyBaseActivity
                 try {
                     dbReader = db.getReader();
                     dbReader.open();
-                    chanelTitleNumber=dbReader.getFeedById(feedId).getItemsCount();
+                    chanelTitleNumber = dbReader.getFeedById(feedId).getItemsCount();
                     if (txtNumberTitle != null) {
                         txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
                     }
@@ -89,10 +89,10 @@ public class Main2Activity extends MyBaseActivity
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
         txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
-        db=new DB(this);
+        db = new DB(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref, false);
         sPref = PreferenceManager.getDefaultSharedPreferences(this);
-        currentFilter = DbReader.WhereFlags.valueOf(sPref.getString(WhERE_FLAG,"ALL"));
+        currentFilter = DbReader.WhereFlags.valueOf(sPref.getString(WhERE_FLAG, "ALL"));
 
         initToolbar();
         initNavigationView();
@@ -119,7 +119,7 @@ public class Main2Activity extends MyBaseActivity
         }
         //если смотерли активность, не просмотренную ранее, то перегружаем все.
         if (feedItemViewedChange) {
-            feedItemViewedChange=false;
+            feedItemViewedChange = false;
             newsTitleAndListInit();
         }
         super.onResume();
@@ -154,7 +154,6 @@ public class Main2Activity extends MyBaseActivity
     }
 
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -162,7 +161,7 @@ public class Main2Activity extends MyBaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_add) {
-            NewChanelActivity.start(this);
+            NewFeedActivity.start(this);
         } else if (id == R.id.nav_change) {
             ChannelChangeActivity.start(this);
         } else if (id == R.id.nav_delete) {
@@ -222,7 +221,7 @@ public class Main2Activity extends MyBaseActivity
         ed.putString(CHANEL_TITLE, chanelTitle);
         ed.putLong(CHANEL_ID, feedId);
         ed.putInt(CHANEL_TITLE_NUMBER, chanelTitleNumber);
-        ed.putString(WhERE_FLAG,currentFilter.name());
+        ed.putString(WhERE_FLAG, currentFilter.name());
         ed.apply();
     }
 
@@ -292,13 +291,13 @@ public class Main2Activity extends MyBaseActivity
 
             if (newsList != null) {
                 newsList.setVisibility(View.VISIBLE);
-                newsCursor = dbReader.getCursorOfFeedItems(feedId,currentFilter);
+                newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
 
                 String[] from = {DbConvention.FEED_ITEM_TITLE,
                         DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_date};
 
-                adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId,this);
+                adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId, this);
 
                 newsList.setAdapter(adapter);
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -307,12 +306,12 @@ public class Main2Activity extends MyBaseActivity
                         if (view != null) {
                             ImageView imageView = (ImageView) view.findViewById(R.id.feedItem_list_checkedBtn);
                             MyTag tag = (MyTag) imageView.getTag();
-                            if (tag.checkedFlag==MyTag.falseValue) {
+                            if (tag.checkedFlag == MyTag.falseValue) {
                                 DbWriter dbWriter = null;
                                 try {
                                     dbWriter = db.getWriter();
                                     dbWriter.open();
-                                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId,MyTag.trueValue , MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
+                                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue, MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
                                     dbWriter.close();
                                     chanelTitleNumber--;
                                     txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
@@ -326,8 +325,8 @@ public class Main2Activity extends MyBaseActivity
                                 }
 
                             }
-                            feedItemViewedChange=true;
-                            FullNewsActivity.start(Main2Activity.this, feedItemId, feedId);
+                            feedItemViewedChange = true;
+                            FullFeedItemActivity.start(Main2Activity.this, feedItemId, feedId);
                         }
                     }
                 });
@@ -353,11 +352,11 @@ public class Main2Activity extends MyBaseActivity
     public void onClick(View v) {
         MyTag tag = (MyTag) v.getTag();
         ImageView im = (ImageView) v;
-        DbWriter dbWriter=null;
-        try{
-            dbWriter =  db.getWriter();
+        DbWriter dbWriter = null;
+        try {
+            dbWriter = db.getWriter();
             dbWriter.open();
-        } catch (Throwable th){
+        } catch (Throwable th) {
             th.printStackTrace();
             if (dbWriter != null) {
                 dbWriter.close();
@@ -368,7 +367,7 @@ public class Main2Activity extends MyBaseActivity
         if (tag.idOfClickedIcon == R.id.feedItem_list_checkedBtn) {
             if (tag.checkedFlag == MyTag.trueValue) {
                 try {
-                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId,MyTag.falseValue, MyTag.trueValue, tag.favoriteFlag, tag.favoriteFlag);
+                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.falseValue, MyTag.trueValue, tag.favoriteFlag, tag.favoriteFlag);
                     chanelTitleNumber++;
                     txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
                     tag.checkedFlag = MyTag.falseValue;
@@ -382,7 +381,7 @@ public class Main2Activity extends MyBaseActivity
                 }
             } else {
                 try {
-                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId,MyTag.trueValue , MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
+                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue, MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
                     chanelTitleNumber--;
                     txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
                     tag.checkedFlag = MyTag.trueValue;
@@ -396,8 +395,7 @@ public class Main2Activity extends MyBaseActivity
                 }
             }
 
-        } else
-            if (tag.idOfClickedIcon == R.id.feedItem_list_favoriteBtn) {
+        } else if (tag.idOfClickedIcon == R.id.feedItem_list_favoriteBtn) {
             if (tag.favoriteFlag == MyTag.falseValue) {
                 try {
                     dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, tag.checkedFlag, tag.checkedFlag,
@@ -433,9 +431,8 @@ public class Main2Activity extends MyBaseActivity
             adapter.notifyDataSetChanged();
         } catch (DbException e) {
             e.printStackTrace();
-        }
-        finally {
-            if(dbWriter!=null)dbWriter.close();
+        } finally {
+            if (dbWriter != null) dbWriter.close();
         }
 
     }
@@ -475,21 +472,20 @@ public class Main2Activity extends MyBaseActivity
                 case R.id.refreshButton:
                     UpdateChannelIntentService.startActionUpdate(this);
                     break;
-                default: return super.onOptionsItemSelected(item);
+                default:
+                    return super.onOptionsItemSelected(item);
             }
 
             dbReader = db.getReader();
             dbReader.open();
-            newsCursor = dbReader.getCursorOfFeedItems(feedId,currentFilter);
+            newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
             adapter.changeCursor(newsCursor);
             adapter.notifyDataSetChanged();
             return true;
-        }
-        catch (Throwable th){
+        } catch (Throwable th) {
             th.printStackTrace();
-        }
-        finally {
-            if(dbReader!=null)
+        } finally {
+            if (dbReader != null)
                 dbReader.close();
         }
         return true;
@@ -508,7 +504,9 @@ public class Main2Activity extends MyBaseActivity
 
                 while (!newsCursor.isAfterLast()) {
                     int lastCheckedFlag = newsCursor.getInt(itemCheckedFlagIndex);
-                    if(lastCheckedFlag!=MyTag.trueValue){chanelTitleNumber--;}
+                    if (lastCheckedFlag != MyTag.trueValue) {
+                        chanelTitleNumber--;
+                    }
                     dbWriter.changeFeedItemFlags(newsCursor.getLong(itemIdIndex), feedId, MyTag.trueValue,
                             lastCheckedFlag,
                             newsCursor.getInt(itemFavoriteFlagIndex),
