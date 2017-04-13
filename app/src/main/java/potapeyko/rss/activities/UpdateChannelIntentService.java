@@ -209,8 +209,8 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
 
     @Override
     public void OnFeedItem(FeedParser feedParser, FeedItem feedItem) {
-        int FLAG_NOT_CHECKED_ITEM=0;
-        int FLAG_NOT_FAVORITE_ITEM=0;
+        int FLAG_NOT_CHECKED_ITEM = 0;
+        int FLAG_NOT_FAVORITE_ITEM = 0;
         //получение от парсера инфы о новости канала
         DbWriter dbWriter = null;
         try {
@@ -219,7 +219,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedId, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
                         feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),
-                        FLAG_NOT_CHECKED_ITEM,FLAG_NOT_FAVORITE_ITEM);
+                        FLAG_NOT_CHECKED_ITEM, FLAG_NOT_FAVORITE_ITEM);
                 isNewFeedItem = true;
                 quantityOfNewFeedItem++;
             }

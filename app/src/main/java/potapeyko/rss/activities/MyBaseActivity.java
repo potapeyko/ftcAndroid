@@ -16,14 +16,14 @@ import potapeyko.rss.interfaces.IActivityListener;
 import java.util.ArrayList;
 
 
-public  class MyBaseActivity extends AppCompatActivity {
-
+public class MyBaseActivity extends AppCompatActivity {
 
     protected Toolbar initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         return toolbar;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.refresh, menu);

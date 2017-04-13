@@ -6,6 +6,6 @@ class MyTag {
     int checkedFlag;
     int favoriteFlag;
     int idOfClickedIcon;
-    static final int trueValue=1;
-    static final int falseValue =0;
+    static final int trueValue = 1;
+    static final int falseValue = 0;
 }

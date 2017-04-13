@@ -123,17 +123,17 @@ public class AddChannelIntentService extends IntentService implements FeedParser
     public void OnFeedInfo(FeedParser feedParser, Feed feed) {//получение от парсера инфы о канале
         //запись в бд. ответное сообщение.
         DbWriter dbWriter = null;
-        Log.d("wtf","FEED  "+feed.getTitle()+" "+feed.getLink()+"\n");
+        Log.d("wtf", "FEED  " + feed.getTitle() + " " + feed.getLink() + "\n");
         try {
             dbWriter = db.getWriter();
             dbWriter.open();
             long result = dbWriter.addFeedToDB(feed.getTitle(), feed.getLink(), feed.getSiteLink(), feed.getDescription(),
-                    feed.getLastBuildDate(), feed.getPubDate(),0);
+                    feed.getLastBuildDate(), feed.getPubDate(), 0);
             if (result == -1) {
                 sendMyBroadcast(this, DB_EXCEPTION_BROADCAST_MESS, 0);
                 //todo логирование
             } else {
-                Log.d("wtf","FEED res");
+                Log.d("wtf", "FEED res");
                 feedID = result;
                 sendMyBroadcast(this, CHANNEL_ADD_BROADCAST_MESS, feedID);
             }
@@ -150,14 +150,14 @@ public class AddChannelIntentService extends IntentService implements FeedParser
     @Override
     public void OnFeedItem(FeedParser feedParser, FeedItem feedItem) {
         //получение от парсера инфы о новости канала
-        int FLAG_NOT_CHECKED_ITEM=0;
-        int FLAG_NOT_FAVORITE_ITEM=0;
+        int FLAG_NOT_CHECKED_ITEM = 0;
+        int FLAG_NOT_FAVORITE_ITEM = 0;
 
         if (feedID == NOTHING_ID) {
-            Log.d("wtf","item  \n");
+            Log.d("wtf", "item  \n");
             return;
         }
-        Log.d("wtf","item  "+feedItem.getTitle()+" "+feedItem.getLink()+"\n"+feedItem.getDescription());
+        Log.d("wtf", "item  " + feedItem.getTitle() + " " + feedItem.getLink() + "\n" + feedItem.getDescription());
         DbWriter dbWriter = null;
         try {
 
@@ -167,7 +167,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedID, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
                         feedItem.getPubDate(), feedItem.getMediaURL(), feedItem.getMediaSize(),
-                        FLAG_NOT_CHECKED_ITEM,FLAG_NOT_FAVORITE_ITEM);
+                        FLAG_NOT_CHECKED_ITEM, FLAG_NOT_FAVORITE_ITEM);
 
             }
 

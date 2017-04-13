@@ -24,10 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NewChanelActivity"/>
+        <activity android:name=".activities.NewFeedActivity"/>
         <activity android:name=".activities.AboutAppActivity"/>
         <activity android:name=".activities.ChannelChangeActivity"/>
-        <activity android:name=".activities.FullNewsActivity"/>
+        <activity android:name=".activities.FullFeedItemActivity"/>
         <activity android:name=".activities.SettingsActivity">
         </activity>
 

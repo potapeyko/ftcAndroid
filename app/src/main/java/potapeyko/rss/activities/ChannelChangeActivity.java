@@ -25,7 +25,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
     private final DB db;
     static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
-    private static final String CHANEL_ID_KEY= "CHANEL_ID";
+    private static final String CHANEL_ID_KEY = "CHANEL_ID";
 
     public ChannelChangeActivity() {
         this.db = new DB(this);
@@ -64,7 +64,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
             try {
                 dbReader.open();
                 channelsListCursor = dbReader.getAllChannelsCursor();
-                if(!channelsListCursor.moveToFirst()){
+                if (!channelsListCursor.moveToFirst()) {
                     if (title != null) {
                         title.setText(R.string.activity_channel_change_empty_list);
                     }
@@ -73,8 +73,8 @@ public final class ChannelChangeActivity extends MyBaseActivity {
 
 
                 final String[] from = {DbConvention.FEED_TITLE,
-                        DbConvention.FEED_DESCRIPTION,DbConvention.FEED_COUNT};
-                final int[] to = {R.id.feeds_list_item_title, R.id.feeds_list_item_description,R.id.feeds_list_item_flag};
+                        DbConvention.FEED_DESCRIPTION, DbConvention.FEED_COUNT};
+                final int[] to = {R.id.feeds_list_item_title, R.id.feeds_list_item_description, R.id.feeds_list_item_flag};
 
                 final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.feeds_list_item,
                         channelsListCursor, from, to);

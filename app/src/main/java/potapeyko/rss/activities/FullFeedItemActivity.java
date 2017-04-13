@@ -17,19 +17,18 @@ import potapeyko.rss.R;
 import potapeyko.rss.model.FeedItem;
 import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
-import potapeyko.rss.sql.DbWriter;
 
-public class FullNewsActivity extends AppCompatActivity {
+public class FullFeedItemActivity extends AppCompatActivity {
     private long feedItemId;
     private long feedId;
     private final DB db;
     private FeedItem feedItem;
-    private int favoriteFlag=0;///ВРЕМЕННО!!!
+    private int favoriteFlag = 0;///ВРЕМЕННО!!!
     private static final String idFeedItemKey = "FULL_NEWS_ID";
     private static final String idFeedKey = "FEED_ID";
     private static final int UNKNOWN_ID = -10;
 
-    public FullNewsActivity() {
+    public FullFeedItemActivity() {
         db = new DB(this);
     }
 
@@ -73,10 +72,10 @@ public class FullNewsActivity extends AppCompatActivity {
             return;
         }
 
-        DbReader dbReader =null;
+        DbReader dbReader = null;
         try {
-                dbReader = db.getReader();
-                dbReader.open();
+            dbReader = db.getReader();
+            dbReader.open();
             feedItem = dbReader.getFeedItemById(feedItemId);
             if (title != null) {
                 title.setText(feedItem.getTitle());
@@ -111,6 +110,7 @@ public class FullNewsActivity extends AppCompatActivity {
         outState.putLong(idFeedItemKey, feedItemId);
         outState.putLong(idFeedKey, feedId);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.refresh, menu);
@@ -127,8 +127,9 @@ public class FullNewsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     static void start(@NonNull Activity other, long feedItemId, long feedId) {
-        Intent intent = new Intent(other, FullNewsActivity.class);
+        Intent intent = new Intent(other, FullFeedItemActivity.class);
         intent.putExtra(idFeedItemKey, feedItemId);
         intent.putExtra(idFeedKey, feedId);
         other.startActivity(intent);
