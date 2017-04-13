@@ -52,8 +52,8 @@ public final class DbConvention {
                     FEED_ITEM_PUBLICATION_DATE + " INTEGER, " +
                     FEED_ITEM_MEDIA_URL + " text, " +
                     FEED_ITEM_MEDIA_SIZE + " INTEGER, " +
-                    FEED_ITEM_FLAGS_FAVORITE + " boolean, "+
-                    FEED_ITEM_FLAGS_CHECKED  + " boolean, "+
+                    FEED_ITEM_FLAGS_FAVORITE + " INTEGER, "+
+                    FEED_ITEM_FLAGS_CHECKED  + " INTEGER, "+
                     FEED_ITEM_FEED_ID + " INTEGER, " +
                     " foreign key (" + FEED_ITEM_FEED_ID + ") references " +
                     FEED_TABLE_NAME + " (_id) on delete cascade);";

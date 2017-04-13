@@ -72,6 +72,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="menu_main_favorite_title">Избраное</string>
+    <string name="menu_main_checked_title">Прочитанные</string>
+    <string name="menu_main_notcheckrd_title">Непрочитанные</string>
+    <string name="menu_main_all_list_title">Список целиком</string>
+    <string name="menu_main_check_all_title">Отметить все как прочитанные</string>
 
 
 </resources>

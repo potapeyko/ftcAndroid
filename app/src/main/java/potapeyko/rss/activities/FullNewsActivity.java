@@ -22,12 +22,11 @@ import potapeyko.rss.sql.DbWriter;
 public class FullNewsActivity extends AppCompatActivity {
     private long feedItemId;
     private long feedId;
-    private boolean mViewedKey = true;
     private final DB db;
     private FeedItem feedItem;
+    private int favoriteFlag=0;///ВРЕМЕННО!!!
     private static final String idFeedItemKey = "FULL_NEWS_ID";
     private static final String idFeedKey = "FEED_ID";
-    private static final String viewedKey = "FULL_NEWS_VIEWED_KEY";
     private static final int UNKNOWN_ID = -10;
 
     public FullNewsActivity() {
@@ -56,7 +55,6 @@ public class FullNewsActivity extends AppCompatActivity {
         } else {
             feedItemId = getIntent().getLongExtra(idFeedItemKey, UNKNOWN_ID);
             feedId = getIntent().getLongExtra(idFeedKey, UNKNOWN_ID);
-            mViewedKey = getIntent().getBooleanExtra(viewedKey, true);
         }
 
         TextView title = (TextView) findViewById(R.id.activity_full_feedItem_title);
@@ -75,28 +73,10 @@ public class FullNewsActivity extends AppCompatActivity {
             return;
         }
 
-        DbWriter dbWriter = null;
-        if (!mViewedKey) {
-            try {
-                dbWriter = db.getWriter();
-                dbWriter.open();
-                dbWriter.changeFlagsOnOpenNewFeedItem(feedItemId,feedId);
-
-            } catch (Throwable th) {
-                th.printStackTrace();
-                if (dbWriter != null) {
-                    dbWriter.close();
-                    dbWriter = null;
-                }
-            }
-        }
-
-        DbReader dbReader = dbWriter;
+        DbReader dbReader =null;
         try {
-            if (dbReader == null) {
                 dbReader = db.getReader();
                 dbReader.open();
-            }
             feedItem = dbReader.getFeedItemById(feedItemId);
             if (title != null) {
                 title.setText(feedItem.getTitle());
@@ -147,11 +127,10 @@ public class FullNewsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    static void start(@NonNull Activity other, long feedItemId, long feedId,boolean isAlreadyViewed) {
+    static void start(@NonNull Activity other, long feedItemId, long feedId) {
         Intent intent = new Intent(other, FullNewsActivity.class);
         intent.putExtra(idFeedItemKey, feedItemId);
         intent.putExtra(idFeedKey, feedId);
-        intent.putExtra(viewedKey, isAlreadyViewed);
         other.startActivity(intent);
     }
 }

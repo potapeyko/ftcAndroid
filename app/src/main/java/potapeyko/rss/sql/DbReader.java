@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class DbReader {
+    public enum WhereFlags{
+        ALL,
+        FAVORITE,
+        CHECKED,
+        NOT_CHECKED,
+    }
 
     final Context context;
     DBHelper dBHelper;
@@ -134,21 +140,33 @@ public class DbReader {
         return list;
     }
 
-    public Cursor getAllItemsOfFeedCursor(final long feedId) throws DbException {
+    public Cursor getCursorOfFeedItems(final long feedId, @NonNull DbReader.WhereFlags whereFlag) throws DbException {
         if (dB == null) throw new DbException();
         final String[] columns = new String[]{
-                DbConvention.FEED_ITEM_ID,
-                DbConvention.FEED_ITEM_TITLE,
-                DbConvention.FEED_ITEM_DESCRIPTION,
-                DbConvention.FEED_ITEM_LINK,
-                DbConvention.FEED_ITEM_PUBLICATION_DATE,
-                DbConvention.FEED_ITEM_MEDIA_URL,
-                DbConvention.FEED_ITEM_MEDIA_SIZE,
-                DbConvention.FEED_ITEM_FLAGS_CHECKED,
-                DbConvention.FEED_ITEM_FLAGS_FAVORITE
+                DbConvention.FEED_ITEM_ID,                      //0
+                DbConvention.FEED_ITEM_TITLE,                   //1
+                DbConvention.FEED_ITEM_DESCRIPTION,             //2
+                DbConvention.FEED_ITEM_LINK,                    //3
+                DbConvention.FEED_ITEM_PUBLICATION_DATE,        //4
+                DbConvention.FEED_ITEM_MEDIA_URL,               //5
+                DbConvention.FEED_ITEM_MEDIA_SIZE,              //6
+                DbConvention.FEED_ITEM_FLAGS_CHECKED,           //7
+                DbConvention.FEED_ITEM_FLAGS_FAVORITE           //8
 
         };
-        final String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId;
+        String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId;
+        switch (whereFlag){
+            case ALL:
+                break;
+            case CHECKED:
+                selection = selection+" and "+DbConvention.FEED_ITEM_FLAGS_CHECKED+ " = 1";//todo константа
+                break;
+            case FAVORITE:
+                selection = selection+" and "+DbConvention.FEED_ITEM_FLAGS_FAVORITE+ " = 1";//todo константа
+                break;
+            case NOT_CHECKED:
+                selection = selection+" and "+DbConvention.FEED_ITEM_FLAGS_CHECKED+ " = 0";//todo константа
+        }
         final String orderBy = DbConvention.FEED_ITEM_ID + DbConvention.SORT_DESCENDING;
         return dB.query(DbConvention.FEED_ITEM_TABLE_NAME, columns, selection, null, null, null, orderBy);
     }

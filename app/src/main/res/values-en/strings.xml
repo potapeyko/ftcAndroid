@@ -76,5 +76,11 @@
     <string name="notification_updating_subtext">(Click to cancel)</string>
     <string name="notification_updated_subtext">(Click to watch)</string>
 
+    <string name="menu_main_favorite_title">Favorite</string>
+    <string name="menu_main_checked_title">Checked</string>
+    <string name="menu_main_notcheckrd_title">Not checked</string>
+    <string name="menu_main_all_list_title">All list</string>
+    <string name="menu_main_check_all_title">Mark all as read</string>
+
 
 </resources>

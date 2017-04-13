@@ -79,33 +79,28 @@ public class DbWriter extends DbReader {
         }
     }
 
-    public void changeFlagsOnOpenNewFeedItem(final long feedItemId,final long feedId){
+    public void changeFeedItemFlags(final long feedItemId,final long feedId, int newCheckedFlag,int lastCheckedFlag,
+                                    int newFavoriteFlag,int lastFavoriteFlag) {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, 1);
-        dB.beginTransaction();
-        try {
-            String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
-                    "` SET `"+DbConvention.FEED_COUNT+"` = `"
-                    +DbConvention.FEED_COUNT+"` - 1 WHERE _id = " + feedId;
-            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
-                    new String[]{String.valueOf(feedItemId)});
-            dB.execSQL(sql);
-            dB.setTransactionSuccessful();
-        } finally {
-            dB.endTransaction();
-        }
-    }
-    public void changeFeedItemFlags(final long feedItemId, int checkedFlag,int favoriteFlag) {
-        if (dB == null) return;
-        final ContentValues cv = new ContentValues();
-        cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, checkedFlag);
-        cv.put(DbConvention.FEED_ITEM_FLAGS_FAVORITE, favoriteFlag);
-
+        if(newCheckedFlag!=lastCheckedFlag){
+        cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, newCheckedFlag);}
+        if(newFavoriteFlag!=lastFavoriteFlag){
+        cv.put(DbConvention.FEED_ITEM_FLAGS_FAVORITE, newFavoriteFlag);}
+        if(cv.size()==0)return;
         dB.beginTransaction();
         try {
             dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
                     new String[]{String.valueOf(feedItemId)});
+            if(newCheckedFlag!=lastCheckedFlag){
+                String actionSign;
+                if(newCheckedFlag>lastCheckedFlag){actionSign=" - ";}
+                else{actionSign=" + ";}
+                String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
+                        "` SET `"+DbConvention.FEED_COUNT+"` = `"
+                        +DbConvention.FEED_COUNT+"` "+actionSign+" 1 WHERE _id = " + feedId;
+                dB.execSQL(sql);
+            }
             dB.setTransactionSuccessful();
         } finally {
             dB.endTransaction();

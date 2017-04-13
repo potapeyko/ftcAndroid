@@ -17,7 +17,7 @@ public class Feed {
     @Getter @Setter private  String description;
     @Getter @Setter private Date lastBuildDate;
     @Getter @Setter private Date pubDate;
-    @Getter @Setter private int itemsNumberAndFlags=0;
+    @Getter @Setter private int itemsCount;
 
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();

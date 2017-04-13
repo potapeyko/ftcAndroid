@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/refreshButton"
+            android:title="refresh"
+            android:icon="@drawable/ic_toolbar_refresh"
+            yourapp:showAsAction="ifRoom"
+    />
+    <item
+            android:id="@+id/favoriteButton"
+            android:title="@string/menu_main_favorite_title"
+            android:icon="@drawable/ic_toolbar_refresh"
+            yourapp:showAsAction="never"
+    />
+    <item
+            android:id="@+id/checkedButton"
+            android:title="@string/menu_main_checked_title"
+            android:icon="@drawable/ic_toolbar_refresh"
+            yourapp:showAsAction="never"
+    />
+
+    <item
+            android:id="@+id/notCheckedButton"
+            android:title="@string/menu_main_notcheckrd_title"
+
+            yourapp:showAsAction="never"
+    />
+    <item
+            android:id="@+id/allButton"
+            android:title="@string/menu_main_all_list_title"
+
+            yourapp:showAsAction="never"
+    />
+
+    <item
+            android:id="@+id/checkAllButton"
+            android:title="@string/menu_main_check_all_title"
+            android:icon="@drawable/ic_toolbar_refresh"
+            yourapp:showAsAction="never"
+    />
+
+
+</menu>
