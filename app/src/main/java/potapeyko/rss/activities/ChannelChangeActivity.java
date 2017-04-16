@@ -67,6 +67,12 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                 if (!channelsListCursor.moveToFirst()) {
                     if (title != null) {
                         title.setText(R.string.activity_channel_change_empty_list);
+                        title.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                NewFeedActivity.start(ChannelChangeActivity.this);
+                            }
+                        });
                     }
                     return;
                 }

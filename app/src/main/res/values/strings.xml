@@ -24,7 +24,7 @@
     <string name="back">Назад</string>
     <string name="chanel_change_textView">Выбор канала</string>
     <string name="activity_about_title">О приложении</string>
-    <string name="activity_main_add_new_chanel">Выберите или добавьте канал</string>
+    <string name="activity_main_add_new_chanel">Канал не выбран. Выберите канал.</string>
     <string name="activity_settings_period_title">Введите период в минутах</string>
     <string name="activity_settings_period_summary">Введите период обновления в минутах</string>
     <string name="activity_settings_auto_summary">Будет ли приложение проверять новости автоматичеки</string>
@@ -36,8 +36,7 @@
     <string name="settings_lang_key">lang</string>
     <string name="activity_full_news_link_text">Перейти на сайт с полной версией статьи</string>
     <string name="channel_add_broadcast_message">Канал добавлен, ожидайте добавления новостей</string>
-    <string name="activity_channel_change_empty_list">Не добавленно ни одного канала. Добавьте канал в пункте
-        "Добавить канал"
+    <string name="activity_channel_change_empty_list">Список пуст. Добавьте канал.
     </string>
 
     <string name="activity_about_text">

@@ -28,7 +28,7 @@
     <string name="back">Back</string>
     <string name="chanel_change_textView">Feed selection</string>
     <string name="activity_about_title">About application</string>
-    <string name="activity_main_add_new_chanel">Select or add the channel</string>
+    <string name="activity_main_add_new_chanel">No channel selected. Select a channel.</string>
     <string name="activity_settings_period_title">Enter the period in minutes</string>
     <string name="activity_settings_period_summary">
         Enter the refresh period in minutes
@@ -47,8 +47,7 @@
         The channel is added, expect to add news
     </string>
     <string name="activity_channel_change_empty_list">
-        Not added to any channel. Add channel in paragraph
-        "Add Channel"
+        The list is empty. Add a channel.
     </string>
 
     <string name="activity_about_text">

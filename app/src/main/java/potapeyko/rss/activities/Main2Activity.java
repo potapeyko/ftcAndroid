@@ -248,6 +248,12 @@ public class Main2Activity extends MyBaseActivity
     private void prepareEmptyActivity(ListView newsList, TextView title) {
         if (title != null) {
             title.setText(R.string.activity_main_add_new_chanel);
+            title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ChannelChangeActivity.start(Main2Activity.this);
+                }
+            });
         }
         if (txtNumberTitle != null)
             txtNumberTitle.setVisibility(View.INVISIBLE);
@@ -261,6 +267,8 @@ public class Main2Activity extends MyBaseActivity
     private void newsTitleAndListInit() {
         ListView newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
         TextView title = (TextView) findViewById(R.id.activity_main2_txtTitle);
+        txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
+
         if (feedId == -1) {
             prepareEmptyActivity(newsList, title);
             return;
@@ -283,8 +291,8 @@ public class Main2Activity extends MyBaseActivity
 
             if (title != null) {
                 title.setText(chanelTitle);
+
             }
-            txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
             if (txtNumberTitle != null) {
                 txtNumberTitle.setVisibility(View.VISIBLE);
                 txtNumberTitle.setText(String.valueOf(chanelTitleNumber));

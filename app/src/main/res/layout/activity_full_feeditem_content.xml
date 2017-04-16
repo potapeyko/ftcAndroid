@@ -11,7 +11,7 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:id="@+id/activity.full.feedItem.title.container" android:orientation="horizontal"
                   android:background="@color/colorTitleLists"
-                  android:paddingLeft="@dimen/activity_horizontal_margin"
+                  android:paddingLeft="@dimen/main_padding"
                   android:paddingRight="2dp">
     <TextView
             android:id="@+id/activity.full.feedItem.title"
@@ -52,8 +52,8 @@
               android:textColor="@color/colorWhite"
               android:clickable="true"
               android:layout_alignParentBottom="true"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingLeft="@dimen/main_padding"
+              android:paddingRight="@dimen/main_padding"
               android:paddingBottom="4dp"
               android:paddingTop="4dp"
     />
