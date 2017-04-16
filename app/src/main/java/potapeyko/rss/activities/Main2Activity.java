@@ -286,6 +286,7 @@ public class Main2Activity extends MyBaseActivity
             }
             txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
             if (txtNumberTitle != null) {
+                txtNumberTitle.setVisibility(View.VISIBLE);
                 txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
             }
 
