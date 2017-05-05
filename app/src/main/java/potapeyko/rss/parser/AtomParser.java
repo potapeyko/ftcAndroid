@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Дмитрий on 25.01.2017.
  */
-public class AtomParser {
+public class    AtomParser {
     final static String NS_ATOM = "http://www.w3.org/2005/Atom";
 
     public static void process(XmlPullParser parser, FeedParser feedParser) throws XmlPullParserException, IOException {

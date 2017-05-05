@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class FeedParser {
+public class    FeedParser {
     public interface FeedHandler {
         public void OnFeedInfo(FeedParser feedParser, Feed feed);
     }

@@ -76,6 +76,7 @@
     <string name="menu_main_notcheckrd_title">Непрочитанные</string>
     <string name="menu_main_all_list_title">Список целиком</string>
     <string name="menu_main_check_all_title">Отметить все как прочитанные</string>
+    <string name="empty_option">Список пуст. Выберите другую опцию фильтрации.</string>
 
 
 </resources>

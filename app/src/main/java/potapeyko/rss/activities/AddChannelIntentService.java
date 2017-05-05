@@ -106,7 +106,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
             parser.setFeedHandler(this);
             parser.setFeedItemHandler(this);
 
-            parser.parseFeed(xpp, uri); //запуск парсинга
+                parser.parseFeed(xpp, uri); //запуск парсинга
             sendMyBroadcast(this, CHANNEL_NEWS_ADD_BROADCAST_MESS, feedID);
         } catch (IOException | XmlPullParserException | FeedParser.UnknownFeedException e) {
             sendMyBroadcast(this, CONNECTION_EXCEPTION_BROADCAST_MESS, 0);

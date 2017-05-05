@@ -27,11 +27,6 @@ class mySimpleCursorAdapter extends android.support.v4.widget.SimpleCursorAdapte
     }
 
     @Override
-    public Cursor swapCursor(Cursor c) {
-        return super.swapCursor(c);
-    }
-
-    @Override
     public void bindView(View view, Context context, Cursor cursor) {
         super.bindView(view, context, cursor);
         final View v = view.findViewById(mTo[1]);

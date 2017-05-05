@@ -50,6 +50,8 @@ public class Main2Activity extends MyBaseActivity
     private boolean broadcastRegister = false;
     private TextView txtNumberTitle;
     private DbReader.WhereFlags currentFilter;
+    private LinearLayout dummyPlugView;
+    private ListView newsList;
 
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -73,6 +75,7 @@ public class Main2Activity extends MyBaseActivity
                     newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
                     adapter.changeCursor(newsCursor);
                     adapter.notifyDataSetChanged();
+                    checkEmptyList();
                 } catch (Throwable th) {
                     th.printStackTrace();
                 } finally {
@@ -88,7 +91,7 @@ public class Main2Activity extends MyBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
-        txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
+
         db = new DB(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref, false);
         sPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -265,9 +268,14 @@ public class Main2Activity extends MyBaseActivity
     }
 
     private void newsTitleAndListInit() {
-        ListView newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
         TextView title = (TextView) findViewById(R.id.activity_main2_txtTitle);
         txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
+
+        newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
+
+        dummyPlugView = (LinearLayout) findViewById(R.id.black_empty_option);
+        if(dummyPlugView!=null){dummyPlugView.setVisibility(View.INVISIBLE);}
+        if(newsList!=null){newsList.setVisibility(View.VISIBLE);}
 
         if (feedId == -1) {
             prepareEmptyActivity(newsList, title);
@@ -309,6 +317,9 @@ public class Main2Activity extends MyBaseActivity
                 adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId, this);
 
                 newsList.setAdapter(adapter);
+                if(checkEmptyList()){
+                    return;
+                }
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long feedItemId) {
@@ -362,6 +373,7 @@ public class Main2Activity extends MyBaseActivity
         MyTag tag = (MyTag) v.getTag();
         ImageView im = (ImageView) v;
         DbWriter dbWriter = null;
+
         try {
             dbWriter = db.getWriter();
             dbWriter.open();
@@ -438,6 +450,7 @@ public class Main2Activity extends MyBaseActivity
             newsCursor = dbWriter.getCursorOfFeedItems(feedId, currentFilter);
             adapter.swapCursor(newsCursor);
             adapter.notifyDataSetChanged();
+            checkEmptyList();
         } catch (DbException e) {
             e.printStackTrace();
         } finally {
@@ -490,6 +503,7 @@ public class Main2Activity extends MyBaseActivity
             newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
             adapter.changeCursor(newsCursor);
             adapter.notifyDataSetChanged();
+            checkEmptyList();
             return true;
         } catch (Throwable th) {
             th.printStackTrace();
@@ -498,6 +512,23 @@ public class Main2Activity extends MyBaseActivity
                 dbReader.close();
         }
         return true;
+    }
+
+    /**
+     * check list and set dummy Plug View
+     * @return true - if list is empty
+     * false - if list is not empty
+     */
+    private boolean checkEmptyList() {
+        if(newsCursor.getCount()==0){
+            newsList.setVisibility(View.INVISIBLE);
+            dummyPlugView.setVisibility(View.VISIBLE);
+            return true;
+        }else{
+            newsList.setVisibility(View.VISIBLE);
+            dummyPlugView.setVisibility(View.INVISIBLE);
+        }
+        return false;
     }
 
     private void setAllAsChecked(Cursor newsCursor) {
