@@ -20,7 +20,7 @@ import potapeyko.rss.sql.DB;
 import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 
-public class FullFeedItemActivity extends AppCompatActivity {
+public class FullFeedItemActivity extends MyBaseActivity {
     private long feedItemId;
     private long feedId;
     private final DB db;
@@ -161,23 +161,6 @@ public class FullFeedItemActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putLong(idFeedItemKey, feedItemId);
         outState.putLong(idFeedKey, feedId);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.refresh, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.refreshButton) {
-            UpdateChannelIntentService.startActionUpdate(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     static void start(@NonNull Activity other, long feedItemId, long feedId) {
