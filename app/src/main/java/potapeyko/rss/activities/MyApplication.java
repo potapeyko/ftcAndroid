@@ -13,6 +13,8 @@ import potapeyko.rss.utils.UpdateAlarmListener;
 
 import java.util.Locale;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class MyApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
     private SharedPreferences preferences;
     private Locale locale;
@@ -31,9 +33,15 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
             config.locale = locale;
             getBaseContext().getResources().updateConfiguration(config, null);
 
-            Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
+            Intent mainActivityIntent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+            Intent settingsActivityIntent  = new Intent(getApplicationContext(),SettingsActivity.class);
+
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            settingsActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            settingsActivityIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivityIntent);
+            startActivity(settingsActivityIntent);
+
         } else if (getString(R.string.settings_period_key).equals(key) ||
                 getString(R.string.settings_auto_update_key).equals(key)) {
             alarmSettings();

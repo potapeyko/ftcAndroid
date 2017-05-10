@@ -61,9 +61,6 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
     public void onCreate() {
         super.onCreate();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "it work ftc onCreate Service", Toast.LENGTH_LONG);
-        toast.show();
     }
 
     /**
@@ -95,6 +92,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                     PendingIntent.FLAG_CANCEL_CURRENT);
         } else {
             notificationIntent = new Intent(this, ChannelChangeActivity.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             contentIntent = PendingIntent.getActivity(this,
                     0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
