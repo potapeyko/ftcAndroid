@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
-
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,25 +42,27 @@ public class FullFeedItemActivity extends MyBaseActivity {
         super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.share, menu);
+        MenuItem item = menu.findItem(R.id.action_share);
+        if(item!=null){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/*");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, feedItem.getLink());
+        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        if(shareActionProvider!=null) {
+
+            shareActionProvider.setShareIntent(shareIntent);}
+        }
+//            shareActionProvider = new ShareActionProvider(FullFeedItemActivity.this);
+//            shareActionProvider.setShareIntent(shareIntent);
+//            MenuItemCompat.setActionProvider(item, shareActionProvider);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.menu_share) {
-            showShareDialog();
-        }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareDialog() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text/*");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
-        intent.putExtra(Intent.EXTRA_TEXT, feedItem.getLink());
-        startActivity(Intent.createChooser(intent, getString(R.string.menu_share)));
     }
 
     @Override
