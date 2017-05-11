@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.MenuItemCompat;
+
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 import lombok.NonNull;
 import potapeyko.rss.R;
@@ -32,7 +34,33 @@ public class FullFeedItemActivity extends MyBaseActivity {
     private ImageView favoriteBtn;
 
     public FullFeedItemActivity() {
-        db = new DB(this);
+        db = new DB(FullFeedItemActivity.this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.share, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_share) {
+            showShareDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showShareDialog() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/*");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+        intent.putExtra(Intent.EXTRA_TEXT, feedItem.getLink());
+        startActivity(Intent.createChooser(intent, getString(R.string.menu_share)));
     }
 
     @Override
