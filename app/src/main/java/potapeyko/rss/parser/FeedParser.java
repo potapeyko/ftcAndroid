@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 public class    FeedParser {
     public interface FeedHandler {
-        public void OnFeedInfo(FeedParser feedParser, Feed feed);
+        public void OnFeed(FeedParser feedParser, Feed feed);
     }
 
     public interface FeedItemHandler {
@@ -50,23 +50,19 @@ public class    FeedParser {
     @Setter
     private FeedItemHandler feedItemHandler;
     private boolean stopProcessing = false;
+    public boolean shouldStopProcessing() {
+        synchronized (this) {return stopProcessing;}
+    }
+    public void stopProcessing() {
+        synchronized (this) { stopProcessing = true;}
+    }
     @Getter private String FeedUrl;
 
 
     public FeedParser() {
     }
 
-    public boolean shouldStopProcessing() {
-        synchronized (this) {
-            return stopProcessing;
-        }
-    }
 
-    public void stopProcessing() {
-        synchronized (this) {
-            stopProcessing = true;
-        }
-    }
 
     public void parseFeed(@NonNull XmlPullParser parser, @NonNull String FeedUrl)
             throws XmlPullParserException, IOException, UnknownFeedException {

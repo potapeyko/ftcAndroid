@@ -69,13 +69,13 @@ public class DbWriter extends DbReader {
 
         long resultId;
 
-        dB.beginTransaction();
+        dB.beginTransaction(); //начало транзакции
         try {
-            resultId = dB.insert(DbConvention.FEED_TABLE_NAME, null, cv);
-            dB.setTransactionSuccessful();
+            resultId = dB.insert(DbConvention.FEED_TABLE_NAME, null, cv);//выполнение действия
+            dB.setTransactionSuccessful();//если удалось, применяем транзакцию
             return resultId;
         } finally {
-            dB.endTransaction();
+            dB.endTransaction();//завершаем. Если произошла ошибка, то произайдет откат
         }
     }
 

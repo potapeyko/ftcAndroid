@@ -97,16 +97,13 @@ public class AddChannelIntentService extends IntentService implements FeedParser
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(ADD_INTENT_CONNECT_TIMEOUT);
             urlConnection.connect();
-            InputStream is = urlConnection.getInputStream();
-
+            InputStream is = urlConnection.getInputStream();//входной поток
             XmlPullParser xpp = FeedParser.prepareXpp(is);
-
-            FeedParser parser = new FeedParser();
+            FeedParser parser = new FeedParser();//создаем объект парсера
             //регистрация класса в качестве получателя сообщений
             parser.setFeedHandler(this);
             parser.setFeedItemHandler(this);
-
-                parser.parseFeed(xpp, uri); //запуск парсинга
+            parser.parseFeed(xpp, uri); //запуск парсинга
             sendMyBroadcast(this, CHANNEL_NEWS_ADD_BROADCAST_MESS, feedID);
         } catch (IOException | XmlPullParserException | FeedParser.UnknownFeedException e) {
             sendMyBroadcast(this, CONNECTION_EXCEPTION_BROADCAST_MESS, 0);
@@ -120,7 +117,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
     }
 
     @Override
-    public void OnFeedInfo(FeedParser feedParser, Feed feed) {//получение от парсера инфы о канале
+    public void OnFeed(FeedParser feedParser, Feed feed) {//получение от парсера инфы о канале
         //запись в бд. ответное сообщение.
         DbWriter dbWriter = null;
         Log.d("wtf", "FEED  " + feed.getTitle() + " " + feed.getLink() + "\n");

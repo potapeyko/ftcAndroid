@@ -195,7 +195,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
     }
 
     @Override
-    public void OnFeedInfo(FeedParser feedParser, Feed feed) {
+    public void OnFeed(FeedParser feedParser, Feed feed) {
         numberOfFeed++;
         Notification nf = this.getNotification(
                 getString(R.string.notification_up),

@@ -42,7 +42,7 @@ public class    AtomParser {
         }
 
         if (feedParser.getFeedHandler() != null)
-            feedParser.getFeedHandler().OnFeedInfo(feedParser, feed);
+            feedParser.getFeedHandler().OnFeed(feedParser, feed);
         if (feedParser.shouldStopProcessing())
             return;
 

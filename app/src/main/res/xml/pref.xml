@@ -9,12 +9,14 @@
     </SwitchPreference>
 
     <EditTextPreference
+            android:id="@+id/period_EditTextPreference"
             android:dependency="@string/settings_auto_update_key"
             android:key="@string/settings_period_key"
             android:defaultValue="1440"
             android:title="@string/activity_settings_period_title"
             android:summary="@string/activity_settings_period_summary"
             android:numeric="integer"
+            android:maxLength="10"
     >
     </EditTextPreference>
 
