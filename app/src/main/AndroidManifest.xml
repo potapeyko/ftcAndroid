@@ -43,14 +43,12 @@
                 android:name=".activities.UpdateChannelIntentServiceStopper"
                 android:enabled="true">
         </service>
-
-        <receiver android:name=".utils.UpdateAlarmListener">
-        </receiver>
-        <receiver android:name=".activities.BootReceiver">
+        <receiver android:name=".utils.UpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="potapeyko.rss.activities.UpdateReceiver"/>
             </intent-filter>
         </receiver>
 
