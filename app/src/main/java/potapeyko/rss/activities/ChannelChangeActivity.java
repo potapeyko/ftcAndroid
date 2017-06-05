@@ -20,14 +20,10 @@ import potapeyko.rss.sql.DbReader;
 
 
 public final class ChannelChangeActivity extends MyBaseActivity {
-    private final DB db;
     static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
     private static final String CHANEL_ID_KEY = "CHANEL_ID";
 
-    public ChannelChangeActivity() {
-        this.db = new DB(this);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +54,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
         final ListView channelsList = (ListView) findViewById(R.id.feed_change_list);
         TextView title = (TextView) findViewById(R.id.feed_change_text);
         if (channelsList != null) {
-            DbReader dbReader = db.getReader();
+            DbReader dbReader = DB.getReader(this);
             try {
                 dbReader.open();
                 channelsListCursor = dbReader.getAllChannelsCursor();

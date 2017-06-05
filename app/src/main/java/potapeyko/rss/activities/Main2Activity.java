@@ -43,7 +43,6 @@ public class Main2Activity extends MyBaseActivity
     private String chanelTitle = "";
     private int chanelTitleNumber = 0;
     private boolean feedItemViewedChange = false;
-    private DB db;
     private Cursor newsCursor;
     private SharedPreferences sPref;
     private SimpleCursorAdapter adapter;
@@ -66,7 +65,7 @@ public class Main2Activity extends MyBaseActivity
                     (intent.getLongExtra(BroadcastSender.LONG_BROADCAST_DATA, -1)) == feedId) {
                 DbReader dbReader = null;
                 try {
-                    dbReader = db.getReader();
+                    dbReader = DB.getReader(Main2Activity.this);
                     dbReader.open();
                     chanelTitleNumber = dbReader.getFeedById(feedId).getItemsCount();
                     if (txtNumberTitle != null) {
@@ -91,8 +90,6 @@ public class Main2Activity extends MyBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
-
-        db = new DB(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref, false);
         sPref = PreferenceManager.getDefaultSharedPreferences(this);
         currentFilter = DbReader.WhereFlags.valueOf(sPref.getString(WhERE_FLAG, "ALL"));
@@ -200,7 +197,7 @@ public class Main2Activity extends MyBaseActivity
         DbWriter dbWriter = null;
         if (this.getFeedId() != -1) {
             try {
-                dbWriter = db.getWriter();
+                dbWriter = DB.getWriter(this);
                 dbWriter.open();
                 dbWriter.deleteFeedById(this.getFeedId());
                 final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -283,7 +280,7 @@ public class Main2Activity extends MyBaseActivity
         }
         DbReader dbReader = null;
         try {
-            dbReader = db.getReader();
+            dbReader = DB.getReader(this);
             dbReader.open();
             if ("".equals(chanelTitle)) {
                 Feed currentFeed = dbReader.getFeedById(this.feedId);
@@ -329,7 +326,7 @@ public class Main2Activity extends MyBaseActivity
                             if (tag.checkedFlag == MyTag.falseValue) {
                                 DbWriter dbWriter = null;
                                 try {
-                                    dbWriter = db.getWriter();
+                                    dbWriter = DB.getWriter(Main2Activity.this);
                                     dbWriter.open();
                                     dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue, MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
                                     dbWriter.close();
@@ -375,7 +372,7 @@ public class Main2Activity extends MyBaseActivity
         DbWriter dbWriter = null;
 
         try {
-            dbWriter = db.getWriter();
+            dbWriter = DB.getWriter(this);
             dbWriter.open();
         } catch (Throwable th) {
             th.printStackTrace();
@@ -498,7 +495,7 @@ public class Main2Activity extends MyBaseActivity
                     return super.onOptionsItemSelected(item);
             }
 
-            dbReader = db.getReader();
+            dbReader = DB.getReader(this);
             dbReader.open();
             newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
             adapter.changeCursor(newsCursor);
@@ -535,7 +532,7 @@ public class Main2Activity extends MyBaseActivity
         DbWriter dbWriter = null;
         if (newsCursor != null && !newsCursor.isClosed()) {
             try {
-                dbWriter = db.getWriter();
+                dbWriter = DB.getWriter(this);
                 dbWriter.open();
                 newsCursor.moveToFirst();
                 int itemIdIndex = newsCursor.getColumnIndex(DbConvention.FEED_ITEM_ID);

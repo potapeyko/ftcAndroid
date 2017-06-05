@@ -6,16 +6,12 @@ import lombok.NonNull;
 
 public final class DB {
 
-    private final Context context;
 
-    public DB(final @NonNull Context context) {
-        this.context = context;
-    }
 
-    public DbReader getReader(){
+    public static DbReader getReader(final @NonNull Context context){
         return new DbReader(context);
     }
-    public DbWriter getWriter(){
+    public static DbWriter getWriter(final @NonNull Context context){
         return new DbWriter(context);
     }
 

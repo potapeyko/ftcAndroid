@@ -16,12 +16,10 @@ class mySimpleCursorAdapter extends android.support.v4.widget.SimpleCursorAdapte
 
 
     private View.OnClickListener itemIconsClickListener;
-    private DB dB;
     private long feedId;
 
     mySimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, long feedId, View.OnClickListener itemIconsClickListener) {
         super(context, layout, c, from, to);
-        dB = new DB(context);
         this.feedId = feedId;
         this.itemIconsClickListener = itemIconsClickListener;
     }

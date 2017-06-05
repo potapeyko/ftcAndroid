@@ -25,17 +25,11 @@ import potapeyko.rss.sql.DbWriter;
 public class FullFeedItemActivity extends MyBaseActivity {
     private long feedItemId;
     private long feedId;
-    private final DB db;
     private FeedItem feedItem;
-    private int favoriteFlag = 0;///ВРЕМЕННО!!!
     private static final String idFeedItemKey = "FULL_NEWS_ID";
     private static final String idFeedKey = "FEED_ID";
     private static final int UNKNOWN_ID = -10;
     private ImageView favoriteBtn;
-
-    public FullFeedItemActivity() {
-        db = new DB(FullFeedItemActivity.this);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,7 +100,7 @@ public class FullFeedItemActivity extends MyBaseActivity {
 
         DbReader dbReader = null;
         try {
-            dbReader = db.getReader();
+            dbReader = DB.getReader(this);
             dbReader.open();
             feedItem = dbReader.getFeedItemById(feedItemId);
             if (title != null) {
@@ -168,7 +162,7 @@ public class FullFeedItemActivity extends MyBaseActivity {
                 } else {
                     newFlag = MyTag.trueValue;
                 }
-                dbWriter = db.getWriter();
+                dbWriter = DB.getWriter(this);
                 dbWriter.open();
                 dbWriter.changeFeedItemFlags(feedItemId, feedId, feedItem.getCheckedFlag(), feedItem.getCheckedFlag(),
                         newFlag, feedItem.getFavoriteFlag());

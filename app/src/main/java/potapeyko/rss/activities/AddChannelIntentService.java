@@ -38,7 +38,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
         super("AddChannelIntentService");
     }
 
-    private DB db;
+
 
     private long feedID = NOTHING_ID;
 
@@ -70,10 +70,10 @@ public class AddChannelIntentService extends IntentService implements FeedParser
         }
 
         //проверка, м.б. канал уже есть
-        db = new DB(this);
+
         DbReader dbReader = null;
         try {
-            dbReader = db.getReader();
+            dbReader = DB.getReader(this);
             dbReader.open();
             boolean isInDb = dbReader.isFeedInDb(uri);
             if (isInDb) {
@@ -122,7 +122,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
         DbWriter dbWriter = null;
         Log.d("wtf", "FEED  " + feed.getTitle() + " " + feed.getLink() + "\n");
         try {
-            dbWriter = db.getWriter();
+            dbWriter = DB.getWriter(this);
             dbWriter.open();
             long result = dbWriter.addFeedToDB(feed.getTitle(), feed.getLink(), feed.getSiteLink(), feed.getDescription(),
                     feed.getLastBuildDate(), feed.getPubDate(), 0);
@@ -158,7 +158,7 @@ public class AddChannelIntentService extends IntentService implements FeedParser
         DbWriter dbWriter = null;
         try {
 
-            dbWriter = db.getWriter();
+            dbWriter =DB.getWriter(this);
             dbWriter.open();
 
             if (!dbWriter.isFeedItemInDb(feedItem)) {

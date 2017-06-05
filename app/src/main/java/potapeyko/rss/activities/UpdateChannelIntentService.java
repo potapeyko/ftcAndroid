@@ -47,7 +47,6 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
     private int quantityOfNewFeedItem = 0;
     private int quantityOfFeeds = 0;
     private int numberOfFeed = 0;
-    private DB db;
     private NotificationManager notificationManager;
     private static FeedParser parser;
     private static boolean stopProcessing = false;
@@ -131,8 +130,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
 
     private void handleActionUpdate() {
 
-        db = new DB(this);
-        DbReader dbReader = db.getReader();
+        DbReader dbReader = DB.getReader(this);
         HttpURLConnection urlConnection = null;
         try {
             ArrayList<Feed> feeds;
@@ -212,7 +210,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
         //получение от парсера инфы о новости канала
         DbWriter dbWriter = null;
         try {
-            dbWriter = db.getWriter();
+            dbWriter = DB.getWriter(this);
             dbWriter.open();
             if (!dbWriter.isFeedItemInDb(feedItem)) {
                 dbWriter.addFeedItemToDB(feedId, feedItem.getTitle(), feedItem.getLink(), feedItem.getDescription(),
