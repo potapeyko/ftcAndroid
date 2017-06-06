@@ -35,11 +35,11 @@ public class UpdateReceiver extends BroadcastReceiver {
 
     private void planedNextUpdate(boolean updatePeriodChanged) {
         Intent in = new Intent(context, UpdateReceiver.class);
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 in, PendingIntent.FLAG_CANCEL_CURRENT);
         if(!isAutoUpdate){
-            am.cancel(pendingIntent);//отменяем запланированные обновления
+            alarmManager.cancel(pendingIntent);//отменяем запланированные обновления
             return;
         }
 
@@ -61,7 +61,7 @@ public class UpdateReceiver extends BroadcastReceiver {
         final SharedPreferences.Editor ed = sPref.edit();
         ed.putLong(NEXT_UPDATE_TIME_KEY, nextPlanedUpdate);//запоминаем время,когда обновиться
         ed.apply();
-        am.set(AlarmManager.RTC_WAKEUP, nextPlanedUpdate, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nextPlanedUpdate, pendingIntent);
     }
 
     @Override

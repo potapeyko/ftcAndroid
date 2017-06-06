@@ -16,6 +16,7 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
     private SharedPreferences preferences;
     private Locale locale;
     private String lang;
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (getString(R.string.settings_lang_key).equals(key)) {
@@ -30,7 +31,7 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
             getBaseContext().getResources().updateConfiguration(config, null);
 
             Intent mainActivityIntent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-            Intent settingsActivityIntent  = new Intent(getApplicationContext(),SettingsActivity.class);
+            Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
 
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             settingsActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -38,7 +39,9 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
             startActivity(mainActivityIntent);
             startActivity(settingsActivityIntent);
 
-        } else if (getString(R.string.settings_period_key).equals(key) ||
+        } else
+
+        if (getString(R.string.settings_period_key).equals(key) ||
                 getString(R.string.settings_auto_update_key).equals(key)) {
             UpdateReceiver.onUpdatePeriodChanged(this);
         }

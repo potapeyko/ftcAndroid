@@ -75,14 +75,14 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSubText(subText)
-                .setAutoCancel(true);
+                .setAutoCancel(true); //настройка - закрыть уведомление при клике
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(Notification.CATEGORY_SERVICE);
         }
         Intent notificationIntent;
         PendingIntent contentIntent;
         if (progress != null) {
-            builder.setProgress(quantityOfFeeds, progress, false);
+            builder.setProgress(quantityOfFeeds, progress, false);//добавление прогрессбара
             notificationIntent = new Intent(this, UpdateChannelIntentServiceStopper.class);
             notificationIntent.setAction(ACTION_UPDATE_STOP);
 
@@ -97,13 +97,13 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                     PendingIntent.FLAG_CANCEL_CURRENT);
         }
         if (quantity != null) {
-            builder.setNumber(quantity);
+            builder.setNumber(quantity);//добавление числа новостей
         }
-        builder.setContentIntent(contentIntent);
-        return builder.build();
+        builder.setContentIntent(contentIntent);//добавление действия
+        return builder.build();//создание уведомления
     }
 
-    private void sendNotification(Notification nf) {
+    private void   sendNotification(Notification nf) {
         notificationManager.notify(NOTIFICATION_ID, nf);
     }
 
@@ -172,6 +172,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 }
             }
             stopProcessing = false;
+
             this.sendNotification(
                     this.getNotification(getString(R.string.notification_up),
                             "", getString(R.string.notification_updated_subtext),

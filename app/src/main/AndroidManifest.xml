@@ -45,9 +45,9 @@
         </service>
         <receiver android:name=".utils.UpdateReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/><!--Сообщение о включении-->
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/><!--Сообщение о быстром включении (при перезагрузке)-->
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/><!--для htc-->
                 <action android:name="potapeyko.rss.activities.UpdateReceiver"/>
             </intent-filter>
         </receiver>
