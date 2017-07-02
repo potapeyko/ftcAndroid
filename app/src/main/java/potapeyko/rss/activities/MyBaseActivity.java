@@ -24,7 +24,6 @@ public class MyBaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
         if (id == R.id.refreshButton) {
             UpdateChannelIntentService.startActionUpdate(this);

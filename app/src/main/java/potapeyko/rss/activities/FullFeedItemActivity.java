@@ -131,7 +131,7 @@ public class FullFeedItemActivity extends MyBaseActivity {
                     @Override
                     public void onClick(View v) {
                         boolean result = changeFavoriteFlagInDb();
-                        if(result) {
+                        if(result) { //удалось изменить в БД, меняем и на экране
                             if (feedItem.getFavoriteFlag() == MyTag.trueValue) {
                                 favoriteBtn.setImageResource(R.drawable.ic_item_bookmark_not_white);
                                 feedItem.setFavoriteFlag(MyTag.falseValue);
@@ -157,15 +157,15 @@ public class FullFeedItemActivity extends MyBaseActivity {
             int newFlag;
             DbWriter dbWriter = null;
             try {
-                if (feedItem.getFavoriteFlag() == MyTag.trueValue) {
+                if (feedItem.getFavoriteFlag() == MyTag.trueValue) {//проверка текущего состояния
                     newFlag = MyTag.falseValue;
                 } else {
                     newFlag = MyTag.trueValue;
                 }
                 dbWriter = DB.getWriter(this);
                 dbWriter.open();
-                dbWriter.changeFeedItemFlags(feedItemId, feedId, feedItem.getCheckedFlag(), feedItem.getCheckedFlag(),
-                        newFlag, feedItem.getFavoriteFlag());
+                dbWriter.changeFeedItemFlags(feedItemId, feedId, feedItem.getCheckedFlag(),//запрос в БД
+                        feedItem.getCheckedFlag(),newFlag, feedItem.getFavoriteFlag());
                 return true;
             }catch (Throwable th){
                 th.printStackTrace();

@@ -19,7 +19,7 @@ import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 
 
-public final class ChannelChangeActivity extends MyBaseActivity {
+public final class FeedChangeActivity extends MyBaseActivity {
     static final int CHANEL_CHANGE_CODE = 1235;
     private Cursor channelsListCursor = null;
     private static final String CHANEL_ID_KEY = "CHANEL_ID";
@@ -41,7 +41,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
     }
 
     static void start(@NonNull final Activity other) {
-        final Intent intent = new Intent(other, ChannelChangeActivity.class);
+        final Intent intent = new Intent(other, FeedChangeActivity.class);
         other.startActivityForResult(intent, CHANEL_CHANGE_CODE);
     }
 
@@ -51,7 +51,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
     }
 
     private void channelsListInit() {
-        final ListView channelsList = (ListView) findViewById(R.id.feed_change_list);
+        final ListView channelsList = (ListView) findViewById(R.id.feed_change_list); //получаем список с разметки
         TextView title = (TextView) findViewById(R.id.feed_change_text);
         if (channelsList != null) {
             DbReader dbReader = DB.getReader(this);
@@ -64,7 +64,7 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                         title.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                NewFeedActivity.start(ChannelChangeActivity.this);
+                                NewFeedActivity.start(FeedChangeActivity.this);
                             }
                         });
                     }
@@ -72,17 +72,19 @@ public final class ChannelChangeActivity extends MyBaseActivity {
                 }
 
 
-                final String[] from = {DbConvention.FEED_TITLE,
+                final String[] from = {DbConvention.FEED_TITLE, //откуда брать данные
                         DbConvention.FEED_DESCRIPTION, DbConvention.FEED_COUNT};
-                final int[] to = {R.id.feeds_list_item_title, R.id.feeds_list_item_description, R.id.feeds_list_item_flag};
+                final int[] to = {R.id.feeds_list_item_title, //в какие поля записывать
+                        R.id.feeds_list_item_description, R.id.feeds_list_item_flag};
 
-                final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.feeds_list_item,
+                final SimpleCursorAdapter adapter =
+                        new SimpleCursorAdapter(this, R.layout.feeds_list_item,
                         channelsListCursor, from, to);
 
                 channelsList.setAdapter(adapter);
                 channelsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {//устанавливаем обработчик нажатия
                         Intent intent = new Intent();
                         intent.putExtra(CHANEL_ID_KEY, id);
                         setResult(RESULT_OK, intent);

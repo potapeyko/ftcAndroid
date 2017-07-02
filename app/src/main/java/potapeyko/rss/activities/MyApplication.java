@@ -33,10 +33,10 @@ public class MyApplication extends Application implements SharedPreferences.OnSh
             Intent mainActivityIntent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
             Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
 
-            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//флаг для закрытия всех подобных активностей
             settingsActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            settingsActivityIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mainActivityIntent);
+            settingsActivityIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);//создание нового стека экранов
+            startActivity(mainActivityIntent);//запуск
             startActivity(settingsActivityIntent);
 
         } else

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import potapeyko.rss.R;
@@ -90,7 +89,7 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                     0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
         } else {
-            notificationIntent = new Intent(this, ChannelChangeActivity.class);
+            notificationIntent = new Intent(this, FeedChangeActivity.class);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             contentIntent = PendingIntent.getActivity(this,
                     0, notificationIntent,
@@ -172,7 +171,11 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 }
             }
             stopProcessing = false;
-
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             this.sendNotification(
                     this.getNotification(getString(R.string.notification_up),
                             "", getString(R.string.notification_updated_subtext),

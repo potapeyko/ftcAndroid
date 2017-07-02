@@ -38,16 +38,17 @@ public final class NewFeedActivity extends MyBaseActivity {
             }
 
             String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
-            if (CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)) {
-                Main2Activity.start(NewFeedActivity.this, intent.getLongExtra(LONG_BROADCAST_DATA, -1));
+            if (CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)) {//все успешно добавленно
+                MainActivity.start(NewFeedActivity.this,
+                        intent.getLongExtra(LONG_BROADCAST_DATA, -1));//открываем добавленный канал
                 NewFeedActivity.this.finish();
             } else if (CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)) {
                 showCauseToast(broadcastMessage);
-            } else {
+            } else {//какая то ошибка
                 btnNewChanel.setEnabled(true);
                 etUri.setEnabled(true);
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
-                showCauseToast(broadcastMessage);
+                progressBar.setVisibility(ProgressBar.INVISIBLE);//убираем прогресс
+                showCauseToast(broadcastMessage); // сообщения о причинах ошибки
             }
 
         }

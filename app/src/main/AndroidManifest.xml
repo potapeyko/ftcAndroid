@@ -18,7 +18,7 @@
         <activity android:name=".activities.MyBaseActivity"
         />
         <activity
-                android:name=".activities.Main2Activity">
+                android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -26,7 +26,7 @@
         </activity>
         <activity android:name=".activities.NewFeedActivity"/>
         <activity android:name=".activities.AboutAppActivity"/>
-        <activity android:name=".activities.ChannelChangeActivity"/>
+        <activity android:name=".activities.FeedChangeActivity"/>
         <activity android:name=".activities.FullFeedItemActivity"/>
         <activity android:name=".activities.SettingsActivity">
         </activity>

@@ -36,7 +36,6 @@
                 android:layout_alignParentLeft="true"
                 android:clickable="true"
                >
-
         </ImageView>
         <ImageView
                 android:paddingLeft="6dp"
@@ -45,16 +44,13 @@
                 android:paddingBottom="4dp"
                 android:layout_width="46dp"
                 android:layout_height="42dp"
-
                 android:id="@+id/feedItem_list_favoriteBtn"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_item_bookmark_black"
                 android:clickable="true"
              >
-
         </ImageView>
-
         <TextView android:layout_width="match_parent" android:layout_height="24dp"
                   android:id="@+id/feedItem_list_date"
                   android:layout_alignParentBottom="true"
@@ -63,7 +59,5 @@
                   android:paddingBottom="2dp"
                   android:paddingTop="2dp"
                   android:text="16.02.17"/>
-
     </RelativeLayout>
-
 </LinearLayout>

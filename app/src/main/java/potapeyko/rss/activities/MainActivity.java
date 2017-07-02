@@ -28,14 +28,14 @@ import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 import potapeyko.rss.utils.BroadcastSender;
 
-public class Main2Activity extends MyBaseActivity
+public class MainActivity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     static final String CHANEL_ID = "chanel_id";
     private static final String CHANEL_TITLE = "chanel_title";
     private static final String CHANEL_TITLE_NUMBER = "chanel_title_number";
     private static final String WhERE_FLAG = "where_flag";
 
-    private static final int LAYOUT = R.layout.activity_main2;
+    private static final int LAYOUT = R.layout.activity_main;
 
     @Getter
     @NonNull
@@ -65,7 +65,7 @@ public class Main2Activity extends MyBaseActivity
                     (intent.getLongExtra(BroadcastSender.LONG_BROADCAST_DATA, -1)) == feedId) {
                 DbReader dbReader = null;
                 try {
-                    dbReader = DB.getReader(Main2Activity.this);
+                    dbReader = DB.getReader(MainActivity.this);
                     dbReader.open();
                     chanelTitleNumber = dbReader.getFeedById(feedId).getItemsCount();
                     if (txtNumberTitle != null) {
@@ -96,8 +96,6 @@ public class Main2Activity extends MyBaseActivity
 
         initToolbar();
         initNavigationView();
-
-
         feedId = getIntent().getLongExtra(CHANEL_ID, -1);
         chanelTitle = "";
 
@@ -163,7 +161,7 @@ public class Main2Activity extends MyBaseActivity
         if (id == R.id.nav_add) {
             NewFeedActivity.start(this);
         } else if (id == R.id.nav_change) {
-            ChannelChangeActivity.start(this);
+            FeedChangeActivity.start(this);
         } else if (id == R.id.nav_delete) {
             deleteChannel();
         } else if (id == R.id.nav_setting) {
@@ -182,11 +180,11 @@ public class Main2Activity extends MyBaseActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode != ChannelChangeActivity.CHANEL_CHANGE_CODE) {
+        if (requestCode != FeedChangeActivity.CHANEL_CHANGE_CODE) {
             return;
         }
         if (data != null) {
-            feedId = ChannelChangeActivity.getResultChanelId(data);
+            feedId = FeedChangeActivity.getResultChanelId(data);
         }
         chanelTitle = "";
         newsTitleAndListInit();
@@ -202,7 +200,7 @@ public class Main2Activity extends MyBaseActivity
                 dbWriter.deleteFeedById(this.getFeedId());
                 final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
                 final SharedPreferences.Editor ed = sPref.edit();
-                ed.putLong(Main2Activity.CHANEL_ID, -1);
+                ed.putLong(MainActivity.CHANEL_ID, -1);
                 ed.apply();
             } catch (Throwable r) {
                 r.printStackTrace();
@@ -210,7 +208,7 @@ public class Main2Activity extends MyBaseActivity
                 if (dbWriter != null) {
                     dbWriter.close();
                 }
-                ChannelChangeActivity.start(this);
+                FeedChangeActivity.start(this);
             }
         }
     }
@@ -251,7 +249,7 @@ public class Main2Activity extends MyBaseActivity
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ChannelChangeActivity.start(Main2Activity.this);
+                    FeedChangeActivity.start(MainActivity.this);
                 }
             });
         }
@@ -265,10 +263,10 @@ public class Main2Activity extends MyBaseActivity
     }
 
     private void newsTitleAndListInit() {
-        TextView title = (TextView) findViewById(R.id.activity_main2_txtTitle);
-        txtNumberTitle = (TextView) findViewById(R.id.activity_main2_txtNumberTitle);
+        TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
+        txtNumberTitle = (TextView) findViewById(R.id.activity_main_txtNumberTitle);
 
-        newsList = (ListView) findViewById(R.id.activity_main2_feedsList);
+        newsList = (ListView) findViewById(R.id.activity_main_feedsList);
 
         dummyPlugView = (LinearLayout) findViewById(R.id.black_empty_option);
         if(dummyPlugView!=null){dummyPlugView.setVisibility(View.INVISIBLE);}
@@ -311,7 +309,7 @@ public class Main2Activity extends MyBaseActivity
                         DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_date};
 
-                adapter = new mySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId, this);
+                adapter = new MySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId, this);
 
                 newsList.setAdapter(adapter);
                 if(checkEmptyList()){
@@ -326,7 +324,7 @@ public class Main2Activity extends MyBaseActivity
                             if (tag.checkedFlag == MyTag.falseValue) {
                                 DbWriter dbWriter = null;
                                 try {
-                                    dbWriter = DB.getWriter(Main2Activity.this);
+                                    dbWriter = DB.getWriter(MainActivity.this);
                                     dbWriter.open();
                                     dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue, MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
                                     dbWriter.close();
@@ -343,7 +341,7 @@ public class Main2Activity extends MyBaseActivity
 
                             }
                             feedItemViewedChange = true;
-                            FullFeedItemActivity.start(Main2Activity.this, feedItemId, feedId);
+                            FullFeedItemActivity.start(MainActivity.this, feedItemId, feedId);
                         }
                     }
                 });
@@ -358,7 +356,7 @@ public class Main2Activity extends MyBaseActivity
     }
 
     static void start(@NonNull Activity other, long aLong) {
-        Intent intent = new Intent(other, Main2Activity.class);
+        Intent intent = new Intent(other, MainActivity.class);
         intent.putExtra(CHANEL_ID, aLong);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         other.startActivity(intent);
@@ -367,7 +365,9 @@ public class Main2Activity extends MyBaseActivity
 
     @Override
     public void onClick(View v) {
+        if(v.getTag()==null)return;
         MyTag tag = (MyTag) v.getTag();
+
         ImageView im = (ImageView) v;
         DbWriter dbWriter = null;
 
@@ -498,8 +498,8 @@ public class Main2Activity extends MyBaseActivity
             dbReader = DB.getReader(this);
             dbReader.open();
             newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
-            adapter.changeCursor(newsCursor);
-            adapter.notifyDataSetChanged();
+            adapter.changeCursor(newsCursor);//устанавливаем новый курсой
+            adapter.notifyDataSetChanged();//сообщаем адаптеру, что курсор сменен
             checkEmptyList();
             return true;
         } catch (Throwable th) {
