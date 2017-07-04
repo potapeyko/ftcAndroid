@@ -10,4 +10,8 @@
         <item>ru</item>
         <item>en</item>
     </string-array>
+    <string-array name="http_https">
+        <item>http://</item>
+        <item>https://</item>
+    </string-array>
 </resources>

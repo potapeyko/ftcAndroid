@@ -25,8 +25,10 @@ public final class NewFeedActivity extends MyBaseActivity {
     private Button btnNewChanel;
     private EditText etUri;
     private TextView tvNewChanel;
+    private Spinner spUrlProtocol;
     private final NetworkHelper nwHelper;
     private ProgressBar progressBar;
+//    int o=0;
 
     final private BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -87,7 +89,12 @@ public final class NewFeedActivity extends MyBaseActivity {
         });
         btnNewChanel = (Button) findViewById(R.id.activity_new_feed_btnNewChanel);
         etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
+
+
         tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
+        spUrlProtocol = (Spinner) findViewById(R.id.activity_new_feed_spUrlProtocol);
+
+
         progressBar = (ProgressBar) findViewById(R.id.activity_new_feed_progressBar);
         if (!nwHelper.isNetworkAvailable()) {
             notConnectionCase();
@@ -95,8 +102,7 @@ public final class NewFeedActivity extends MyBaseActivity {
             btnNewChanel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String uri = etUri.getText().toString();
-                    uri = addProtocol(uri);
+                    String uri = getUri();
                     if (!isLinkCorrect(uri)) {
                         Toast.makeText(NewFeedActivity.this,
                                 R.string.new_chanel_not_correct_link_toast,
@@ -108,17 +114,33 @@ public final class NewFeedActivity extends MyBaseActivity {
                     btnNewChanel.setEnabled(false);
                     etUri.setEnabled(false);
                     progressBar.setVisibility(ProgressBar.VISIBLE);
+
+//                    spUrlProtocol.setSelection(o,false);
+//                    o=++o%2;
                 }
             });
 
         }
     }
 
-    private String addProtocol(String uri) {
+    private String getUri() {
+        String uri = etUri.getText().toString();
+        String http_https[] = getResources().getStringArray(R.array.http_https);
         if (!uri.contains("://")) {
-            return "http://" + uri;
+            return getResources().getStringArray(R.array.http_https)[spUrlProtocol.getSelectedItemPosition()] + uri;
+        } else {
+            String[] s = uri.split("://", 2);
+            etUri.setText(s[1]);
+            String protocol = s[0] + "://";
+            for (int i = 0; i < http_https.length; i++) {
+
+                if (http_https[i].equals(protocol)) {
+                    spUrlProtocol.setSelection(i, false);
+                    break;
+                }
+            }
+            return uri;
         }
-        return uri;
     }
 
     private boolean isLinkCorrect(String uri) {
