@@ -16,11 +16,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import lombok.NonNull;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import potapeyko.rss.R;
 import potapeyko.rss.model.Feed;
 import potapeyko.rss.network.NetworkHelper;
 import potapeyko.rss.utils.BroadcastSender;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -38,6 +49,7 @@ public final class NewFeedActivity extends MyBaseActivity {
     private Spinner spUrlProtocol;
     private final NetworkHelper nwHelper;
     private LinearLayout progressBarLayout; //progressBarLayout inside this linearLayout
+    ArrayList<Feed> feedsList;
 //    int o=0;
 
     private GetListOfFeedsAsynkTask getListOfFeedsAsynkTask;
@@ -46,8 +58,9 @@ public final class NewFeedActivity extends MyBaseActivity {
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
 
-        if (getListOfFeedsAsynkTask != null)
+        if (getListOfFeedsAsynkTask != null) {
             getListOfFeedsAsynkTask.unlink();
+        }
         return getListOfFeedsAsynkTask;
 
     }
@@ -70,11 +83,67 @@ public final class NewFeedActivity extends MyBaseActivity {
         }
 
         @Override
-        protected Void doInBackground(String... url) {
+        protected Void doInBackground(String... uri) {
             //сходить на сайт, распарсить, отдать
+            if (uri == null || uri[0] == null || uri[0].compareTo("") == 0) return null;
             try {
-                Thread.sleep(5000L);
-            } catch (InterruptedException e) {
+                HttpURLConnection urlConnection = null;
+
+
+                URL url = new URL("http://cloud.feedly.com/v3/search/feeds?count=50&q=" + URLEncoder.encode(uri[0], "UTF-8"));
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setConnectTimeout(1000);
+                urlConnection.connect();
+                InputStream is = urlConnection.getInputStream();
+                Reader reader = new BufferedReader(new InputStreamReader(is));
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(reader);
+                JSONObject jsonObj = (JSONObject) obj;
+                JSONArray jsonResults = (JSONArray) jsonObj.get("results");
+
+                int sizeOfJsonRes = jsonResults.size();
+                feeds = new ArrayList<>(sizeOfJsonRes);
+
+                String link;
+                String description;
+                String title = null;
+                String website;
+                Object[] temp = new Object[4];
+
+                for (int i = 0; i < sizeOfJsonRes; i++) {
+                    JSONObject f = (JSONObject) jsonResults.get(i);
+                    temp[0] = f.get("feedId");
+                    temp[1] = f.get("title");
+                    temp[2] = f.get("website");
+                    temp[3] = f.get("description");
+                    if (temp[0] == null) continue;
+                    link = temp[0].toString().substring(5);
+                    if (temp[1] == null) {
+                        title = null;
+                    } else {
+                        title = temp[1].toString();
+                    }
+                    if (temp[2] == null) {
+                        website = null;
+                    } else {
+                        website = temp[2].toString();
+                    }
+                    if (temp[3] == null) {
+                        description = null;
+                    } else {
+                        description = temp[3].toString();
+                    }
+
+                    feeds.add(
+                            new Feed(1, title, link, website,
+                                    description, null,
+                                    null, 0)
+                    );
+                }
+                //http://cloud.feedly.com/v3/search/feeds?count=50&q=sport
+
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -92,23 +161,8 @@ public final class NewFeedActivity extends MyBaseActivity {
 
 
     private void createFeedsList(ArrayList<Feed> s) {
-        if (lvFeedsList != null) {
-            Feed[] a = {new Feed(1, "World of Tanks", "https://worldoftanks.ru/ru/rss/news/", "link1", "Des",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0), new Feed(2, "title2", "link2", "link1", "Des2",
-                    null, null, 0)};
-            s = new ArrayList<Feed>(Arrays.asList(a));
+        if (lvFeedsList != null && s != null) {
+            feedsList = s;
             ArrayAdapter arrayAdapter = createArrayAdapter(s);
             lvFeedsList.setAdapter(arrayAdapter);
             lvFeedsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -187,6 +241,37 @@ public final class NewFeedActivity extends MyBaseActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        //задача работает, но не держит активость (не мешает удалиться)
+        if (getListOfFeedsAsynkTask != null) {
+            getListOfFeedsAsynkTask.unlink();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //если активность восстановили, а в ней была запущена задача, тогда линкуем обратно
+        checkAsynkTask();
+
+    }
+
+    private void checkAsynkTask() {
+        if (getListOfFeedsAsynkTask != null) {
+            //задача могла закончиться пока активность была скрыта.
+            if (getListOfFeedsAsynkTask.getStatus() != AsyncTask.Status.FINISHED) {
+                getListOfFeedsAsynkTask.link(this);
+                deactivateControls();
+                progressBarLayout.setVisibility(ProgressBar.VISIBLE);
+            } else {
+                createFeedsList(getListOfFeedsAsynkTask.getFeeds());
+                getListOfFeedsAsynkTask = null;//задача закончилась, результаты достали. больше она не нужна
+            }
+        }//если равна нулю, то будет создана при нажатии кнопки
+    }
+
+    @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(NewFeedActivity.this).registerReceiver(br, new IntentFilter(BroadcastSender.INTENT_FILTER));
@@ -237,7 +322,7 @@ public final class NewFeedActivity extends MyBaseActivity {
                     getListOfFeedsAsynkTask = new GetListOfFeedsAsynkTask();
                     getListOfFeedsAsynkTask.link(NewFeedActivity.this);
                     getListOfFeedsAsynkTask.
-                            execute("http://cloud.feedly.com/v3/search/feeds?count=50&q=sport");
+                            execute(etKeywords.getText().toString());
                 }
             });
             btnFindNewChanel.requestFocus();
@@ -246,13 +331,13 @@ public final class NewFeedActivity extends MyBaseActivity {
 
         //получаем сохраненную при пересоздании активности задачу
         getListOfFeedsAsynkTask = (GetListOfFeedsAsynkTask) getLastCustomNonConfigurationInstance();
-        if (getListOfFeedsAsynkTask != null) {
-            if (getListOfFeedsAsynkTask.getStatus() != AsyncTask.Status.FINISHED) {
-                getListOfFeedsAsynkTask.link(this);
-                progressBarLayout.setVisibility(ProgressBar.VISIBLE);
-                getListOfFeedsAsynkTask = new GetListOfFeedsAsynkTask();
-            } else {
-                createFeedsList(getListOfFeedsAsynkTask.getFeeds());
+        checkAsynkTask();
+
+        //может скрывали активность, тогда задача могла убиться вместе с активностью а список сохранился
+        if (savedInstanceState != null) {
+            ArrayList<Feed> feedsFromBandle = (ArrayList<Feed>) savedInstanceState.getSerializable("feedsList");
+            if (feedsFromBandle != null) {
+                createFeedsList(feedsFromBandle);
             }
         }
     }
@@ -303,7 +388,7 @@ public final class NewFeedActivity extends MyBaseActivity {
         return Patterns.WEB_URL.matcher(uri).matches();
     }
 
-    private void notConnectionCase() {
+    private void notConnectionCase() {//todo доделать для остальных полей
         btnConnectNewChanel.setText(R.string.back);
         btnConnectNewChanel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,4 +414,10 @@ public final class NewFeedActivity extends MyBaseActivity {
         other.startActivity(intent);
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("feedsList", feedsList);
+    }
 }

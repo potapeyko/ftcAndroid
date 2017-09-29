@@ -2,13 +2,17 @@ package potapeyko.rss.model;
 
 
 import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
 import lombok.*;
+import org.json.simple.JSONAware;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor
-public class Feed {
+public class Feed implements Serializable {
     @Getter private  long id;
     @Getter @Setter private String title;
     @Getter @Setter private String link;
@@ -34,5 +38,7 @@ public class Feed {
         }
         return values;
     }
+
+
 
 }
