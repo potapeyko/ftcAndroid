@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">rssReader</string>
     <string name="title_txt">Неизмененный text</string>
-    <string name="hint_new_chanel_uti">URL of the feed to connect</string>
+    <string name="hint_new_chanel_uti">URL of feed</string>
 
     <string name="drawer_items_array_add">Add feed</string>
     <string name="drawer_items_array_change">Change feed</string>
@@ -18,9 +18,11 @@
     <string name="link_text">
         Link to the full article on the Web
     </string>
-    <string name="new_chanel_tv">Enter the feed</string>
+    <string name="new_chanel_tv_url">Enter url of feed</string>
+    <string name="new_chanel_tv_keywords">or keywords</string>
     <string name="new_chanel_connect_btn">Connect</string>
     <string name="new_chanel_find_btn">Find</string>
+
     <string name="new_chanel_no_connection">Connection not set in</string>
     <string name="new_chanel_no_connection_toast">Check the connection and try again</string>
     <string name="new_chanel_not_correct_link_toast">

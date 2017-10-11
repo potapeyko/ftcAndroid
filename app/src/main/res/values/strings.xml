@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">rssReader</string>
     <string name="title_txt">Неизмененный текст</string>
-    <string name="hint_new_chanel_uti">URL ленты для подключения</string>
+    <string name="hint_new_chanel_uti">URL ленты</string>
     <string name="drawer_items_array_add">Добавить канал</string>
 
     <string name="drawer_items_array_change">Сменить канал</string>
@@ -16,7 +16,8 @@
         <item>О приложении</item>
     </string-array>
     <string name="link_text">Ссылка на полную статью в Сети</string>
-    <string name="new_chanel_tv">Введите канал</string>
+    <string name="new_chanel_tv_url">Введите url канала</string>
+    <string name="new_chanel_tv_keywords">или ключевые слова</string>
     <string name="new_chanel_connect_btn">Подключиться</string>
     <string name="new_chanel_find_btn">Найти</string>
     <string name="new_chanel_no_connection">Соединение не установленно</string>

@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import lombok.NonNull;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -33,11 +32,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static potapeyko.rss.utils.BroadcastSender.*;
 
-//todo: не влазит на экран при горизонтальной ориентации экрана. + сделать поход в интернет.
+//// TODO: 11.10.2017 сделать обработку отсутствия соединения и повторного поиска строки без изменений
 public final class NewFeedActivity extends MyBaseActivity {
 
     private Button btnConnectNewChanel;
@@ -49,11 +47,13 @@ public final class NewFeedActivity extends MyBaseActivity {
     private Spinner spUrlProtocol;
     private final NetworkHelper nwHelper;
     private LinearLayout progressBarLayout; //progressBarLayout inside this linearLayout
+
+    private LinearLayout hiddenLayout; // часть, скрываемая при выводе списка каналов
     ArrayList<Feed> feedsList;
 //    int o=0;
 
     private GetListOfFeedsAsynkTask getListOfFeedsAsynkTask;
-
+    private boolean isFeedsListVisible = false;
     /// сохранение асинктаска при повороте экрана.
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
@@ -62,7 +62,6 @@ public final class NewFeedActivity extends MyBaseActivity {
             getListOfFeedsAsynkTask.unlink();
         }
         return getListOfFeedsAsynkTask;
-
     }
 
     static private class GetListOfFeedsAsynkTask extends AsyncTask<String, Void, Void> {
@@ -88,9 +87,8 @@ public final class NewFeedActivity extends MyBaseActivity {
             if (uri == null || uri[0] == null || uri[0].compareTo("") == 0) return null;
             try {
                 HttpURLConnection urlConnection = null;
-
-
-                URL url = new URL("http://cloud.feedly.com/v3/search/feeds?count=50&q=" + URLEncoder.encode(uri[0], "UTF-8"));
+                URL url = new URL("http://cloud.feedly.com/v3/search/feeds?count=50&q=" +
+                        URLEncoder.encode(uri[0], "UTF-8"));
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setConnectTimeout(1000);
                 urlConnection.connect();
@@ -161,6 +159,7 @@ public final class NewFeedActivity extends MyBaseActivity {
 
 
     private void createFeedsList(ArrayList<Feed> s) {
+
         if (lvFeedsList != null && s != null) {
             feedsList = s;
             ArrayAdapter arrayAdapter = createArrayAdapter(s);
@@ -177,8 +176,24 @@ public final class NewFeedActivity extends MyBaseActivity {
             });
             //http://cloud.feedly.com/v3/search/feeds?count=50&q=sport
         }
-        progressBarLayout.setVisibility(ProgressBar.INVISIBLE);//убираем прогресс
+        lvFeedsList.setVisibility(View.VISIBLE);
+        progressBarLayout.setVisibility(View.INVISIBLE);//убираем прогресс
         activateControls();
+        isFeedsListVisible = true;
+        hiddenLayout.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isFeedsListVisible){
+            isFeedsListVisible = false;
+            lvFeedsList.setVisibility(View.INVISIBLE);
+            hiddenLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     final private BroadcastReceiver br = new BroadcastReceiver() {
@@ -281,7 +296,7 @@ public final class NewFeedActivity extends MyBaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+               onBackPressed();
             }
         });
         btnConnectNewChanel = (Button) findViewById(R.id.activity_new_feed_btnConnectNewChanel);
@@ -289,9 +304,15 @@ public final class NewFeedActivity extends MyBaseActivity {
         etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
         etKeywords = (EditText) findViewById(R.id.activity_new_feed_etFindNewChanelKeywords);
 
-
+        hiddenLayout =(LinearLayout) findViewById(R.id.activity_new_feed_hiddenLayout );
         tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
         spUrlProtocol = (Spinner) findViewById(R.id.activity_new_feed_spUrlProtocol);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.http_https, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        spUrlProtocol.setAdapter(adapter);
         lvFeedsList = (ListView) findViewById(R.id.activity_new_feed_list);
         progressBarLayout = (LinearLayout) findViewById(R.id.activity_new_feed_progressBar_layout);
 

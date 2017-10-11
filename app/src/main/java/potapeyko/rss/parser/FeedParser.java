@@ -69,8 +69,12 @@ public class    FeedParser {
 
         this.FeedUrl = FeedUrl;
         int eventType = parser.getEventType();
-        while (eventType != XmlPullParser.START_TAG)
+        while (eventType != XmlPullParser.START_TAG) {
             eventType = parser.next();
+            if(eventType==XmlPullParser.END_DOCUMENT){
+                throw new UnknownFeedException();
+            }
+        }
         if (parser.getName().equals("rss")) {
             RSSParser.process(parser, this);
         } else if (parser.getName().equals("feed")) {
