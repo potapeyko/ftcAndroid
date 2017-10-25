@@ -326,7 +326,8 @@ public class MainActivity extends MyBaseActivity
                                 try {
                                     dbWriter = DB.getWriter(MainActivity.this);
                                     dbWriter.open();
-                                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue, MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
+                                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.trueValue,
+                                            MyTag.falseValue, tag.favoriteFlag, tag.favoriteFlag);
                                     dbWriter.close();
                                     chanelTitleNumber--;
                                     txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
@@ -385,7 +386,8 @@ public class MainActivity extends MyBaseActivity
         if (tag.idOfClickedIcon == R.id.feedItem_list_checkedBtn) {
             if (tag.checkedFlag == MyTag.trueValue) {
                 try {
-                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.falseValue, MyTag.trueValue, tag.favoriteFlag, tag.favoriteFlag);
+                    dbWriter.changeFeedItemFlags(tag.feedItemId, feedId, MyTag.falseValue, MyTag.trueValue,
+                            tag.favoriteFlag, tag.favoriteFlag);
                     chanelTitleNumber++;
                     txtNumberTitle.setText(String.valueOf(chanelTitleNumber));
                     tag.checkedFlag = MyTag.falseValue;

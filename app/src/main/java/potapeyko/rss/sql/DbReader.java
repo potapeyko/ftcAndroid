@@ -95,7 +95,7 @@ public class DbReader {
                 String mediaUrl = cur.isNull(5) ? null : cur.getString(5);
                 Long mediaSize = cur.isNull(6) ? null : cur.getLong(6);
                 resFeedItem = new FeedItem(cur.getLong(0), title, description, link, pubDate, mediaUrl,
-                        mediaSize,cur.getInt(7),cur.getInt(8));
+                        mediaSize,cur.getInt(7),cur.getInt(8),0 );
             }
             return resFeedItem;
         } catch (Throwable th) {

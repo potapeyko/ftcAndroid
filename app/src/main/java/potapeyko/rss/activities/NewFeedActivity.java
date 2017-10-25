@@ -35,8 +35,11 @@ import java.util.ArrayList;
 
 import static potapeyko.rss.utils.BroadcastSender.*;
 
-//// TODO: 11.10.2017 сделать обработку отсутствия соединения и повторного поиска строки без изменений
+//// TODO: 11.10.2017 сделать обработку отсутствия соединения
 public final class NewFeedActivity extends MyBaseActivity {
+
+    volatile private String lastSearchRequest = "";//сохраняет запрос, чтобы не повторять поиск при неизменном запросе
+
 
     private Button btnConnectNewChanel;
     private Button btnFindNewChanel;
@@ -44,9 +47,11 @@ public final class NewFeedActivity extends MyBaseActivity {
     private EditText etKeywords;
     private ListView lvFeedsList;
     private TextView tvNewChanel;
+    private TextView tvOrNewChanel;
     private Spinner spUrlProtocol;
     private final NetworkHelper nwHelper;
     private LinearLayout progressBarLayout; //progressBarLayout inside this linearLayout
+    final private BroadcastReceiver br = new NewFeedBroadcastReceiver();
 
     private LinearLayout hiddenLayout; // часть, скрываемая при выводе списка каналов
     ArrayList<Feed> feedsList;
@@ -54,6 +59,7 @@ public final class NewFeedActivity extends MyBaseActivity {
 
     private GetListOfFeedsAsynkTask getListOfFeedsAsynkTask;
     private boolean isFeedsListVisible = false;
+
     /// сохранение асинктаска при повороте экрана.
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
@@ -84,6 +90,7 @@ public final class NewFeedActivity extends MyBaseActivity {
         @Override
         protected Void doInBackground(String... uri) {
             //сходить на сайт, распарсить, отдать
+
             if (uri == null || uri[0] == null || uri[0].compareTo("") == 0) return null;
             try {
                 HttpURLConnection urlConnection = null;
@@ -131,7 +138,6 @@ public final class NewFeedActivity extends MyBaseActivity {
                     } else {
                         description = temp[3].toString();
                     }
-
                     feeds.add(
                             new Feed(1, title, link, website,
                                     description, null,
@@ -139,10 +145,11 @@ public final class NewFeedActivity extends MyBaseActivity {
                     );
                 }
                 //http://cloud.feedly.com/v3/search/feeds?count=50&q=sport
-
-
             } catch (Exception e) {
                 e.printStackTrace();
+                if (newFeedActivity != null) {
+                    newFeedActivity.lastSearchRequest = "";
+                }
             }
             return null;
         }
@@ -153,6 +160,7 @@ public final class NewFeedActivity extends MyBaseActivity {
             super.onPostExecute(result);
             if (newFeedActivity != null) {
                 newFeedActivity.createFeedsList(feeds);
+
             }
         }
     }
@@ -176,6 +184,7 @@ public final class NewFeedActivity extends MyBaseActivity {
             });
             //http://cloud.feedly.com/v3/search/feeds?count=50&q=sport
         }
+        if(s==null){Toast.makeText(this,"Empty result",Toast.LENGTH_SHORT).show();}
         lvFeedsList.setVisibility(View.VISIBLE);
         progressBarLayout.setVisibility(View.INVISIBLE);//убираем прогресс
         activateControls();
@@ -186,40 +195,14 @@ public final class NewFeedActivity extends MyBaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(isFeedsListVisible){
+        if (isFeedsListVisible) {
             isFeedsListVisible = false;
             lvFeedsList.setVisibility(View.INVISIBLE);
             hiddenLayout.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
-
-    final private BroadcastReceiver br = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent == null) {
-                Log.e(getString(R.string.LOG_KEY), "onReceive intent == null");
-                return;
-            }
-
-            String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
-            if (CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)) {//все успешно добавленно
-                MainActivity.start(NewFeedActivity.this,
-                        intent.getLongExtra(LONG_BROADCAST_DATA, -1));//открываем добавленный канал
-                NewFeedActivity.this.finish();
-            } else if (CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)) {
-                showCauseToast(broadcastMessage);
-            } else {//какая то ошибка
-                NewFeedActivity.this.activateControls();
-                progressBarLayout.setVisibility(ProgressBar.INVISIBLE);//убираем прогресс
-                showCauseToast(broadcastMessage); // сообщения о причинах ошибки
-            }
-
-        }
-    };
 
     private void showCauseToast(String broadcastMessage) {
         if (CHANNEL_ALREADY_WAS_IN_DB_BROADCAST_MESS.equals(broadcastMessage)) {
@@ -269,7 +252,6 @@ public final class NewFeedActivity extends MyBaseActivity {
         super.onResume();
         //если активность восстановили, а в ней была запущена задача, тогда линкуем обратно
         checkAsynkTask();
-
     }
 
     private void checkAsynkTask() {
@@ -296,7 +278,7 @@ public final class NewFeedActivity extends MyBaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onBackPressed();
+                onBackPressed();
             }
         });
         btnConnectNewChanel = (Button) findViewById(R.id.activity_new_feed_btnConnectNewChanel);
@@ -304,8 +286,9 @@ public final class NewFeedActivity extends MyBaseActivity {
         etUri = (EditText) findViewById(R.id.activity_new_feed_etNewChanelUri);
         etKeywords = (EditText) findViewById(R.id.activity_new_feed_etFindNewChanelKeywords);
 
-        hiddenLayout =(LinearLayout) findViewById(R.id.activity_new_feed_hiddenLayout );
+        hiddenLayout = (LinearLayout) findViewById(R.id.activity_new_feed_hiddenLayout);
         tvNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvNewChanel);
+        tvOrNewChanel = (TextView) findViewById(R.id.activity_new_feed_tvOrNewChanel);
         spUrlProtocol = (Spinner) findViewById(R.id.activity_new_feed_spUrlProtocol);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.http_https, android.R.layout.simple_spinner_item);
@@ -338,12 +321,16 @@ public final class NewFeedActivity extends MyBaseActivity {
             btnFindNewChanel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    deactivateControls();
-                    progressBarLayout.setVisibility(ProgressBar.VISIBLE);
-                    getListOfFeedsAsynkTask = new GetListOfFeedsAsynkTask();
-                    getListOfFeedsAsynkTask.link(NewFeedActivity.this);
-                    getListOfFeedsAsynkTask.
-                            execute(etKeywords.getText().toString());
+                    String request = etKeywords.getText().toString();
+                    if (lastSearchRequest.compareTo(request) != 0 && request != null) {
+                        lastSearchRequest = request;
+                        progressBarLayout.setVisibility(ProgressBar.VISIBLE);
+                        deactivateControls();
+                        getListOfFeedsAsynkTask = new GetListOfFeedsAsynkTask();
+                        getListOfFeedsAsynkTask.link(NewFeedActivity.this);
+                        getListOfFeedsAsynkTask.
+                                execute(lastSearchRequest);
+                    }
                 }
             });
             btnFindNewChanel.requestFocus();
@@ -419,8 +406,14 @@ public final class NewFeedActivity extends MyBaseActivity {
         });
         etUri.setEnabled(false);
         etUri.setVisibility(View.INVISIBLE);
+        btnFindNewChanel.setVisibility(View.INVISIBLE);
+        etKeywords.setVisibility(View.INVISIBLE);
+        spUrlProtocol.setVisibility(View.INVISIBLE);
+        tvOrNewChanel.setVisibility(View.INVISIBLE);
         tvNewChanel.setText(R.string.new_chanel_no_connection);
         Toast.makeText(this, R.string.new_chanel_no_connection_toast, Toast.LENGTH_LONG).show();
+
+
     }
 
 
@@ -441,4 +434,34 @@ public final class NewFeedActivity extends MyBaseActivity {
         super.onSaveInstanceState(outState);
         outState.putSerializable("feedsList", feedsList);
     }
+
+
+    private final class NewFeedBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent == null) {
+                Log.e(getString(R.string.LOG_KEY), "onReceive intent == null");
+                return;
+            }
+
+            String broadcastMessage = intent.getStringExtra(STRING_BROADCAST_MESSAGE);
+            if (CHANNEL_NEWS_ADD_BROADCAST_MESS.equals(broadcastMessage)) {//все успешно добавленно
+                MainActivity.start(NewFeedActivity.this,
+                        intent.getLongExtra(LONG_BROADCAST_DATA, -1));//открываем добавленный канал
+                NewFeedActivity.this.finish();
+            } else if (CHANNEL_ADD_BROADCAST_MESS.equals(broadcastMessage)) {
+                showCauseToast(broadcastMessage);
+            } else {//какая то ошибка
+                NewFeedActivity.this.activateControls();
+                progressBarLayout.setVisibility(ProgressBar.INVISIBLE);//убираем прогресс
+                showCauseToast(broadcastMessage); // сообщения о причинах ошибки
+            }
+
+        }
+    }
+
+    ;
+
+
 }

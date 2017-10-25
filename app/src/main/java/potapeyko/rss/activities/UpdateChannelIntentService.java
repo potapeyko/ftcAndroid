@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static potapeyko.rss.utils.BroadcastSender.*;
 
@@ -162,20 +163,19 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                 isNewFeedItem = false;
                 parser.parseFeed(xpp, uri); //запуск парсинга
                 //отправка собщения об обновлении канала.
+                deleteFeedItems(feedId);
+
+
 
                 if (isNewFeedItem) {
                     sendMyBroadcast(this, CHANNEL_UPDATE_BROADCAST_MESS,
                             feed.getId());
                 } else {
-                    Log.d("wtf", "Обнова. Нового нет");
+
                 }
             }
             stopProcessing = false;
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             this.sendNotification(
                     this.getNotification(getString(R.string.notification_up),
                             "", getString(R.string.notification_updated_subtext),
@@ -192,6 +192,27 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
+            }
+        }
+    }
+
+    private void deleteFeedItems(final long feedId) {
+        DbWriter dbWriter = null;
+
+        try {
+            dbWriter = DB.getWriter(this);
+            dbWriter.open();
+            long m = 30*24*60*60*100;
+            long m1 = 60*100;
+            dbWriter.deleteFeedItems(feedId);
+            dbWriter.cancelDeferRemovalForAll(feedId);
+
+        } catch (Throwable th) {
+            sendMyBroadcast(this, DB_EXCEPTION_BROADCAST_MESS, 0);
+            //todo логирование
+        } finally {
+            if (dbWriter != null) {
+                dbWriter.close();
             }
         }
     }
@@ -222,8 +243,9 @@ public class UpdateChannelIntentService extends IntentService implements FeedPar
                         FLAG_NOT_CHECKED_ITEM, FLAG_NOT_FAVORITE_ITEM);
                 isNewFeedItem = true;
                 quantityOfNewFeedItem++;
+            } else{
+                dbWriter.deferRemoval(feedItem);
             }
-
         } catch (Throwable th) {
             sendMyBroadcast(this, DB_EXCEPTION_BROADCAST_MESS, 0);
             //todo логирование

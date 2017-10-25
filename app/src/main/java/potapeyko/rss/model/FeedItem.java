@@ -25,6 +25,11 @@ public class FeedItem {
     private Long mediaSize;
     @Getter @Setter private int checkedFlag=0;
     @Getter @Setter private int favoriteFlag=0;
+    @Getter @Setter private int deleteFlag=0;//2 - пока не удалять.
+
+
+
+
 
 
     public FeedItem(){

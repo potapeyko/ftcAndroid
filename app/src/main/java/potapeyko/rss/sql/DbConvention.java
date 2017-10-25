@@ -6,7 +6,7 @@ public final class DbConvention {
     }
 
     static final String DB_NAME = "rssReaderDb";
-    static final int DB_VERSION = 2;
+    static final int DB_VERSION = 1;
 
     //FEED
     static final String FEED_TABLE_NAME = "feed";
@@ -42,6 +42,7 @@ public final class DbConvention {
     static final String FEED_ITEM_MEDIA_SIZE = "mediaSize";
     public static final String FEED_ITEM_FLAGS_FAVORITE = "favorite";
     public static final String FEED_ITEM_FLAGS_CHECKED = "checked";
+    public static final String FEED_ITEM_FLAGS_DELETE = "deleteFlag";
 
     static final String DB_CREATE_NEWS_TABLE =
             "create table " + FEED_ITEM_TABLE_NAME +
@@ -54,6 +55,7 @@ public final class DbConvention {
                     FEED_ITEM_MEDIA_SIZE + " INTEGER, " +
                     FEED_ITEM_FLAGS_FAVORITE + " INTEGER, "+
                     FEED_ITEM_FLAGS_CHECKED  + " INTEGER, "+
+                    FEED_ITEM_FLAGS_DELETE  + " INTEGER, "+
                     FEED_ITEM_FEED_ID + " INTEGER, " +
                     " foreign key (" + FEED_ITEM_FEED_ID + ") references " +
                     FEED_TABLE_NAME + " (_id) on delete cascade);";

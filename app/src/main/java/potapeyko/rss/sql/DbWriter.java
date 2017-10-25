@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import lombok.NonNull;
 import potapeyko.rss.exceptions.DbException;
+import potapeyko.rss.model.FeedItem;
 
 import java.util.Date;
 
@@ -22,7 +23,7 @@ public class DbWriter extends DbReader {
 
     public void addFeedItemToDB(final long feedId, final String title, final String link,
                                 final String description, final Date pubDate, final String mediaUrl,
-                                Long mediaSize, int checkedFlag,int favoriteFlag) throws DbException {
+                                Long mediaSize, int checkedFlag, int favoriteFlag) throws DbException {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
         cv.put(DbConvention.FEED_ITEM_FEED_ID, feedId);
@@ -34,15 +35,17 @@ public class DbWriter extends DbReader {
         cv.put(DbConvention.FEED_ITEM_MEDIA_SIZE, mediaSize);
         cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, checkedFlag);
         cv.put(DbConvention.FEED_ITEM_FLAGS_FAVORITE, favoriteFlag);
+        cv.put(DbConvention.FEED_ITEM_FLAGS_DELETE, 0);
+
         long result = -1;
 
         dB.beginTransaction();
         try {
             result = dB.insert(DbConvention.FEED_ITEM_TABLE_NAME, null, cv);
-            if(result!=-1){
+            if (result != -1) {
                 String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
-                        "` SET `"+DbConvention.FEED_COUNT+"` = `"+
-                        DbConvention.FEED_COUNT+"` + 1 WHERE _id = " + feedId;
+                        "` SET `" + DbConvention.FEED_COUNT + "` = `" +
+                        DbConvention.FEED_COUNT + "` + 1 WHERE _id = " + feedId;
                 dB.execSQL(sql);
             }
             dB.setTransactionSuccessful();
@@ -79,33 +82,50 @@ public class DbWriter extends DbReader {
         }
     }
 
-    public void changeFeedItemFlags(final long feedItemId,final long feedId, int newCheckedFlag,int lastCheckedFlag,
-                                    int newFavoriteFlag,int lastFavoriteFlag) {
+    /**
+     * if (last...Flag) == (new...Flag) then it flag will not be changed.
+     * if you don't need to change flag then set new...Flag== last...Flag
+     */
+    public void changeFeedItemFlags(final long feedItemId, final long feedId, int newCheckedFlag, int lastCheckedFlag,
+                                    int newFavoriteFlag, int lastFavoriteFlag) {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
-        if(newCheckedFlag!=lastCheckedFlag){
-        cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, newCheckedFlag);}
-        if(newFavoriteFlag!=lastFavoriteFlag){
-        cv.put(DbConvention.FEED_ITEM_FLAGS_FAVORITE, newFavoriteFlag);}
-        if(cv.size()==0)return;
+        if (newCheckedFlag != lastCheckedFlag) {
+            cv.put(DbConvention.FEED_ITEM_FLAGS_CHECKED, newCheckedFlag);
+        }
+        if (newFavoriteFlag != lastFavoriteFlag) {
+            cv.put(DbConvention.FEED_ITEM_FLAGS_FAVORITE, newFavoriteFlag);
+        }
+        if (cv.size() == 0) return;
         dB.beginTransaction();
         try {
             dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, "_id = ?",
                     new String[]{String.valueOf(feedItemId)});
-            if(newCheckedFlag!=lastCheckedFlag){
+            if (newCheckedFlag != lastCheckedFlag) {
                 String actionSign;
-                if(newCheckedFlag>lastCheckedFlag){actionSign=" - ";}
-                else{actionSign=" + ";}
+                if (newCheckedFlag > lastCheckedFlag) {
+                    actionSign = " - ";
+                } else {
+                    actionSign = " + ";
+                }
                 String sql = "UPDATE `" + DbConvention.FEED_TABLE_NAME +
-                        "` SET `"+DbConvention.FEED_COUNT+"` = `"
-                        +DbConvention.FEED_COUNT+"` "+actionSign+" 1 WHERE _id = " + feedId;
+                        "` SET `" + DbConvention.FEED_COUNT + "` = `"
+                        + DbConvention.FEED_COUNT + "` " + actionSign + " 1 WHERE _id = " + feedId;
                 dB.execSQL(sql);
             }
             dB.setTransactionSuccessful();
+        } catch (Throwable e) {
+            e.printStackTrace();
         } finally {
             dB.endTransaction();
         }
     }
+
+    /**
+     * if (last...Flag) == (new...Flag) then it flag will not be changed.
+     * if you don't need to change flag then set new...Flag== last...Flag
+     */
+
     public void changeFeedCount(final long feedId, int newCount) {
         if (dB == null) return;
         final ContentValues cv = new ContentValues();
@@ -134,4 +154,48 @@ public class DbWriter extends DbReader {
             dB.endTransaction();
         }
     }
+
+    public void deleteFeedItems(final long feedId) {
+        if (dB == null) return;
+        String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId + " and " + DbConvention.FEED_ITEM_FLAGS_DELETE +
+                " = 1";
+        dB.beginTransaction();
+        try {
+            int result = dB.delete(DbConvention.FEED_ITEM_TABLE_NAME, selection, null);
+            dB.setTransactionSuccessful();
+        } finally {
+            dB.endTransaction();
+        }
+    }
+
+
+    public void deferRemoval(FeedItem feedItem) {
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS_DELETE, 2);
+        String selection = "_id = " + feedItem.getId() + " and " + DbConvention.FEED_ITEM_FLAGS_DELETE + " = 1";
+        deferRemovalTransaction(cv,selection);
+    }
+
+    public void cancelDeferRemovalForAll(final long feedId) {
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS_DELETE, 1);
+        String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId + " and " + DbConvention.FEED_ITEM_FLAGS_DELETE + " = 2";
+        deferRemovalTransaction(cv, selection);
+    }
+
+    private void deferRemovalTransaction( final ContentValues cv,final String selection ) {
+        dB.beginTransaction();
+        try {
+            dB.update(DbConvention.FEED_ITEM_TABLE_NAME, cv, selection, null);
+            dB.setTransactionSuccessful();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        } finally {
+            dB.endTransaction();
+        }
+    }
 }
+
+
