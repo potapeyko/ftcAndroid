@@ -151,10 +151,13 @@ public class DbReader {
                 DbConvention.FEED_ITEM_MEDIA_URL,               //5
                 DbConvention.FEED_ITEM_MEDIA_SIZE,              //6
                 DbConvention.FEED_ITEM_FLAGS_CHECKED,           //7
-                DbConvention.FEED_ITEM_FLAGS_FAVORITE           //8
+                DbConvention.FEED_ITEM_FLAGS_FAVORITE,          //8
+                DbConvention.FEED_ITEM_FLAGS_DELETE,           //9
+
 
         };
-        String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId;
+        String selection = DbConvention.FEED_ITEM_FEED_ID + " = " + feedId +" and "+DbConvention.FEED_ITEM_FLAGS_DELETE+
+                " = 0";
         switch (whereFlag){
             case ALL:
                 break;

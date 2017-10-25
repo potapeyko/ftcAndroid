@@ -27,6 +27,9 @@ import potapeyko.rss.sql.DbConvention;
 import potapeyko.rss.sql.DbReader;
 import potapeyko.rss.sql.DbWriter;
 import potapeyko.rss.utils.BroadcastSender;
+import potapeyko.rss.utils.swipeListView.SwipeAdapterDecorator;
+import potapeyko.rss.utils.swipeListView.SwipeDetector;
+import potapeyko.rss.utils.swipeListView.SwipedListView;
 
 public class MainActivity extends MyBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -50,7 +53,7 @@ public class MainActivity extends MyBaseActivity
     private TextView txtNumberTitle;
     private DbReader.WhereFlags currentFilter;
     private LinearLayout dummyPlugView;
-    private ListView newsList;
+    private SwipedListView newsList;
 
     private final BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -266,7 +269,7 @@ public class MainActivity extends MyBaseActivity
         TextView title = (TextView) findViewById(R.id.activity_main_txtTitle);
         txtNumberTitle = (TextView) findViewById(R.id.activity_main_txtNumberTitle);
 
-        newsList = (ListView) findViewById(R.id.activity_main_feedsList);
+        newsList = (SwipedListView) findViewById(R.id.activity_main_feedsList);
 
         dummyPlugView = (LinearLayout) findViewById(R.id.black_empty_option);
         if(dummyPlugView!=null){dummyPlugView.setVisibility(View.INVISIBLE);}
@@ -303,18 +306,41 @@ public class MainActivity extends MyBaseActivity
 
             if (newsList != null) {
                 newsList.setVisibility(View.VISIBLE);
+                /*swipeListView*/
                 newsCursor = dbReader.getCursorOfFeedItems(feedId, currentFilter);
-
                 String[] from = {DbConvention.FEED_ITEM_TITLE,
                         DbConvention.FEED_ITEM_PUBLICATION_DATE};
                 int[] to = {R.id.feedItem_list_title, R.id.feedItem_list_date};
 
                 adapter = new MySimpleCursorAdapter(this, R.layout.feeditem_list_item, newsCursor, from, to, feedId, this);
-
                 newsList.setAdapter(adapter);
                 if(checkEmptyList()){
                     return;
                 }
+                newsList.setOnItemSwipeListener(new SwipedListView.OnItemSwipeListener() {
+                    @Override
+                    public boolean onItemSwipe(AdapterView<?> var1, View var2, int var3,SwipeDetector.Action action) {
+                        DbWriter dbWriter = null;
+                        try {
+                            dbWriter = DB.getWriter(MainActivity.this);
+                            dbWriter.open();
+                            newsCursor.moveToPosition(var3);
+                            long feedItemId= newsCursor.getLong(newsCursor.getColumnIndex(DbConvention.FEED_ITEM_ID));
+                            dbWriter.setDeleteFlag(feedItemId);
+                            newsCursor = dbWriter.getCursorOfFeedItems(feedId, currentFilter);
+                            adapter.swapCursor(newsCursor);
+                            adapter.notifyDataSetChanged();
+                            checkEmptyList();
+                        } catch (DbException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (dbWriter != null) dbWriter.close();
+                        }
+                        return true;
+                    }
+                });
+
+
                 newsList.setOnItemClickListener(new ListView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long feedItemId) {

@@ -168,6 +168,13 @@ public class DbWriter extends DbReader {
         }
     }
 
+    public void setDeleteFlag(long feedItemId){
+        if (dB == null) return;
+        final ContentValues cv = new ContentValues();
+        cv.put(DbConvention.FEED_ITEM_FLAGS_DELETE, 1);
+        String selection = DbConvention.FEED_ITEM_ID + " = " + feedItemId;
+        deferRemovalTransaction(cv,selection);
+    }
 
     public void deferRemoval(FeedItem feedItem) {
         if (dB == null) return;

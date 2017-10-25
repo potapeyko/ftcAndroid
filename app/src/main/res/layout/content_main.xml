@@ -38,7 +38,7 @@
     <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
     <include layout="@layout/black_empty_option"
     />
-    <ListView
+    <potapeyko.rss.utils.swipeListView.SwipedListView
             android:id="@+id/activity_main_feedsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
